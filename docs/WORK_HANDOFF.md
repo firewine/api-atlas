@@ -8,7 +8,7 @@
 - Default branch: `main`
 - Visibility: public
 - Handoff date: 2026-09-13 (Asia/Seoul)
-- Project state: bootstrap only; MVP implementation has **not** been completed yet
+- Project state: MVP merged to `main`; 25-provider expansion implemented on `work/api-atlas-deploy-expand` and verified locally on 2026-09-13. Cloudflare account deployment remains blocked until the Cloudflare connection is available.
 
 ---
 
@@ -656,29 +656,29 @@ If Cloudflare credentials/account access are unavailable in Work, complete every
 
 Do **not** declare the MVP complete unless all applicable items below are true:
 
-- [ ] repository installs cleanly from lockfile
-- [ ] `npm run check` passes
-- [ ] `npm run build` passes
-- [ ] Pagefind index is generated successfully
-- [ ] home page exists and explains the product
-- [ ] `/apis/` directory page works
-- [ ] at least 10 verified seed provider pages exist
-- [ ] category pages work
-- [ ] at least 5 substantive comparison pages exist
-- [ ] at least 7 substantive guides exist
-- [ ] machine-readable catalog JSON works
-- [ ] provider JSON works
-- [ ] robots.txt exists
-- [ ] sitemap exists
-- [ ] llms.txt exists
-- [ ] canonical metadata is present
-- [ ] sources and verified dates are visible
-- [ ] GitHub Actions validates build/content
-- [ ] no secrets are committed
-- [ ] no bot/ad-impression monetization logic exists
-- [ ] no mass-generated thin pages were added just to inflate page count
+- [x] repository installs cleanly from lockfile
+- [x] `npm run check` passes
+- [x] `npm run build` passes
+- [x] Pagefind index is generated successfully
+- [x] home page exists and explains the product
+- [x] `/apis/` directory page works
+- [x] at least 10 verified seed provider pages exist
+- [x] category pages work
+- [x] at least 5 substantive comparison pages exist
+- [x] at least 7 substantive guides exist
+- [x] machine-readable catalog JSON works
+- [x] provider JSON works
+- [x] robots.txt exists
+- [x] sitemap exists
+- [x] llms.txt exists
+- [x] canonical metadata is present
+- [x] sources and verified dates are visible
+- [x] GitHub Actions validates build/content
+- [x] no secrets are committed
+- [x] no bot/ad-impression monetization logic exists
+- [x] no mass-generated thin pages were added just to inflate page count
 
-Longer-term launch target after the seed implementation: at least 25 quality provider/API entries.
+The 25-provider launch catalog is implemented. The next content milestone should improve depth, comparisons, and refresh automation rather than inflate entry count.
 
 ---
 

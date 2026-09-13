@@ -7,7 +7,7 @@ const apis = defineCollection({
   schema: z.object({
     name: z.string(),
     provider: z.string(),
-    category: z.enum(['ai', 'market-data', 'public-data', 'currency-data']),
+    category: z.enum(['ai', 'market-data', 'public-data', 'currency-data', 'developer-platform', 'payments', 'communications', 'mapping-weather']),
     status: z.enum(['active', 'legacy', 'research']),
     officialDocs: z.url(),
     homepage: z.url(),

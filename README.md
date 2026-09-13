@@ -1,6 +1,6 @@
 # API Atlas
 
-API Atlas is a static-first, source-backed API knowledge base. The MVP ships ten provider profiles, category indexes, five comparisons, seven integration guides, a change ledger, Pagefind search, and machine-readable catalog surfaces.
+API Atlas is a static-first, source-backed API knowledge base. The catalog ships 25 provider profiles, category indexes, comparisons, integration guides, a change ledger, Pagefind search, and machine-readable catalog surfaces.
 
 ## Local development
 
@@ -37,6 +37,8 @@ Machine surfaces:
 ## Deployment
 
 The output is static and deployable from `dist/` to Cloudflare Pages. Set `SITE_URL` to the production HTTPS origin during the build so canonical links, the sitemap, robots file, and `llms.txt` use the final domain.
+
+The exact Pages setup and post-deploy verification procedure are documented in `docs/CLOUDFLARE_PAGES.md`.
 
 ## Policy boundary
 
