@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout title="About" description="API Atlas is a static-first, source-backed API knowledge base.">
+  <header class="page-hero"><div class="narrow">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
+    <span class="eyebrow">About API Atlas</span><h1 class="page-title">A map, not another maze.</h1>
+    <p class="lede">Vendor docs are authoritative but optimized for their own product. API Atlas is the concise decision layer that points back to them.</p>
+  </div></header>
+  <section class="section-tight"><article class="narrow prose">
+    <h2>The promise</h2><p>A developer—or a legitimate retrieval system—should be able to learn what an API does, how it authenticates, what might have changed, and which official page supports the answer in minutes.</p>
+    <h2>The boundaries</h2><p>Profiles are original summaries, not copied manuals. API Atlas does not guarantee provider availability, data fitness, or license rights. The linked official documentation remains authoritative, especially for production contracts and regulated data.</p>
+    <h2>Static by design</h2><p>Provider Markdown is validated at build time and generates both semantic HTML and JSON. That keeps facts reviewable in Git, pages fast, and the source of truth shared across human and machine surfaces.</p>
+  </article></section>
+</BaseLayout>

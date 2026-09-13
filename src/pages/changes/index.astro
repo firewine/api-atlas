@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { changeEvents } from '../../data/changes';
+---
+
+<BaseLayout title="Catalog changes" description="Meaningful API Atlas catalog, fact, and policy changes.">
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Changes' }]} />
+    <span class="eyebrow">Change ledger</span><h1 class="page-title">What changed—and why it matters.</h1>
+    <p class="lede">Only meaningful catalog events appear here. Machine clients can use <a href="/api/changes.json">changes.json</a>.</p>
+  </div></header>
+  <section class="section-tight"><div class="narrow prose">
+    {changeEvents.map((event) => <article>
+      <span class="eyebrow">{event.date} · {event.type}</span><h2>{event.title}</h2><p>{event.summary}</p>
+    </article>)}
+  </div></section>
+</BaseLayout>

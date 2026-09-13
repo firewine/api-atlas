@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProviderCard from '../../components/ProviderCard.astro';
+import { categories, type CategorySlug } from '../../data/categories';
+import { sortApis } from '../../lib/content';
+
+export function getStaticPaths() {
+  return Object.keys(categories).map((slug) => ({ params: { slug }, props: { slug: slug as CategorySlug } }));
+}
+
+interface Props { slug: CategorySlug }
+const { slug } = Astro.props;
+const category = categories[slug];
+const apis = sortApis((await getCollection('apis')).filter((api) => api.data.category === slug));
+---
+
+<BaseLayout title={category.name} description={category.description}>
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Categories', href: '/categories/' }, { label: category.name }]} />
+    <span class="eyebrow">{category.eyebrow} · {apis.length} profiles</span>
+    <h1 class="page-title">{category.name}</h1><p class="lede">{category.description}</p>
+  </div></header>
+  <section class="dark-section section-tight"><div class="shell provider-grid">
+    {apis.map((api) => <ProviderCard api={api} />)}
+  </div></section>
+</BaseLayout>

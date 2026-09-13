@@ -1,0 +1,49 @@
+---
+import { formatDate } from '../lib/content';
+
+interface Fact {
+  label: string;
+  value: string;
+  sourceUrl: string;
+  verifiedAt: Date;
+}
+
+interface Props {
+  verifiedAt: Date;
+  sourceUrls: string[];
+  facts?: Fact[];
+}
+
+const { verifiedAt, sourceUrls, facts = [] } = Astro.props;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<aside class="source-panel" aria-labelledby="source-panel-title">
+  <div class="source-heading">
+    <div>
+      <span class="eyebrow">Provenance</span>
+      <h2 id="source-panel-title">Verified facts, visible sources</h2>
+    </div>
+    <span class="verified-stamp">Checked {formatDate(verifiedAt)}</span>
+  </div>
+  {facts.length > 0 && (
+    <dl class="fact-provenance">
+      {facts.map((fact) => (
+        <div>
+          <dt>{fact.label}</dt>
+          <dd>
+            <span>{fact.value}</span>
+            <a href={fact.sourceUrl} rel="noopener noreferrer">Source · {host(fact.sourceUrl)}</a>
+            <time datetime={formatDate(fact.verifiedAt)}>Verified {formatDate(fact.verifiedAt)}</time>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  )}
+  <h3>Official sources</h3>
+  <ol class="source-list">
+    {sourceUrls.map((url) => (
+      <li><a href={url} rel="noopener noreferrer">{url}</a></li>
+    ))}
+  </ol>
+</aside>

@@ -1,0 +1,73 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SourcePanel from '../../components/SourcePanel.astro';
+import { getCategory } from '../../data/categories';
+import { formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const apis = await getCollection('apis');
+  return apis.map((api) => ({ params: { slug: api.id }, props: { api } }));
+}
+
+interface Props { api: CollectionEntry<'apis'> }
+const { api } = Astro.props;
+const { Content } = await render(api);
+const category = getCategory(api.data.category);
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: `${api.data.name} API profile`,
+  description: api.data.summary,
+  dateModified: formatDate(api.data.verifiedAt),
+  author: { '@type': 'Organization', name: 'API Atlas' },
+  mainEntityOfPage: new URL(`/apis/${api.id}/`, Astro.site ?? Astro.url.origin).href,
+  citation: api.data.sourceUrls,
+};
+---
+
+<BaseLayout title={api.data.name} description={api.data.summary} jsonLd={articleSchema}>
+  <header class="page-hero" style={`--accent:${category.accent}`}>
+    <div class="shell">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'APIs', href: '/apis/' }, { label: api.data.name }]} />
+      <span class="eyebrow">{category.name} · {api.data.status}</span>
+      <h1 class="page-title" data-pagefind-meta="title">{api.data.name}</h1>
+      <p class="lede">{api.data.summary}</p>
+    </div>
+  </header>
+  <section class="section-tight">
+    <div class="shell detail-grid">
+      <article class="prose">
+        <Content />
+        <section aria-labelledby="integration-surface">
+          <h2 id="integration-surface">Integration surface</h2>
+          <dl class="integration-list">
+            <div><dt>Versioning</dt><dd>{api.data.versioning}</dd></div>
+            <div><dt>Resource groups</dt><dd>{api.data.resourceGroups.join(', ')}</dd></div>
+            <div><dt>Pagination</dt><dd>{api.data.pagination}</dd></div>
+            <div><dt>Errors</dt><dd>{api.data.errors}</dd></div>
+            <div><dt>Webhooks</dt><dd>{api.data.webhooks}</dd></div>
+            <div><dt>Official SDKs</dt><dd>{api.data.sdks.length ? api.data.sdks.join(', ') : 'None confirmed in the reviewed official sources.'}</dd></div>
+          </dl>
+        </section>
+        <SourcePanel verifiedAt={api.data.verifiedAt} sourceUrls={api.data.sourceUrls} facts={api.data.mutableFacts} />
+      </article>
+      <aside class="provider-meta" data-pagefind-ignore>
+        <dl>
+          <div><dt>Provider</dt><dd>{api.data.provider}</dd></div>
+          <div><dt>Category</dt><dd><a href={`/categories/${api.data.category}/`}>{category.name}</a></dd></div>
+          <div><dt>Status</dt><dd>{api.data.status}</dd></div>
+          <div><dt>Base URL</dt><dd><code>{api.data.baseUrl}</code></dd></div>
+          <div><dt>Authentication</dt><dd>{api.data.auth}</dd></div>
+          <div><dt>Pricing</dt><dd>{api.data.pricing}</dd></div>
+          <div><dt>Limits</dt><dd>{api.data.rateLimit}</dd></div>
+          <div><dt>Formats</dt><dd>{api.data.formats.join(', ')}</dd></div>
+          <div><dt>Verified</dt><dd><time datetime={formatDate(api.data.verifiedAt)}>{formatDate(api.data.verifiedAt)}</time></dd></div>
+        </dl>
+        <a class="button" href={api.data.officialDocs} rel="noopener noreferrer">Official docs ↗</a>
+        <a class="button secondary" href={`/api/providers/${api.id}.json`}>Provider JSON</a>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

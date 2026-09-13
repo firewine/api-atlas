@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { categories } from '../../data/categories';
+
+const apis = await getCollection('apis');
+---
+
+<BaseLayout title="API categories" description="Explore API Atlas by AI, market data, public data, and currency data categories.">
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Categories' }]} />
+    <span class="eyebrow">Browse by domain</span><h1 class="page-title">API categories.</h1>
+    <p class="lede">Broad enough to scan, specific enough to make the next decision.</p>
+  </div></header>
+  <section class="section-tight"><div class="shell category-grid">
+    {Object.entries(categories).map(([slug, category]) => {
+      const count = apis.filter((api) => api.data.category === slug).length;
+      return <a class="category-card" href={`/categories/${slug}/`}>
+        <span class="category-count">{count} {count === 1 ? 'provider' : 'providers'}</span>
+        <h2>{category.name}</h2><p>{category.description}</p>
+      </a>;
+    })}
+  </div></section>
+</BaseLayout>

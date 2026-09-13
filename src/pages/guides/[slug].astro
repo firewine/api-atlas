@@ -1,0 +1,30 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides');
+  return guides.map((guide) => ({ params: { slug: guide.id }, props: { guide } }));
+}
+
+interface Props { guide: CollectionEntry<'guides'> }
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+const articleSchema = {
+  '@context': 'https://schema.org', '@type': 'TechArticle',
+  headline: guide.data.title, description: guide.data.summary,
+  dateModified: formatDate(guide.data.updatedAt),
+  author: { '@type': 'Organization', name: 'API Atlas' },
+};
+---
+
+<BaseLayout title={guide.data.title} description={guide.data.summary} jsonLd={articleSchema}>
+  <header class="page-hero"><div class="narrow">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Guides', href: '/guides/' }, { label: guide.data.title }]} />
+    <span class="eyebrow">Guide {String(guide.data.order).padStart(2, '0')} · updated {formatDate(guide.data.updatedAt)}</span>
+    <h1 class="page-title">{guide.data.title}</h1><p class="lede">{guide.data.summary}</p>
+  </div></header>
+  <section class="section-tight"><article class="narrow prose"><Content /></article></section>
+</BaseLayout>

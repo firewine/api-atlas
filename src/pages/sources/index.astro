@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout title="Source and crawler policy" description="How API Atlas verifies claims, records provenance, and controls crawler access.">
+  <header class="page-hero"><div class="narrow">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Source policy' }]} />
+    <span class="eyebrow">Editorial policy</span><h1 class="page-title">Every changing claim needs a trail.</h1>
+    <p class="lede">API Atlas summarizes official material; it does not replace or mirror it.</p>
+  </div></header>
+  <section class="section-tight"><article class="narrow prose">
+    <h2>Source priority</h2>
+    <ol><li>Official OpenAPI or machine-readable specification</li><li>Official reference documentation</li><li>Official changelog, release notes, or feed</li><li>Official SDK or source repository</li><li>Original editorial summary grounded in the above</li></ol>
+    <p>Secondary sources can corroborate a claim, but they do not anchor mutable pricing, quotas, authentication, version, availability, or product-status facts.</p>
+    <h2>Fact-level provenance</h2>
+    <p>Each provider record has a page verification date and official source list. Facts likely to change carry their own value, source URL, and verification date. When an exact limit cannot be confirmed, the profile says so rather than filling the gap with an estimate.</p>
+    <h2>Crawler policy</h2>
+    <p>The 2026-09-13 policy allows ordinary search crawlers and explicitly allows OpenAI's <code>OAI-SearchBot</code> plus Anthropic's <code>Claude-SearchBot</code> and <code>Claude-User</code>. It separately disallows the training crawlers <code>GPTBot</code> and <code>ClaudeBot</code>.</p>
+    <p><code>Google-Extended</code> combines control over future Gemini training and some grounding uses while remaining separate from Google Search. The MVP blocks that combined token and leaves ordinary Google Search indexing allowed. Revisit this choice if Google later offers more granular controls.</p>
+    <ul><li><a href="https://developers.openai.com/api/docs/bots">OpenAI crawler documentation</a></li><li><a href="https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropic crawler documentation</a></li><li><a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers#google-extended">Google crawler documentation</a></li></ul>
+    <h2>Monetization boundary</h2>
+    <p>API Atlas does not cloak content, distinguish ad rendering by user agent, manufacture impressions, or treat bot traffic as advertising inventory. Legitimate discovery may lead a real person to the site; any future monetization must be designed for that human visit.</p>
+  </article></section>
+</BaseLayout>
