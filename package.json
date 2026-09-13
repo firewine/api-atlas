@@ -7,7 +7,10 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "check": "astro check",
+    "check": "astro sync && astro check",
+    "validate:content": "node scripts/validate-content.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs",
+    "validate": "npm run check && npm run build && npm run validate:content && npm run verify:dist",
     "astro": "astro"
   },
   "dependencies": {

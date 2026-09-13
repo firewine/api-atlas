@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProviderCard from '../components/ProviderCard.astro';
+import { categories } from '../data/categories';
+import { sortApis } from '../lib/content';
+
+const apis = sortApis(await getCollection('apis'));
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+const featured = ['openai', 'eodhd', 'bok-ecos', 'massive', 'gemini', 'yfinance']
+  .map((id) => apis.find((api) => api.id === id))
+  .filter((api) => api !== undefined);
+---
+
+<BaseLayout description="Source-backed API profiles, comparisons, and integration guides—built for developers and legitimate retrieval systems.">
+  <section class="hero">
+    <div class="shell">
+      <span class="eyebrow">Source-backed API intelligence</span>
+      <h1 class="display">Find the API.<br />Verify the facts.</h1>
+      <p class="lede">API Atlas turns fragmented vendor documentation into concise, dated, source-visible profiles. No scraped doc dumps. No mystery claims.</p>
+      <div class="hero-actions">
+        <a class="button" href="/apis/">Browse the catalog <span aria-hidden="true">→</span></a>
+        <a class="button secondary" href="/compare/">Compare providers</a>
+      </div>
+      <dl class="hero-stats" aria-label="Catalog summary">
+        <div><dt>Verified providers</dt><dd>{apis.length}</dd></div>
+        <div><dt>Categories</dt><dd>{Object.keys(categories).length}</dd></div>
+        <div><dt>Task guides</dt><dd>{guides.length}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="dark-section section">
+    <div class="shell">
+      <div class="section-heading">
+        <div><span class="eyebrow">Start here</span><h2>Field notes, not brochures.</h2></div>
+        <p>Every profile links mutable claims to current official sources and shows when the claim was checked.</p>
+      </div>
+      <div class="provider-grid">
+        {featured.map((api) => <ProviderCard api={api} />)}
+      </div>
+      <p style="margin-top:2rem"><a class="text-link" href="/apis/">View all {apis.length} providers →</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-heading">
+        <div><span class="eyebrow">Browse by problem</span><h2>Four useful starting points.</h2></div>
+        <p>Categories are deliberately broad in the MVP. The provider page holds the nuance.</p>
+      </div>
+      <div class="category-grid">
+        {Object.entries(categories).map(([slug, category]) => {
+          const count = apis.filter((api) => api.data.category === slug).length;
+          return (
+            <a class="category-card" href={`/categories/${slug}/`} style={`--card-accent:${category.accent}`}>
+              <span class="category-count">{String(count).padStart(2, '0')} providers</span>
+              <h3>{category.name}</h3>
+              <p>{category.description}</p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--paper-deep)">
+    <div class="shell">
+      <div class="section-heading">
+        <div><span class="eyebrow">Integration playbooks</span><h2>Build with fewer surprises.</h2></div>
+        <a class="text-link" href="/guides/">All guides →</a>
+      </div>
+      <div class="guide-grid">
+        {guides.slice(0, 4).map((guide) => (
+          <a class="guide-card" href={`/guides/${guide.id}/`}>
+            <span class="category-count">Guide {String(guide.data.order).padStart(2, '0')}</span>
+            <h3>{guide.data.title}</h3>
+            <p>{guide.data.summary}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

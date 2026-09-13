@@ -1,0 +1,28 @@
+---
+import type { ApiEntry } from '../lib/content';
+import { formatDate } from '../lib/content';
+import { getCategory } from '../data/categories';
+
+interface Props {
+  api: ApiEntry;
+  featured?: boolean;
+}
+
+const { api, featured = false } = Astro.props;
+const category = getCategory(api.data.category);
+---
+
+<article class:list={['provider-card', { featured }]} style={`--card-accent:${category.accent}`}>
+  <div class="card-topline">
+    <span class="category-dot" aria-hidden="true"></span>
+    <a href={`/categories/${api.data.category}/`}>{category.name}</a>
+    <span class={`status status-${api.data.status}`}>{api.data.status}</span>
+  </div>
+  <h3><a href={`/apis/${api.id}/`}>{api.data.name}</a></h3>
+  <p>{api.data.summary}</p>
+  <dl class="card-facts">
+    <div><dt>Auth</dt><dd>{api.data.auth}</dd></div>
+    <div><dt>Verified</dt><dd><time datetime={formatDate(api.data.verifiedAt)}>{formatDate(api.data.verifiedAt)}</time></dd></div>
+  </dl>
+  <a class="text-link" href={`/apis/${api.id}/`}>Open profile <span aria-hidden="true">→</span></a>
+</article>

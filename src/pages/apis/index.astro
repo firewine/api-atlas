@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProviderCard from '../../components/ProviderCard.astro';
+import { categories } from '../../data/categories';
+import { sortApis } from '../../lib/content';
+
+const apis = sortApis(await getCollection('apis'));
+---
+
+<BaseLayout title="API catalog" description="Browse concise, source-backed profiles for AI, market data, public data, and currency APIs.">
+  <header class="page-hero">
+    <div class="shell">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'APIs' }]} />
+      <span class="eyebrow">{apis.length} verified profiles</span>
+      <h1 class="page-title">The API catalog.</h1>
+      <p class="lede">Each profile is an editorial summary with visible official sources and dated mutable facts.</p>
+      <nav class="filter-row" aria-label="API categories">
+        <a class="active" href="/apis/">All</a>
+        {Object.entries(categories).map(([slug, category]) => <a href={`/categories/${slug}/`}>{category.name}</a>)}
+      </nav>
+    </div>
+  </header>
+  <section class="dark-section section-tight">
+    <div class="shell provider-grid">
+      {apis.map((api) => <ProviderCard api={api} />)}
+    </div>
+  </section>
+</BaseLayout>

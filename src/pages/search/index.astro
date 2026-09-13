@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout title="Search" description="Search API Atlas provider profiles, comparisons, and integration guides." noIndex={true}>
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Search' }]} />
+    <span class="eyebrow">Pagefind static search</span><h1 class="page-title">Search the atlas.</h1>
+    <p class="lede">Search runs entirely against the index generated with the static build.</p>
+  </div></header>
+  <section class="section-tight" data-pagefind-ignore><div class="shell search-wrap">
+    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <div id="search"></div>
+    <noscript>Search requires JavaScript. Browse the <a href="/apis/">API catalog</a> instead.</noscript>
+    <script src="/pagefind/pagefind-ui.js" is:inline></script>
+    <script is:inline>
+      window.addEventListener('DOMContentLoaded', () => {
+        const query = new URLSearchParams(window.location.search).get('q') || '';
+        if (window.PagefindUI) new window.PagefindUI({ element: '#search', showSubResults: true, showImages: false, autofocus: true, processTerm: (term) => term || query });
+      });
+    </script>
+  </div></section>
+</BaseLayout>

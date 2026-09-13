@@ -1,0 +1,100 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  noIndex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title = 'API Atlas',
+  description = 'A concise, source-backed atlas of APIs for developers and retrieval systems.',
+  canonicalPath = Astro.url.pathname,
+  noIndex = false,
+  jsonLd,
+} = Astro.props;
+
+const pageTitle = title === 'API Atlas' ? title : `${title} · API Atlas`;
+const canonical = new URL(canonicalPath, Astro.site ?? Astro.url.origin);
+const currentPath = Astro.url.pathname;
+const navItems = [
+  ['/apis/', 'APIs'],
+  ['/categories/', 'Categories'],
+  ['/compare/', 'Compare'],
+  ['/guides/', 'Guides'],
+  ['/changes/', 'Changes'],
+];
+
+const siteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'API Atlas',
+  url: new URL('/', Astro.site ?? Astro.url.origin).href,
+  description,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${new URL('/search/', Astro.site ?? Astro.url.origin).href}?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])] : [siteSchema];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0d1512" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    {noIndex && <meta name="robots" content="noindex,follow" />}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header" data-pagefind-ignore>
+      <a class="brand" href="/" aria-label="API Atlas home">
+        <span class="brand-mark" aria-hidden="true">A:</span>
+        <span>API Atlas</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        {navItems.map(([href, label]) => (
+          <a href={href} aria-current={currentPath.startsWith(href) ? 'page' : undefined}>{label}</a>
+        ))}
+      </nav>
+      <a class="search-link" href="/search/" aria-label="Search API Atlas">
+        <span aria-hidden="true">⌕</span> Search
+      </a>
+    </header>
+    <main id="main-content" data-pagefind-body={!noIndex ? true : undefined}>
+      <slot />
+    </main>
+    <footer class="site-footer" data-pagefind-ignore>
+      <div>
+        <a class="brand footer-brand" href="/"><span class="brand-mark">A:</span> API Atlas</a>
+        <p>Concise API intelligence, traced to official sources.</p>
+      </div>
+      <div class="footer-links">
+        <a href="/sources/">Source policy</a>
+        <a href="/about/">About</a>
+        <a href="/api/catalog.json">Catalog JSON</a>
+        <a href="/llms.txt">llms.txt</a>
+      </div>
+      <p class="footer-note">No crawler cloaking. No bot-driven ad impressions. Last catalog review: 2026-09-13.</p>
+    </footer>
+  </body>
+</html>

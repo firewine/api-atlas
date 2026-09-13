@@ -1,0 +1,39 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SourcePanel from '../../components/SourcePanel.astro';
+import { formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const comparisons = await getCollection('comparisons');
+  return comparisons.map((comparison) => ({ params: { slug: comparison.id }, props: { comparison } }));
+}
+
+interface Props { comparison: CollectionEntry<'comparisons'> }
+const { comparison } = Astro.props;
+const apis = await getCollection('apis');
+const providers = comparison.data.providers.map((id) => apis.find((api) => api.id === id)).filter((api) => api !== undefined);
+const { Content } = await render(comparison);
+const articleSchema = {
+  '@context': 'https://schema.org', '@type': 'TechArticle',
+  headline: comparison.data.title, description: comparison.data.summary,
+  dateModified: formatDate(comparison.data.verifiedAt), citation: comparison.data.sourceUrls,
+  author: { '@type': 'Organization', name: 'API Atlas' },
+};
+---
+
+<BaseLayout title={comparison.data.title} description={comparison.data.summary} jsonLd={articleSchema}>
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Compare', href: '/compare/' }, { label: comparison.data.title }]} />
+    <span class="eyebrow">Head to head · verified {formatDate(comparison.data.verifiedAt)}</span>
+    <h1 class="page-title">{comparison.data.title}</h1><p class="lede">{comparison.data.summary}</p>
+  </div></header>
+  <section class="section-tight"><div class="narrow prose">
+    <div class="comparison-verdict"><strong>Bottom line:</strong> {comparison.data.verdict}</div>
+    <Content />
+    <h2>Provider profiles</h2>
+    <ul>{providers.map((api) => <li><a href={`/apis/${api.id}/`}>{api.data.name}</a> — source-backed facts and current verification notes</li>)}</ul>
+    <SourcePanel verifiedAt={comparison.data.verifiedAt} sourceUrls={comparison.data.sourceUrls} />
+  </div></section>
+</BaseLayout>

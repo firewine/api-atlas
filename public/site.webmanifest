@@ -1,0 +1,9 @@
+{
+  "name": "API Atlas",
+  "short_name": "API Atlas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f1e9",
+  "theme_color": "#0d1512",
+  "icons": []
+}

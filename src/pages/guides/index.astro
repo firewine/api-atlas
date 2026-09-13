@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="API integration guides" description="Original, task-oriented guides for choosing, integrating, and maintaining APIs.">
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Guides' }]} />
+    <span class="eyebrow">{guides.length} practical playbooks</span><h1 class="page-title">Guides for the work between endpoints.</h1>
+    <p class="lede">Selection, security, pagination, retries, verification, specifications, and change tracking.</p>
+  </div></header>
+  <section class="section-tight"><div class="shell guide-grid">
+    {guides.map((guide) => <a class="guide-card" href={`/guides/${guide.id}/`}>
+      <span class="category-count">Guide {String(guide.data.order).padStart(2, '0')}</span>
+      <h2>{guide.data.title}</h2><p>{guide.data.summary}</p>
+    </a>)}
+  </div></section>
+</BaseLayout>
