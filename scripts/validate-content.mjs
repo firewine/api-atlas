@@ -1,26 +1,15 @@
 import { readFile } from 'node:fs/promises';
 
-const expectedSlugs = [
-  'alpha-vantage',
-  'anthropic',
-  'bok-ecos',
-  'currencylayer',
-  'eodhd',
-  'fsc-data-go-kr',
-  'gemini',
-  'massive',
-  'openai',
-  'yfinance',
-];
+const requiredSeedSlugs = ['alpha-vantage', 'anthropic', 'bok-ecos', 'currencylayer', 'eodhd', 'fsc-data-go-kr', 'gemini', 'massive', 'openai', 'yfinance'];
 const coreFacts = ['Base URL', 'Authentication', 'Pricing', 'Rate limits'];
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const catalog = JSON.parse(await readFile(new URL('../dist/api/catalog.json', import.meta.url), 'utf8'));
 const errors = [];
 
 if (catalog.schemaVersion !== '1.0') errors.push('catalog schemaVersion must be 1.0');
-if (catalog.providerCount !== expectedSlugs.length) errors.push(`expected ${expectedSlugs.length} providers, found ${catalog.providerCount}`);
+if (catalog.providerCount < 25) errors.push(`expected at least 25 providers, found ${catalog.providerCount}`);
 const slugs = catalog.providers.map((provider) => provider.id).sort();
-if (JSON.stringify(slugs) !== JSON.stringify(expectedSlugs)) errors.push(`provider slugs differ: ${slugs.join(', ')}`);
+for (const slug of requiredSeedSlugs) if (!slugs.includes(slug)) errors.push(`missing required seed provider: ${slug}`);
 if (new Set(slugs).size !== slugs.length) errors.push('provider IDs must be unique');
 
 for (const provider of catalog.providers) {

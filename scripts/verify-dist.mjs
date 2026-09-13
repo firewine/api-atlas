@@ -3,10 +3,11 @@ import { readdir, readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
 const dist = new URL('../dist/', import.meta.url);
-const providerSlugs = ['alpha-vantage', 'anthropic', 'bok-ecos', 'currencylayer', 'eodhd', 'fsc-data-go-kr', 'gemini', 'massive', 'openai', 'yfinance'];
+const catalog = JSON.parse(await readFile(new URL('api/catalog.json', dist), 'utf8'));
+const providerSlugs = catalog.providers.map((provider) => provider.id);
 const comparisonSlugs = ['eodhd-vs-alpha-vantage', 'eodhd-vs-massive', 'massive-vs-alpha-vantage', 'openai-vs-anthropic', 'openai-vs-gemini'];
 const guideSlugs = ['api-key-safety', 'choose-llm-api', 'choose-stock-market-data-api', 'consume-openapi-specification', 'rest-pagination-patterns', 'retry-and-backoff', 'verify-api-rate-limits'];
-const categorySlugs = ['ai', 'market-data', 'public-data', 'currency-data'];
+const categorySlugs = [...new Set(catalog.providers.map((provider) => provider.category))];
 const required = [
   'index.html', 'apis/index.html', 'categories/index.html', 'compare/index.html', 'guides/index.html',
   'changes/index.html', 'sources/index.html', 'about/index.html', 'search/index.html', '404.html',
