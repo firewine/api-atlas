@@ -65,6 +65,19 @@ curl https://api.openai.com/v1/responses \
 
 Select a current model from the official model catalog instead of copying a model name from an old article. Handle `429` responses with bounded exponential backoff and respect the returned rate-limit metadata.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1/chat/completions` | Chat completions |
+| `GET /v1/models` | List models |
+| `GET /v1/models/{model_id}` | Model details |
+| `POST /v1/embeddings` | Create embeddings |
+| `POST /v1/images/generations` | Generate images |
+| `POST /v1/audio/transcriptions` | Speech to text |
+| `POST /v1/audio/speech` | Text to speech |
+| `GET /v1/assistants` | List assistants |
+
 ## Decision notes
 
 Evaluate models using your own representative inputs, latency target, and output-quality rubric. Price comparisons should include input, cached input where applicable, output, and tool-specific charges rather than a single headline token price.
