@@ -72,8 +72,46 @@ curl "https://eodhd.com/api/eod/AAPL.US?api_token=<redacted>
 
 The EOD endpoint defaults to CSV. Set `fmt=json` when a JSON response is easier to consume. Keep the token server-side even though query-string authentication is supported.
 
+## Python example: dividend history with defensive parsing
+
+```python
+import httpx
+from decimal import Decimal
+
+BASE = "https://eodhd.com/api"
+TOKEN = "your_api_token"  # keep server-side
+
+def get_dividends(ticker: str, exchange: str = "US") -> list[dict]:
+    """Fetch dividend history, skipping rows with missing critical fields."""
+    url = f"{BASE}/div/{ticker}.{exchange}"
+    resp = httpx.get(url, params={"api_token": TOKEN, "fmt": "json"}, timeout=30)
+    resp.raise_for_status()
+    rows = []
+    for row in resp.json():
+        # paymentDate is frequently null in practice — don't assume it exists
+        amount = row.get("value")
+        if amount is None:
+            continue
+        rows.append({
+            "ex_date": row.get("date"),
+            "payment_date": row.get("paymentDate"),  # may be None
+            "amount": Decimal(str(amount)),
+            "currency": row.get("currencyCode", "USD"),
+        })
+    return rows
+
+# Example: SCHD.US dividends
+for div in get_dividends("SCHD")[:3]:
+    print(div["ex_date"], div["amount"], div["currency"])
+```
+
 ## Decision notes
 
 EODHD is a practical fit when a product wants broad market coverage from one integration. Before production use, match every required dataset to the actual plan and license; a personal subscription does not automatically grant redistribution rights.
 
 Field-level spot checks are worth the effort: dividend date fields and close-price session definitions have shown gaps in practice, so validate the exact fields a product depends on against a second source before treating them as authoritative.
+
+**Real-world data quality notes (observed September–October 2026):**
+- Bulk dividend queries returned `paymentDate: null` for thousands of rows (Korean listings most affected)
+- Some rows have payment dates earlier than ex-dates — validate chronology
+- `isPrimary` flag meaning for a given listing is ambiguous — confirm methodology before comparing closes
