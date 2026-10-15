@@ -8,6 +8,7 @@ export const GET: APIRoute = async ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
   const apis = sortApis(await getCollection('apis'));
   const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+  const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
   const lines = [
     '# API Atlas',
     '',
@@ -19,6 +20,11 @@ export const GET: APIRoute = async ({ site }) => {
     '',
     '## Provider profiles',
     ...apis.map((api) => `- [${api.data.name}](${new URL(`/apis/${api.id}/`, origin).href}): ${api.data.summary}`),
+    '',
+    '## Comparisons',
+    ...comparisons.map(
+      (c) => `- [${c.data.title}](${new URL(`/compare/${c.id}/`, origin).href}): ${c.data.verdict}`,
+    ),
     '',
     '## Guides',
     ...guides.map((guide) => `- [${guide.data.title}](${new URL(`/guides/${guide.id}/`, origin).href}): ${guide.data.summary}`),
