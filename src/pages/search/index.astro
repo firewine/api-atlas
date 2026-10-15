@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Search" description="Search API Atlas provider profiles, comparisons, and integration guides." noIndex={true}>
@@ -10,10 +11,10 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
     <p class="lede">Search runs entirely against the index generated with the static build.</p>
   </div></header>
   <section class="section-tight" data-pagefind-ignore><div class="shell search-wrap">
-    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <link href={`${base}pagefind/pagefind-ui.css`} rel="stylesheet" />
     <div id="search"></div>
-    <noscript>Search requires JavaScript. Browse the <a href="/apis/">API catalog</a> instead.</noscript>
-    <script src="/pagefind/pagefind-ui.js" is:inline></script>
+    <noscript>Search requires JavaScript. Browse the <a href={`${base}apis/`}>API catalog</a> instead.</noscript>
+    <script src={`${base}pagefind/pagefind-ui.js"} is:inline></script>
     <script is:inline>
       window.addEventListener('DOMContentLoaded', () => {
         const query = new URLSearchParams(window.location.search).get('q') || '';
