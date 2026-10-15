@@ -70,6 +70,19 @@ curl "https://api.massive.com/v3/reference/dividends" \
 
 The query-string `apiKey` form also works, but authorization headers reduce accidental key leakage through logs and copied URLs.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v2/aggs/ticker/{ticker}/range/{mult}/{ts}/{from}/{to}` | OHLCV aggregates |
+| `GET /v2/aggs/grouped/locale/us/market/stocks/{date}` | Grouped daily bars |
+| `GET /v1/open-close/{ticker}/{date}` | Daily open/close |
+| `GET /v3/reference/tickers` | Ticker reference data |
+| `GET /v3/reference/tickers/{ticker}` | Ticker details |
+| `GET /v3/reference/dividends` | Dividend data |
+| `GET /v3/reference/splits` | Stock splits |
+| `GET /v2/last/trade/{ticker}` | Last trade |
+
 ## Decision notes
 
 Compare Massive plans on four axes: asset class, historical depth, feed latency, and usage rights. “Unlimited calls” does not by itself answer whether the data may be displayed or redistributed in a commercial product.
