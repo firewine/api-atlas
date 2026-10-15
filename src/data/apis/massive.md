@@ -73,3 +73,49 @@ The query-string `apiKey` form also works, but authorization headers reduce acci
 ## Decision notes
 
 Compare Massive plans on four axes: asset class, historical depth, feed latency, and usage rights. “Unlimited calls” does not by itself answer whether the data may be displayed or redistributed in a commercial product.
+
+## Python example: aggregates and ticker details
+
+```python
+import httpx
+from decimal import Decimal
+from datetime import date
+
+API_KEY = "your_massive_api_key"
+BASE = "https://api.massive.com"
+
+def get_aggs(ticker: str, from_: str, to: str, timespan: str = "day") -> list[dict]:
+    """Get OHLCV aggregates. Response nests under 'results'."""
+    resp = httpx.get(
+        f"{BASE}/v2/aggs/ticker/{ticker}/range/1/{timespan}/{from_}/{to}",
+        params={"apiKey": API_KEY},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    if data.get("status") != "OK":
+        raise RuntimeError(f"Massive error: {data.get('status')}")
+    return [
+        {
+            "date": date.fromtimestamp(r["t"] / 1000),
+            "open": Decimal(str(r["o"])),
+            "close": Decimal(str(r["c"])),
+            "volume": r["v"],
+        }
+        for r in data.get("results", [])
+    ]
+
+def get_ticker_details(ticker: str) -> dict:
+    resp = httpx.get(f"{BASE}/v3/reference/tickers/{ticker}", params={"apiKey": API_KEY}, timeout=30)
+    resp.raise_for_status()
+    return resp.json()["results"]
+
+for bar in get_aggs("AAPL", "2024-01-02", "2024-01-05"):
+    print(bar["date"], bar["close"])
+```
+
+**Notes:**
+- Timestamps are milliseconds since epoch — divide by 1000
+- Free tier is delayed 15 min and limited to 5 calls/min; paid plans unlock real-time
+- The company rebranded from Polygon.io to Massive in 2025; old `polygon.io` hosts still work
+- Dividends live under `/v3/reference/dividends`; splits under `/v3/reference/splits`
