@@ -53,3 +53,41 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to online payments and billing and marketplace and platform payments. Before production, verify verify webhook signatures. use idempotency keys for safely retried writes. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: customers and charges (test mode)
+
+```python
+import httpx
+from httpx import BasicAuth
+
+SECRET_KEY = "sk_test_your_key"  # TEST key — never use live keys in code samples
+BASE = "https://api.stripe.com/v1"
+
+def create_customer(email: str, name: str | None = None) -> dict:
+    """Create a customer. Stripe uses form-encoded bodies with basic auth."""
+    data = {"email": email}
+    if name:
+        data["name"] = name
+    resp = httpx.post(
+        f"{BASE}/customers", auth=BasicAuth(SECRET_KEY, ""), data=data, timeout=30
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+def list_charges(limit: int = 10) -> list[dict]:
+    resp = httpx.get(
+        f"{BASE}/charges", auth=BasicAuth(SECRET_KEY, ""), params={"limit": limit}, timeout=30
+    )
+    resp.raise_for_status()
+    return resp.json()["data"]
+
+customer = create_customer("dev@example.com", "Dev Example")
+print("created:", customer["id"])
+```
+
+**Notes:**
+- Secret key goes in HTTP Basic auth username (password empty) — not a Bearer header
+- Request bodies are `application/x-www-form-urlencoded`, not JSON
+- Always develop against `sk_test_*` keys; live keys start `sk_live_*`
+- Idempotency: send `Idempotency-Key` header on POSTs to safely retry
+- Use the official `stripe` SDK in production — it handles retries, pagination, and webhooks
