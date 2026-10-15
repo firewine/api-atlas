@@ -68,3 +68,34 @@ Start with the catalog endpoints, record the selected table and item codes, then
 ## Decision notes
 
 Prefer ECOS over secondary macro-data vendors when the required Korean series is available. Treat release timing, revisions, units, and frequency as part of the observation—not as display-only metadata.
+
+## Python example: USD/KRW exchange rate
+
+```python
+import httpx
+from decimal import Decimal
+
+API_KEY = "your_ecos_api_key"
+BASE = "https://ecos.bok.or.kr/api"
+
+def get_usd_krw(date: str) -> Decimal | None:
+    """Get USD/KRW rate for a date (YYYYMMDD). Returns None if unavailable."""
+    # 731Y001 = exchange rates, USD = 0000001
+    url = f"{BASE}/StatisticSearch/{API_KEY}/json/kr/1/10/731Y001/DD/{date}/{date}/0000001"
+    resp = httpx.get(url, timeout=12)
+    resp.raise_for_status()
+    rows = resp.json().get("StatisticSearch", {}).get("row", [])
+    for row in rows:
+        if row.get("ITEM_CODE1") == "0000001":  # USD
+            return Decimal(row["DATA_VALUE"])
+    return None
+
+# Example
+rate = get_usd_krw("20261015")
+print(f"USD/KRW: {rate}")
+```
+
+**Notes:**
+- Rate limit: ~100 calls/hour — cache aggressively (daily cache is sufficient for FX)
+- Statistic codes: `731Y001` for exchange rates; item codes identify currencies
+- Response nests data under `StatisticSearch.row`
