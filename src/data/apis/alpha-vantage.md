@@ -69,6 +69,23 @@ curl "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&ap
 
 The documentation defines each function separately. Validate output metadata and error or throttling messages before treating a response as market data.
 
+## Key endpoints
+
+| Function | Description |
+|----------|-------------|
+| `TIME_SERIES_DAILY` | Daily OHLCV time series |
+| `TIME_SERIES_INTRADAY` | Intraday OHLCV (1min-60min intervals) |
+| `TIME_SERIES_WEEKLY` / `TIME_SERIES_MONTHLY` | Weekly/monthly OHLCV |
+| `GLOBAL_QUOTE` | Latest price and volume snapshot |
+| `SYMBOL_SEARCH` | Ticker symbol search |
+| `OVERVIEW` | Company fundamentals overview |
+| `INCOME_STATEMENT` / `BALANCE_SHEET` / `CASH_FLOW` | Financial statements |
+| `DIVIDENDS` | Dividend payment history |
+| `SMA` / `EMA` / `RSI` / `MACD` | Technical indicators |
+| `CURRENCY_EXCHANGE_RATE` | Forex spot rate |
+| `NEWS_SENTIMENT` | News with sentiment scores |
+| `EARNINGS_CALENDAR` / `IPO_CALENDAR` | Market calendars |
+
 ## Decision notes
 
 Alpha Vantage is easy to test, but the 25-request daily standard limit makes caching and a narrow refresh scope essential. Confirm commercial rights and any real-time exchange entitlements before shipping a user-facing product.
