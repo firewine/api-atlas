@@ -75,6 +75,19 @@ oci compute instance launch \
   --ssh-authorized-keys-file ~/.ssh/id_ed25519.pub
 ```
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /20160918/instances` | Launch compute instance |
+| `GET /20160918/instances` | List instances |
+| `GET /20160918/instances/{id}` | Instance details |
+| `DELETE /20160918/instances/{id}` | Terminate instance |
+| `POST /20160918/instances/{id}/actions` | Instance actions (start/stop) |
+| `GET /20160918/shapes` | List available shapes |
+| `GET /20160918/images` | List images |
+| `GET /20160918/vnicAttachments` | List VNIC attachments |
+
 ## Real-world notes
 
 **Availability domains.** Use the availability domain name returned for your tenancy and region by `oci iam availability-domain list`.
