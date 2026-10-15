@@ -18,7 +18,7 @@ const apis = sortApis(await getCollection('apis'));
       <h1 class="page-title">The API catalog.</h1>
       <p class="lede">Each profile is an editorial summary with visible official sources and dated mutable facts.</p>
       <nav class="filter-row" aria-label="API categories">
-        <a class="active" href={`${base}apis/`}>All</a>
+        <a class="active" href={`${base}/apis/`}>All</a>
         {Object.entries(categories).map(([slug, category]) => <a href={`/categories/${slug}/`}>{category.name}</a>)}
       </nav>
     </div>
