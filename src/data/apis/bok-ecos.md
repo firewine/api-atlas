@@ -65,6 +65,16 @@ GET https://ecos.bok.or.kr/api/StatisticSearch/{API_KEY}/json/kr/1/10/{STAT_CODE
 
 Start with the catalog endpoints, record the selected table and item codes, then query the actual time series. Store those codes alongside the data so later refreshes remain auditable.
 
+## Key endpoints
+
+| Endpoint pattern | Description |
+|------------------|-------------|
+| `StatisticSearch/{key}/json/kr/1/10/731Y001/D/{from}/{to}/0000001` | USD/KRW exchange rate (731Y001) |
+| `StatisticSearch/{key}/json/kr/1/100/731Y001/D/{from}/{to}/` | All major currency rates |
+| `StatisticSearch/{key}/json/kr/1/10/060Y001/M/{from}/{to}/` | Consumer price index |
+| `StatisticSearch/{key}/json/kr/1/10/102Y004/M/{from}/{to}/` | Policy interest rate |
+| `StatisticItemList/{key}/json/kr/1/100/731Y001` | List items in a statistic |
+
 ## Decision notes
 
 Prefer ECOS over secondary macro-data vendors when the required Korean series is available. Treat release timing, revisions, units, and frequency as part of the observation—not as display-only metadata.
