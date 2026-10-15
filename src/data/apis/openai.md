@@ -68,3 +68,40 @@ Select a current model from the official model catalog instead of copying a mode
 ## Decision notes
 
 Evaluate models using your own representative inputs, latency target, and output-quality rubric. Price comparisons should include input, cached input where applicable, output, and tool-specific charges rather than a single headline token price.
+
+## Python example: chat completion with error handling
+
+```python
+import httpx
+
+API_KEY = "your_openai_api_key"
+BASE = "https://api.openai.com/v1"
+
+def chat(messages: list[dict], model: str = "gpt-4o-mini", **kwargs) -> str:
+    """Send a chat completion request. Raises on API errors."""
+    resp = httpx.post(
+        f"{BASE}/chat/completions",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        json={"model": model, "messages": messages, **kwargs},
+        timeout=60,
+    )
+    if resp.status_code == 429:
+        raise RuntimeError("Rate limited — back off and retry")
+    if resp.status_code == 401:
+        raise RuntimeError("Invalid API key")
+    resp.raise_for_status()
+    return resp.json()["choices"][0]["message"]["content"]
+
+def list_models() -> list[str]:
+    resp = httpx.get(f"{BASE}/models", headers={"Authorization": f"Bearer {API_KEY}"}, timeout=30)
+    resp.raise_for_status()
+    return [m["id"] for m in resp.json()["data"]]
+
+print(chat([{"role": "user", "content": "What is 2+2? Answer in one word."}]))
+```
+
+**Notes:**
+- Auth is `Authorization: Bearer <key>`; never expose keys client-side
+- 429 means rate limit — respect `retry-after` headers and back off
+- Model names change frequently; call `/models` or check docs for current IDs
+- Use the official `openai` Python SDK for streaming, retries, and type safety in production
