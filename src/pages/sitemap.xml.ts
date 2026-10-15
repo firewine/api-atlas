@@ -14,6 +14,8 @@ const escapeXml = (value: string) => value
 
 export const GET: APIRoute = async ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
+  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
+  const abs = (p: string) => baseHref + p.replace(/^\//, '');
   const [apis, guides, comparisons] = await Promise.all([
     getCollection('apis'),
     getCollection('guides'),
@@ -35,7 +37,7 @@ export const GET: APIRoute = async ({ site }) => {
   ];
   const urls = entries.map(({ path, modified }) => [
     '  <url>',
-    `    <loc>${escapeXml(new URL(path, origin).href)}</loc>`,
+    `    <loc>${escapeXml(abs(path))}</loc>`,
     `    <lastmod>${formatDate(modified)}</lastmod>`,
     '  </url>',
   ].join('\n')).join('\n');
