@@ -53,3 +53,47 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to weather prototypes and multi-location forecast requests. Before production, verify attribution and license requirements vary by dataset. commercial use should use the appropriate customer plan. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: weather forecast (no auth)
+
+```python
+import httpx
+from datetime import date
+
+BASE = "https://api.open-meteo.com/v1"
+
+def forecast(lat: float, lon: float, days: int = 3) -> list[dict]:
+    """Get daily forecast. No API key needed."""
+    resp = httpx.get(
+        f"{BASE}/forecast",
+        params={
+            "latitude": lat,
+            "longitude": lon,
+            "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum",
+            "forecast_days": days,
+            "timezone": "auto",
+        },
+        timeout=30,
+    )
+    resp.raise_for_status()
+    d = resp.json()["daily"]
+    return [
+        {
+            "date": date.fromisoformat(d["time"][i]),
+            "tmax": d["temperature_2m_max"][i],
+            "tmin": d["temperature_2m_min"][i],
+            "precip_mm": d["precipitation_sum"][i],
+        }
+        for i in range(len(d["time"]))
+    ]
+
+# Seoul
+for day in forecast(37.57, 126.98):
+    print(day["date"], f"{day['tmin']}~{day['tmax']}C", f"{day['precip_mm']}mm")
+```
+
+**Notes:**
+- Completely free, no API key, generous limits (10000 calls/day)
+- Pick variables explicitly via `daily` / `hourly` params — the API returns only what you ask
+- `timezone=auto` localizes times; otherwise UTC
+- Commercial use is allowed on the free tier within limits; check terms for high volume
