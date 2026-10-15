@@ -50,6 +50,17 @@ Official JSON and bulk-data access to company filing submissions and XBRL facts.
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /cgi-bin/browse-edgar` | Company filing index |
+| `GET /Archives/edgar/data/{cik}/{acc}/` | Filing documents |
+| `GET /api/xbrl/companyfacts/CIK{cik}.json` | XBRL company facts |
+| `GET /api/xbrl/companyconcept/CIK{cik}/{taxonomy}/{tag}.json` | XBRL concept data |
+| `GET /files/company_tickers_exchange.json` | Ticker-CIK mapping |
+| `GET /Archives/edgar/daily-index/` | Daily filing index |
+
 ## Decision notes
 
 Best suited to authoritative u.s. filing metadata and company xbrl facts. Before production, verify follow sec fair-access and user-agent rules. do not treat filing facts as investment advice. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
