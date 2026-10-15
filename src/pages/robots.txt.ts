@@ -4,6 +4,8 @@ export const prerender = true;
 
 export const GET: APIRoute = ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
+  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
+  const abs = (p: string) => baseHref + p.replace(/^\//, '');
   const body = `# Search and retrieval crawlers are allowed; training controls are separate.
 # Policy verified against official crawler documentation on 2026-09-13.
 User-agent: OAI-SearchBot
@@ -28,7 +30,7 @@ Disallow: /
 User-agent: *
 Allow: /
 
-Sitemap: ${new URL('/sitemap.xml', origin).href}
+Sitemap: ${abs('/sitemap.xml')}
 `;
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };
