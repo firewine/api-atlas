@@ -73,6 +73,20 @@ print(history.tail())
 
 Pin the package version for reproducible work and expect upstream response behavior to evolve.
 
+## Key functions (unofficial library, not a REST API)
+
+| Function | Description |
+|----------|-------------|
+| `Ticker.history()` | OHLCV price history |
+| `Ticker.info` | Company metadata dict |
+| `Ticker.dividends` | Dividend payment series |
+| `Ticker.splits` | Stock split series |
+| `Ticker.financials` | Income statement |
+| `Ticker.balance_sheet` | Balance sheet |
+| `Ticker.cashflow` | Cash flow statement |
+| `Ticker.earnings_dates` | Earnings dates |
+| `download()` | Bulk download multiple tickers |
+
 ## Decision notes
 
 Use yfinance for personal research and prototyping where its stated terms fit. For production redistribution, uptime commitments, deterministic schemas, or licensed display rights, evaluate a contracted market-data provider instead.
