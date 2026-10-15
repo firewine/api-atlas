@@ -8,7 +8,7 @@
 - Default branch: `main`
 - Visibility: public
 - Handoff date: 2026-09-13 (Asia/Seoul)
-- Project state: MVP merged to `main`; 25-provider expansion implemented on `work/api-atlas-deploy-expand` and verified locally on 2026-09-13. Cloudflare account deployment remains blocked until the Cloudflare connection is available.
+- Current validation contract (2026-10-15): read `AGENTS.md` and `docs/CONTENT_AUTHORING.md`. The implemented static site uses shared source/build provenance checks, stable fact keys, and root/subpath CI browser tests. Historical planning below does not replace the current source or validation contract. Hosting status requires separate verification.
 
 ---
 
@@ -108,67 +108,19 @@ The MVP should be crawl-friendly to legitimate search/retrieval systems while re
 
 ## 3. Current repository state
 
-As of this handoff, `main` contains only the initial bootstrap:
+The static Astro application, provider profiles, guides, comparisons, search and machine-readable surfaces are implemented. Read the actual content collections for current counts; do not infer them from historical milestones in this handoff.
 
-```text
-README.md
-astro.config.mjs
-package.json
-src/
-  content.config.ts
-tsconfig.json
-```
+### 3.1 Stack and validation
 
-There are currently no completed application pages and no provider content files.
+- Astro 7.x and TypeScript; static generation with Pagefind.
+- Git-tracked Markdown content; no database or runtime API keys required.
+- `npm run validate`: contract tests, source/type validation, build/index generation, catalog and distribution validation.
+- `npm run validate:ci`: the same contract plus production browser tests after Chromium installation.
+- `.github/workflows/validate.yml`: Node 24, root and `/api-atlas/` matrix, manual reruns, browser failure artifacts.
 
-### 3.1 Current stack decision
+### 3.2 Content provenance
 
-- Astro 7.x
-- TypeScript
-- static-first generation
-- Astro Content Collections
-- Pagefind for static search
-- Git-tracked Markdown/YAML/JSON content
-- GitHub Actions for validation/build
-- Cloudflare Pages is the preferred deployment target
-
-Do not introduce a database, CMS, auth system, or server runtime for the MVP unless implementation evidence shows one is actually required.
-
-### 3.2 Current package scripts
-
-The bootstrap intends to use:
-
-```json
-{
-  "dev": "astro dev",
-  "build": "astro build && pagefind --site dist",
-  "preview": "astro preview",
-  "check": "astro check"
-}
-```
-
-Verify dependency compatibility before changing versions. Do not downgrade the project to an older Astro architecture merely because an older tutorial uses it.
-
-### 3.3 Current content collection
-
-`src/content.config.ts` currently defines an `apis` collection using the Astro glob loader from `./src/data/apis`.
-
-Current frontmatter fields:
-
-```text
-name
-provider
-category
-status: active | legacy | research
-officialDocs
-auth
-summary
-verifiedAt
-sourceUrls[]
-tags[]
-```
-
-This is a bootstrap schema, not sacred. Expand it when needed for the MVP, but preserve source traceability and avoid unnecessary abstraction.
+`src/content.config.ts` uses `src/lib/provider-provenance.mjs` for the same rules enforced against built JSON. Each provider requires `base-url`, `authentication`, `pricing`, and `rate-limits` keys with source URLs and real verification dates. Display labels do not identify facts. Follow `docs/CONTENT_AUTHORING.md` before adding or changing providers. Never push an unvalidated partial addition.
 
 ---
 

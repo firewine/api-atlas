@@ -6,7 +6,7 @@ status: "active"
 officialDocs: "https://site.financialmodelingprep.com/developer/docs"
 homepage: "https://site.financialmodelingprep.com/"
 baseUrl: "https://financialmodelingprep.com/stable"
-auth: "API key via `apikey` query parameter"
+auth: "API key via apikey request header or query parameter"
 versioning: "/stable (current); /api/v3 (legacy)"
 resourceGroups: ["Stock quotes", "Financial statements", "Ratios", "Insider trading", "ETF/mutual funds", "Economic data"]
 pagination: "Limit param; date ranges for historical"
@@ -23,19 +23,23 @@ cautions: ["Migrating from /api/v3 to /stable — check docs for current endpoin
 verifiedAt: "2026-10-15"
 sourceUrls: ["https://site.financialmodelingprep.com/developer/docs", "https://site.financialmodelingprep.com/developer/docs/pricing", "https://site.financialmodelingprep.com/developer/docs/stable"]
 mutableFacts:
-  - label: "Base URL"
+  - key: "base-url"
+    label: "Base URL"
     value: "https://financialmodelingprep.com/stable"
-    sourceUrl: "https://site.financialmodelingprep.com/developer/docs/stable"
-    verifiedAt: "2026-10-15"
-  - label: "Authentication"
-    value: "API key via apikey query parameter"
     sourceUrl: "https://site.financialmodelingprep.com/developer/docs"
     verifiedAt: "2026-10-15"
-  - label: "Pricing"
+  - key: "authentication"
+    label: "Authentication"
+    value: "API key via apikey request header or query parameter"
+    sourceUrl: "https://site.financialmodelingprep.com/developer/docs"
+    verifiedAt: "2026-10-15"
+  - key: "pricing"
+    label: "Pricing"
     value: "Free tier with limited calls; paid plans for full access"
     sourceUrl: "https://site.financialmodelingprep.com/developer/docs/pricing"
     verifiedAt: "2026-10-15"
-  - label: "Rate limits"
+  - key: "rate-limits"
+    label: "Rate limits"
     value: "Varies by plan; HTTP 429 when exceeded"
     sourceUrl: "https://site.financialmodelingprep.com/developer/docs/pricing"
     verifiedAt: "2026-10-15"
@@ -126,6 +130,6 @@ def get_insider_trades(symbol: str, limit: int = 10) -> list[dict]:
 
 **Notes:**
 - Use `/stable` base URL; `/api/v3` is legacy
-- Auth is `apikey` query param (no header option)
+- Auth supports an `apikey` request header or query parameter
 - 100+ endpoints: statements, ratios, insider trades, ETF holdings, economic calendar
 - WebSocket: `wss://websockets.financialmodelingprep.com` — login with API key, then subscribe

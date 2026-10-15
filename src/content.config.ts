@@ -1,6 +1,10 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { CORE_FACT_KEYS, isVerificationDate, validateProviderProvenance } from './lib/provider-provenance.mjs';
+
+const verificationDate = z.string().refine(isVerificationDate, 'Use a valid YYYY-MM-DD date')
+  .transform((value) => new Date(`${value}T00:00:00Z`));
 
 const apis = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/data/apis' }),
@@ -26,17 +30,22 @@ const apis = defineCollection({
     protocols: z.array(z.string()).min(1),
     bestFor: z.array(z.string()).min(1),
     cautions: z.array(z.string()).default([]),
-    verifiedAt: z.coerce.date(),
+    verifiedAt: verificationDate,
     sourceUrls: z.array(z.url()).min(2),
     mutableFacts: z.array(
       z.object({
-        label: z.string(),
-        value: z.string(),
+        key: z.enum(CORE_FACT_KEYS).optional(),
+        label: z.string().trim().min(1),
+        value: z.string().trim().min(1),
         sourceUrl: z.url(),
-        verifiedAt: z.coerce.date(),
+        verifiedAt: verificationDate,
       }),
     ).min(1),
     tags: z.array(z.string()).default([]),
+  }).superRefine((provider, context) => {
+    for (const issue of validateProviderProvenance(provider)) {
+      context.addIssue({ code: 'custom', path: issue.path, message: issue.message });
+    }
   }),
 });
 
@@ -46,7 +55,7 @@ const guides = defineCollection({
     title: z.string(),
     summary: z.string(),
     order: z.number().int().positive(),
-    updatedAt: z.coerce.date(),
+    updatedAt: verificationDate,
     tags: z.array(z.string()).default([]),
   }),
 });
@@ -59,7 +68,7 @@ const comparisons = defineCollection({
     providers: z.tuple([z.string(), z.string()]),
     verdict: z.string(),
     order: z.number().int().positive(),
-    verifiedAt: z.coerce.date(),
+    verifiedAt: verificationDate,
     sourceUrls: z.array(z.url()).min(2),
   }),
 });
