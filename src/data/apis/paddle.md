@@ -53,3 +53,46 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to saas merchant-of-record billing and subscription lifecycle automation. Before production, verify sandbox and live credentials are separate. process notifications idempotently. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: list products (bearer auth)
+
+```python
+import httpx
+
+API_KEY = "your_paddle_api_key"  # sandbox keys start with test_
+BASE = "https://api.paddle.com"  # sandbox: https://sandbox-api.paddle.com
+
+def api_get(path: str, params: dict | None = None) -> dict:
+    resp = httpx.get(
+        f"{BASE}{path}",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        params=params or {},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+def list_products(status: str = "active") -> list[dict]:
+    """List products. Paddle paginates with `after` cursor."""
+    products, after = [], None
+    while True:
+        params = {"status": status, "per_page": 50}
+        if after:
+            params["after"] = after
+        data = api_get("/products", params)
+        products.extend(data["data"])
+        pagination = data.get("meta", {}).get("pagination", {})
+        if not pagination.get("has_more"):
+            break
+        after = pagination["next"]
+    return products
+
+for p in list_products()[:3]:
+    print(p["id"], p["name"], p["status"])
+```
+
+**Notes:**
+- Bearer token auth; use the sandbox host + test keys for development
+- Pagination is cursor-based (`after`); check `meta.pagination.has_more`
+- Paddle is the merchant of record — it handles global sales tax/VAT for you
+- Webhooks are signed; verify signatures before trusting events
