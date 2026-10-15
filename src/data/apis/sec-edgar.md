@@ -53,3 +53,40 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to authoritative u.s. filing metadata and company xbrl facts. Before production, verify follow sec fair-access and user-agent rules. do not treat filing facts as investment advice. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: company filings (no API key)
+
+```python
+import httpx
+
+BASE = "https://data.sec.gov"
+# SEC REQUIRES a descriptive User-Agent with contact info — requests without one are blocked
+HEADERS = {"User-Agent": "YourAppName/1.0 (contact@example.com)", "Accept-Encoding": "gzip"}
+
+def get_filings(cik: str, form: str | None = None, count: int = 10) -> list[dict]:
+    """Get recent filings for a CIK (10-digit, zero-padded)."""
+    cik = cik.zfill(10)
+    resp = httpx.get(f"{BASE}/submissions/CIK{cik}.json", headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    filings = resp.json()["filings"]["recent"]
+    rows = []
+    for i in range(min(count, len(filings["accessionNumber"]))):
+        if form and filings["form"][i] != form:
+            continue
+        rows.append({
+            "form": filings["form"][i],
+            "filed": filings["filingDate"][i],
+            "accession": filings["accessionNumber"][i].replace("-", ""),
+        })
+    return rows
+
+# Apple's recent 10-K filings (CIK 320193)
+for f in get_filings("320193", form="10-K", count=3):
+    print(f["filed"], f["accession"])
+```
+
+**Notes:**
+- No API key — but a proper `User-Agent` with contact email is mandatory
+- Rate limit: 10 requests/second; be a good citizen
+- Company concept data (e.g. XBRL facts) lives under `/api/xbrl/companyconcept/CIK{cik}/us-gaap/{tag}.json`
+- Full-text search has a separate UI at efts.sec.gov; the JSON APIs above are the programmatic path
