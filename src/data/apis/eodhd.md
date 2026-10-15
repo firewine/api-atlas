@@ -105,6 +105,19 @@ for div in get_dividends("SCHD")[:3]:
     print(div["ex_date"], div["amount"], div["currency"])
 ```
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/eod/{symbol}` | End-of-day OHLCV |
+| `GET /api/real-time/{symbol}` | Real-time quote |
+| `GET /api/div/{symbol}` | Dividend history |
+| `GET /api/splits/{symbol}` | Stock splits |
+| `GET /api/fundamentals/{symbol}` | Fundamentals data |
+| `GET /api/news` | Financial news |
+| `GET /api/eod-bulk-last-day/{exchange}` | Bulk EOD for exchange |
+| `GET /api/screener` | Stock screener |
+
 ## Decision notes
 
 EODHD is a practical fit when a product wants broad market coverage from one integration. Before production use, match every required dataset to the actual plan and license; a personal subscription does not automatically grant redistribution rights.
