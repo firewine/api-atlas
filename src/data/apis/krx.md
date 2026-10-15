@@ -45,6 +45,19 @@ mutableFacts:
 
 Korea Exchange provides official Korean market data. Use the official KRX OPEN API portal to request a key and approval for each service. The request URL is specific to the approved API specification.
 
+## Key functions (via pykrx community library)
+
+| Function | Description |
+|----------|-------------|
+| `stock.get_market_ticker_list()` | All tickers by market |
+| `stock.get_market_ohlcv()` | OHLCV for date range |
+| `stock.get_market_cap()` | Market cap data |
+| `stock.get_market_fundamental()` | PER/PBR/dividend yield |
+| `stock.get_etf_ticker_list()` | ETF tickers |
+| `stock.get_etf_ohlcv()` | ETF OHLCV |
+| `stock.get_index_ticker_list()` | Index tickers |
+| `bond.get_otc_ticker_list()` | Bond tickers |
+
 ## Python example: KRX stock data via pykrx
 
 ```python
