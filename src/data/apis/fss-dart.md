@@ -21,7 +21,7 @@ protocols: ["REST"]
 bestFor: ["Korean company filings", "Financial statements (XBRL)", "Disclosure search"]
 cautions: ["API key required (free registration at opendart.fss.or.kr).", "Documentation is in Korean.", "XBRL parsing requires additional libraries."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://opendart.fss.or.kr/"]
+sourceUrls: ["https://opendart.fss.or.kr/", "https://dart.fss.or.kr/"]
 mutableFacts:
   - label: "Rate limit"
     value: "10,000 requests/day"
