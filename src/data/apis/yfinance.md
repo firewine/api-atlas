@@ -76,3 +76,26 @@ Pin the package version for reproducible work and expect upstream response behav
 ## Decision notes
 
 Use yfinance for personal research and prototyping where its stated terms fit. For production redistribution, uptime commitments, deterministic schemas, or licensed display rights, evaluate a contracted market-data provider instead.
+
+## Python example: ticker info and dividends
+
+```python
+import yfinance as yf
+
+ticker = yf.Ticker("SCHD")
+
+# Basic info — shortName/longName may be missing for some tickers
+info = ticker.info
+name = info.get("shortName") or info.get("longName") or ticker.ticker
+print(name)
+
+# Dividend history as a DataFrame
+divs = ticker.dividends
+print(divs.tail(3))
+
+# Recent price history
+hist = ticker.history(period="1mo")
+print(hist[["Close"]].tail(3))
+```
+
+**Note:** `yfinance` scrapes Yahoo Finance and is not an official API. Rate limits are undocumented and can change. For production use with SLAs, prefer a licensed provider.
