@@ -72,3 +72,54 @@ The portal may show both encoded and decoded forms of a service key. Use the for
 ## Decision notes
 
 The service is useful for identifier discovery and official-source enrichment, but it is not a live NAV or price feed. Persist `basDt` and retrieval time separately, and do not infer present availability from a historical fund record alone.
+
+## Python example: fund product info with pagination
+
+```python
+import httpx
+from urllib.parse import quote
+
+SERVICE_KEY = "your_data_go_kr_service_key"  # URL-encoded already if issued so
+BASE = "https://apis.data.go.kr/1160100/service/GetFundProductInfoService"
+
+def get_fund_products(page_no: int = 1, num_rows: int = 100) -> dict:
+    """Query fund product info. Handles the standard data.go.kr envelope."""
+    resp = httpx.get(
+        f"{BASE}/getFundProductInfo",
+        params={
+            "serviceKey": SERVICE_KEY,
+            "pageNo": page_no,
+            "numOfRows": num_rows,
+            "resultType": "json",
+        },
+        timeout=30,
+    )
+    resp.raise_for_status()
+    body = resp.json()["response"]["body"]
+    return body
+
+def iter_all_funds():
+    """Paginate through all fund products."""
+    page = 1
+    while True:
+        body = get_fund_products(page_no=page)
+        items = body.get("items", {}).get("item", [])
+        if isinstance(items, dict):  # single item comes back as dict, not list
+            items = [items]
+        if not items:
+            break
+        yield from items
+        if page * 100 >= int(body.get("totalCount", 0)):
+            break
+        page += 1
+
+for fund in iter_all_funds():
+    print(fund.get("fundName"), fund.get("fundCode"))
+    break  # remove to iterate all
+```
+
+**Notes:**
+- `serviceKey` must be URL-encoded if it contains special characters — most issued keys do
+- Single-item responses return a dict instead of a list; normalize before iterating
+- `resultType=json` avoids XML parsing; default is XML
+- Rate limits are generous but add delays between pages for large crawls
