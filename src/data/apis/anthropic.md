@@ -70,6 +70,19 @@ curl https://api.anthropic.com/v1/messages \
 
 SDKs populate the standard headers, but a raw HTTP integration must send the API version explicitly.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1/messages` | Create a message (core inference) |
+| `POST /v1/messages/batches` | Create a batch request |
+| `GET /v1/messages/batches/{id}` | Retrieve batch status/results |
+| `POST /v1/messages/count_tokens` | Count tokens before sending |
+| `GET /v1/models` | List available models |
+| `GET /v1/models/{model_id}` | Get model details |
+| `POST /v1/files` | Upload files for use with API |
+| `GET /v1/files` | List uploaded files |
+
 ## Decision notes
 
 Choose between direct Anthropic access and a cloud marketplace based on required features, identity controls, regional availability, and existing cloud commitments—not model name alone.
