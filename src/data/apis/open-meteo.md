@@ -50,6 +50,17 @@ Weather forecast, historical, marine, air-quality, and geocoding APIs with an ac
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/forecast` | Weather forecast (16 days) |
+| `GET /v1/archive` | Historical weather (ERA5) |
+| `GET /v1/air-quality` | Air quality forecast |
+| `GET /v1/geocoding` | Geocoding search |
+| `GET /v1/elevation` | Elevation data |
+| `GET /v1/marine` | Marine weather |
+
 ## Decision notes
 
 Best suited to weather prototypes and multi-location forecast requests. Before production, verify attribution and license requirements vary by dataset. commercial use should use the appropriate customer plan. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
