@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import { stripVTControlCharacters } from 'node:util';
 
 test('Astro rejects undeclared source provenance during source sync, before any build', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'atlas-source-contract-'));
@@ -24,7 +25,7 @@ test('Astro rejects undeclared source provenance during source sync, before any 
     const astroPackage = JSON.parse(await readFile(join(repository, 'node_modules/astro/package.json'), 'utf8'));
     const cli = join(repository, 'node_modules/astro', astroPackage.bin.astro);
     const run = () => spawnSync(process.execPath, [cli, 'sync', '--root', directory], {
-      encoding: 'utf8', timeout: 30000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' },
+      encoding: 'utf8', timeout: 30000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', FORCE_COLOR: '1' },
     });
     const valid = run();
     assert.ifError(valid.error);
@@ -35,7 +36,7 @@ test('Astro rejects undeclared source provenance during source sync, before any 
     const rejected = run();
     assert.ifError(rejected.error);
     assert.equal(rejected.status, 1, rejected.stdout + rejected.stderr);
-    assert.match(rejected.stdout + rejected.stderr, /Fact source is not declared in sourceUrls: https:\/\/example.com\/undeclared-contract-proof/);
+    assert.match(stripVTControlCharacters(rejected.stdout + rejected.stderr), /Fact source is not declared in sourceUrls: https:\/\/example.com\/undeclared-contract-proof/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

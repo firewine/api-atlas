@@ -87,6 +87,12 @@ JSON 출력에는 추가 metadata인 fact `key`가 포함되며 기존 label/val
 
 기존 테스트 삭제·assertion 약화·skip/only·실패 무시로 통과시키지 않았다. 출처 검사 규칙을 제거한 diff는 같은 규칙의 공유 모듈 이동이며, source-schema 통합 테스트가 실제 거부 동작을 확인한다. install/audit/action-runtime 경고는 원래 실패한 exit 1과 구분했으며 자동 dependency 일괄 업그레이드는 하지 않았다.
 
+## GitHub 환경에서 확인한 테스트 이식성 보정
+
+첫 개선 커밋 `61079c6`의 [Actions 실행](https://github.com/firewine/api-atlas/actions/runs/38754197733)은 새 source-schema 통합 테스트에서 실패했다. Astro는 잘못된 출처를 실제로 종료 1로 거부했지만, CI의 ANSI 색상/밑줄 코드가 기대 문자열 중간에 들어가 오류 메시지 비교가 실패했다. 애플리케이션 스키마 오류와 테스트 출력 비교 오류를 구분했다.
+
+Node 표준 `stripVTControlCharacters`로 색상 문자만 제거한 후 같은 오류 내용과 종료 코드를 검사하도록 보정했다. 테스트의 하위 프로세스는 로컬에서도 `FORCE_COLOR=1`을 사용하므로 CI 조건을 함께 검사한다. 오류를 무시하거나 assertion을 완화하지 않는다.
+
 ## 범위의 한계
 
 - 이번 검증은 파일 구조·출처 계약·정적 산출물·UI 동작을 증명한다. 모든 공급자의 가격/endpoint/예제의 의미까지 자동으로 사실 확인하지는 않는다. 새 사실은 작성자가 공식 문서에서 검토해야 한다.
