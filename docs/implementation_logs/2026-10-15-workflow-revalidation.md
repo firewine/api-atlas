@@ -93,6 +93,17 @@ JSON 출력에는 추가 metadata인 fact `key`가 포함되며 기존 label/val
 
 Node 표준 `stripVTControlCharacters`로 색상 문자만 제거한 후 같은 오류 내용과 종료 코드를 검사하도록 보정했다. 테스트의 하위 프로세스는 로컬에서도 `FORCE_COLOR=1`을 사용하므로 CI 조건을 함께 검사한다. 오류를 무시하거나 assertion을 완화하지 않는다.
 
+## GitHub 최종 구현 검증 결과
+
+커밋 `4a4b04efcac57a8ebfa4549e0c53d39cf9d098cb`의 [Actions 실행 38754488316](https://github.com/firewine/api-atlas/actions/runs/38754488316)은 두 matrix job 모두 성공했다. 실제 runner Node는 `v24.21.0`이었다.
+
+| GitHub job | 정적/계약 테스트 | 콘텐츠와 산출물 | Chromium 브라우저 |
+| --- | --- | --- | --- |
+| [root](https://github.com/firewine/api-atlas/actions/runs/38754488316/job/116489176679) | 9 pass, 0 fail; Astro 0 errors | 33 providers/149 facts; 115 outputs/72 HTML | 4 passed |
+| [subpath](https://github.com/firewine/api-atlas/actions/runs/38754488316/job/116489177159) | 9 pass, 0 fail; Astro 0 errors | 같은 검사, `/api-atlas/` 공개 경로 | 4 passed |
+
+실패 증거 업로드 단계는 두 job이 성공했기 때문에 조건에 따라 실행되지 않았다. 테스트는 생략되지 않았다. 커밋·푸시 완료와 CI 성공을 확인했으며 운영 배포·정책 반영 성공으로 확대 해석하지 않는다.
+
 ## 범위의 한계
 
 - 이번 검증은 파일 구조·출처 계약·정적 산출물·UI 동작을 증명한다. 모든 공급자의 가격/endpoint/예제의 의미까지 자동으로 사실 확인하지는 않는다. 새 사실은 작성자가 공식 문서에서 검토해야 한다.
