@@ -50,6 +50,19 @@ A broad control-plane API for Cloudflare accounts, zones, DNS, Workers, Pages, s
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /client/v4/zones` | List zones |
+| `GET /client/v4/zones/{zone_id}` | Zone details |
+| `GET /client/v4/zones/{zone_id}/dns_records` | List DNS records |
+| `POST /client/v4/zones/{zone_id}/dns_records` | Create DNS record |
+| `PATCH /client/v4/zones/{zone_id}/dns_records/{id}` | Update DNS record |
+| `DELETE /client/v4/zones/{zone_id}/dns_records/{id}` | Delete DNS record |
+| `GET /client/v4/accounts` | List accounts |
+| `GET /client/v4/zones/{zone_id}/purge_cache` | Purge cache |
+
 ## Decision notes
 
 Best suited to edge-platform automation and dns and zone management. Before production, verify prefer narrowly scoped tokens. account and zone identifiers are required by many operations. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
