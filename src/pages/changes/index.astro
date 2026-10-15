@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL;
 
 <BaseLayout title="Catalog changes" description="Meaningful API Atlas catalog, fact, and policy changes.">
   <header class="page-hero"><div class="shell">
-    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Changes' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'Changes' }]} />
     <span class="eyebrow">Change ledger</span><h1 class="page-title">What changed—and why it matters.</h1>
     <p class="lede">Only meaningful catalog events appear here. Machine clients can use <a href={`${base}/api/changes.json`}>changes.json</a>.</p>
   </div></header>
