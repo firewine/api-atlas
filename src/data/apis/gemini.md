@@ -77,3 +77,34 @@ Use the official model list at integration time. Quotas belong to the project, s
 ## Decision notes
 
 Separate stable integration facts from model-specific facts. The base API and authentication pattern are relatively stable; model IDs, preview status, token limits, prices, and quotas need dated verification.
+
+## Python example: generate content
+
+```python
+import httpx
+
+API_KEY = "your_gemini_api_key"
+BASE = "https://generativelanguage.googleapis.com/v1beta"
+
+def generate(prompt: str, model: str = "gemini-2.5-flash") -> str:
+    """Generate content. API key goes in the query string."""
+    resp = httpx.post(
+        f"{BASE}/models/{model}:generateContent",
+        params={"key": API_KEY},
+        json={"contents": [{"parts": [{"text": prompt}]}]},
+        timeout=60,
+    )
+    if resp.status_code == 429:
+        raise RuntimeError("Rate limited — back off and retry")
+    resp.raise_for_status()
+    data = resp.json()
+    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+print(generate("What is a dividend? One sentence."))
+```
+
+**Notes:**
+- Auth is the `key` query parameter (or `x-goog-api-key` header)
+- Model names evolve fast; `gemini-2.5-flash` is the current efficient default — verify in docs
+- Free tier has strict RPM/TPD limits; check `candidates[].finishReason` for `MAX_TOKENS` / `SAFETY`
+- Use the official `google-genai` SDK for structured output and function calling
