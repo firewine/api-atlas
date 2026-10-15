@@ -22,11 +22,11 @@ const pageTitle = title === 'API Atlas' ? title : `${title} · API Atlas`;
 const canonical = new URL(canonicalPath, Astro.site ?? Astro.url.origin);
 const currentPath = Astro.url.pathname;
 const navItems = [
-  ['/apis/', 'APIs'],
-  ['/categories/', 'Categories'],
-  ['/compare/', 'Compare'],
-  ['/guides/', 'Guides'],
-  ['/changes/', 'Changes'],
+  [`${base}/apis/`, 'APIs'],
+  [`${base}/categories/`, 'Categories'],
+  [`${base}/compare/`, 'Compare'],
+  [`${base}/guides/`, 'Guides'],
+  [`${base}/changes/`, 'Changes'],
 ];
 
 const siteSchema = {
@@ -54,8 +54,8 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-    <link rel="manifest" href={`${base}site.webmanifest`} />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="manifest" href={`${base}/site.webmanifest`} />
     <meta name="theme-color" content="#0d1512" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
@@ -77,7 +77,7 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
           <a href={href} aria-current={currentPath.startsWith(href) ? 'page' : undefined}>{label}</a>
         ))}
       </nav>
-      <a class="search-link" href={`${base}search/`} aria-label="Search API Atlas">
+      <a class="search-link" href={`${base}/search/`} aria-label="Search API Atlas">
         <span aria-hidden="true">⌕</span> Search
       </a>
     </header>
@@ -90,10 +90,10 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
         <p>Concise API intelligence, traced to official sources.</p>
       </div>
       <div class="footer-links">
-        <a href={`${base}sources/`}>Source policy</a>
-        <a href={`${base}about/`}>About</a>
-        <a href={`${base}api/catalog.json`}>Catalog JSON</a>
-        <a href={`${base}llms.txt`}>llms.txt</a>
+        <a href={`${base}/sources/`}>Source policy</a>
+        <a href={`${base}/about/`}>About</a>
+        <a href={`${base}/api/catalog.json`}>Catalog JSON</a>
+        <a href={`${base}/llms.txt`}>llms.txt</a>
       </div>
       <p class="footer-note">No crawler cloaking. No bot-driven ad impressions. Last catalog review: 2026-09-13.</p>
     </footer>
