@@ -69,6 +69,15 @@ curl "https://apis.data.go.kr/1160100/service/GetFundProductInfoService/getStand
 
 The portal may show both encoded and decoded forms of a service key. Use the form appropriate to the HTTP client so the key is not accidentally encoded twice.
 
+## Key endpoints
+
+| Service / Operation | Description |
+|---------------------|-------------|
+| `GetFundProductInfoService` | Fund product information |
+| `getFundProductInfo` | Fund details by code |
+| `getFundPriceInfo` | Fund NAV/price history |
+| `getFundDividendsInfo` | Fund distribution history |
+
 ## Decision notes
 
 The service is useful for identifier discovery and official-source enrichment, but it is not a live NAV or price feed. Persist `basDt` and retrieval time separately, and do not infer present availability from a historical fund record alone.
