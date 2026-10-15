@@ -53,3 +53,45 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to crypto market discovery and broad asset and exchange metadata. Before production, verify asset ids are safer than ticker symbols. freshness and endpoint access vary by plan. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: simple prices (no key on free tier)
+
+```python
+import httpx
+from decimal import Decimal
+
+BASE = "https://api.coingecko.com/api/v3"
+
+def simple_price(ids: list[str], vs: str = "usd") -> dict[str, Decimal]:
+    """Get current prices. Free tier needs no API key."""
+    resp = httpx.get(
+        f"{BASE}/simple/price",
+        params={"ids": ",".join(ids), "vs_currencies": vs},
+        timeout=30,
+    )
+    if resp.status_code == 429:
+        raise RuntimeError("Rate limited — free tier is ~10-30 calls/min")
+    resp.raise_for_status()
+    return {k: Decimal(str(v[vs])) for k, v in resp.json().items()}
+
+def coin_markets(vs: str = "usd", per_page: int = 10) -> list[dict]:
+    resp = httpx.get(
+        f"{BASE}/coins/markets",
+        params={"vs_currency": vs, "order": "market_cap_desc", "per_page": per_page},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return [
+        {"id": c["id"], "symbol": c["symbol"], "price": Decimal(str(c["current_price"])),
+         "mcap_rank": c["market_cap_rank"]}
+        for c in resp.json()
+    ]
+
+print(simple_price(["bitcoin", "ethereum"]))
+```
+
+**Notes:**
+- Free tier requires no key but is heavily rate-limited (~10-30 calls/min); add delays
+- Paid plans use `x-cg-pro-api-key` header against `pro-api.coingecko.com`
+- Coin IDs are slugs (`bitcoin`, not `BTC`) — resolve via `/coins/list` if unsure
+- Cache aggressively; prices don't need per-second refresh for most use cases
