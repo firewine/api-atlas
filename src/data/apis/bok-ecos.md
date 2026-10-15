@@ -69,33 +69,102 @@ Start with the catalog endpoints, record the selected table and item codes, then
 
 Prefer ECOS over secondary macro-data vendors when the required Korean series is available. Treat release timing, revisions, units, and frequency as part of the observation—not as display-only metadata.
 
-## Python example: USD/KRW exchange rate
+## Python examples
+
+### 1. USD/KRW rate with fallback patterns
 
 ```python
 import httpx
 from decimal import Decimal
+from datetime import datetime
 
 API_KEY = "your_ecos_api_key"
 BASE = "https://ecos.bok.or.kr/api"
 
-def get_usd_krw(date: str) -> Decimal | None:
-    """Get USD/KRW rate for a date (YYYYMMDD). Returns None if unavailable."""
-    # 731Y001 = exchange rates, USD = 0000001
-    url = f"{BASE}/StatisticSearch/{API_KEY}/json/kr/1/10/731Y001/DD/{date}/{date}/0000001"
-    resp = httpx.get(url, timeout=12)
-    resp.raise_for_status()
-    rows = resp.json().get("StatisticSearch", {}).get("row", [])
-    for row in rows:
-        if row.get("ITEM_CODE1") == "0000001":  # USD
-            return Decimal(row["DATA_VALUE"])
+def fetch_usd_krw(dt: datetime) -> Decimal | None:
+    """Fetch USD/KRW for a date, trying multiple URL patterns.
+
+    ECOS API behavior varies; trying several patterns increases success rate.
+    731Y001 = major currency rates vs KRW (most reliable source).
+    """
+    date_str = dt.strftime("%Y%m%d")
+    patterns = [
+        f"{API_KEY}/json/kr/1/10/731Y001/D/{date_str}/{date_str}/0000001",
+        f"{API_KEY}/json/kr/1/100/731Y001/D/{date_str}/{date_str}/",
+    ]
+    for pattern in patterns:
+        try:
+            resp = httpx.get(f"{BASE}/StatisticSearch/{pattern}", timeout=12)
+            resp.raise_for_status()
+            rate = parse_usd_rate(resp.json())
+            if rate:
+                return rate
+        except Exception:
+            continue
     return None
 
-# Example
-rate = get_usd_krw("20261015")
-print(f"USD/KRW: {rate}")
+def parse_usd_rate(data: dict) -> Decimal | None:
+    """Extract USD/KRW from ECOS response. Handles varying structures."""
+    outer = data.get("StatisticSearch") or data
+    # rows may be under 'row', 'rows', 'list', or 'stat'
+    rows = outer.get("row") or outer.get("rows") or []
+    if isinstance(rows, dict):
+        rows = [rows]
+    for row in rows:
+        # Match by item name since codes can vary
+        name = row.get("ITEM_NAME1", "")
+        if "미국달러" in name and "매매기준율" in name:
+            value = row.get("DATA_VALUE", "").replace(",", "").strip()
+            if value and value != "-":
+                return Decimal(value)
+    return None
 ```
 
-**Notes:**
-- Rate limit: ~100 calls/hour — cache aggressively (daily cache is sufficient for FX)
-- Statistic codes: `731Y001` for exchange rates; item codes identify currencies
-- Response nests data under `StatisticSearch.row`
+### 2. Previous business day fallback
+
+```python
+from datetime import timedelta
+
+def get_rate_with_fallback(dt: datetime, max_days_back: int = 5) -> Decimal | None:
+    """Get rate for a date, falling back to previous business days.
+
+    ECOS doesn't publish on weekends/holidays. Walk back up to
+    5 days, skipping weekends, until a rate is found.
+    """
+    # Try the requested date first
+    rate = fetch_usd_krw(dt)
+    if rate:
+        return rate
+    # Walk back, skipping weekends
+    for days_back in range(1, max_days_back + 1):
+        prev = dt - timedelta(days=days_back)
+        if prev.weekday() >= 5:  # Saturday, Sunday
+            continue
+        rate = fetch_usd_krw(prev)
+        if rate:
+            return rate
+    return None
+```
+
+### 3. Caching strategy
+
+```python
+# ECOS allows ~100 calls/hour. For daily FX rates, cache by date.
+# A simple dict works for scripts; use SQLite/Redis for services.
+
+_cache: dict[str, Decimal] = {}
+
+def get_cached_rate(dt: datetime) -> Decimal | None:
+    key = dt.strftime("%Y%m%d")
+    if key not in _cache:
+        _cache[key] = get_rate_with_fallback(dt)
+    return _cache[key]
+```
+
+**Real-world notes:**
+- **Rate limit:** ~100 calls/hour — daily caching is sufficient for FX rates
+- **Weekends/holidays:** No data published; always implement previous-business-day fallback
+- **Response structure varies:** Check `StatisticSearch.row`, handle both list and single-dict
+- **Item matching:** Match by `ITEM_NAME1` containing "미국달러" rather than hardcoding item codes
+- **DATA_VALUE:** May contain commas or "-" for missing; strip and validate before `Decimal()`
+- **Statistic code `731Y001`:** Major currency rates vs KRW — the most reliable source for USD/KRW
