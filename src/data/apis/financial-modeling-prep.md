@@ -21,7 +21,7 @@ protocols: ["REST", "WebSocket"]
 bestFor: ["Financial statements", "Fundamental screening", "Insider trading data"]
 cautions: ["Migrating from /api/v3 to /stable — check docs for current endpoints.", "Free tier is limited; heavy fundamental queries need paid plan.", "WebSocket requires separate subscription."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://site.financialmodelingprep.com/developer/docs", "https://site.financialmodelingprep.com/developer/docs/pricing"]
+sourceUrls: ["https://site.financialmodelingprep.com/developer/docs", "https://site.financialmodelingprep.com/developer/docs/pricing", "https://site.financialmodelingprep.com/developer/docs/stable"]
 mutableFacts:
   - label: "Base URL"
     value: "https://financialmodelingprep.com/stable"
