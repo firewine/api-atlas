@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import SourcePanel from '../../components/SourcePanel.astro';
 import { formatDate } from '../../lib/content';
+const base = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
   const comparisons = await getCollection('comparisons');
@@ -33,7 +34,7 @@ const articleSchema = {
     <div class="comparison-verdict"><strong>Bottom line:</strong> {comparison.data.verdict}</div>
     <Content />
     <h2>Provider profiles</h2>
-    <ul>{providers.map((api) => <li><a href={`/apis/${api.id}/`}>{api.data.name}</a> — source-backed facts and current verification notes</li>)}</ul>
+    <ul>{providers.map((api) => <li><a href={`${base}/apis/${api.id}/`}>{api.data.name}</a> — source-backed facts and current verification notes</li>)}</ul>
     <SourcePanel verifiedAt={comparison.data.verifiedAt} sourceUrls={comparison.data.sourceUrls} />
   </div></section>
 </BaseLayout>
