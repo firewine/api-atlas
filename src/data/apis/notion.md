@@ -53,3 +53,50 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to knowledge-base integrations and content workflow automation. Before production, verify notion-version is required. respect retry-after for 429 and 529 responses. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: query a database (version header required)
+
+```python
+import httpx
+
+API_KEY = "your_notion_integration_token"
+BASE = "https://api.notion.com/v1"
+HEADERS = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Notion-Version": "2022-06-28",  # required — pin a version
+    "Content-Type": "application/json",
+}
+
+def query_database(database_id: str, filter_: dict | None = None) -> list[dict]:
+    """Query a database. Paginate with start_cursor."""
+    rows, cursor = [], None
+    while True:
+        body = {"page_size": 50}
+        if filter_:
+            body["filter"] = filter_
+        if cursor:
+            body["start_cursor"] = cursor
+        resp = httpx.post(f"{BASE}/databases/{database_id}/query", headers=HEADERS, json=body, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        rows.extend(data["results"])
+        if not data.get("has_more"):
+            break
+        cursor = data["next_cursor"]
+    return rows
+
+def page_title(page: dict) -> str:
+    for prop in page["properties"].values():
+        if prop["type"] == "title" and prop["title"]:
+            return prop["title"][0]["plain_text"]
+    return "(untitled)"
+
+for p in query_database("your_database_id")[:5]:
+    print(page_title(p))
+```
+
+**Notes:**
+- `Notion-Version` header is mandatory; pin it to avoid surprise breaking changes
+- The integration must be shared with the database/page or queries return empty
+- Properties are typed (`title`, `rich_text`, `select`, `date`...) — parse per type
+- Rate limit ~3 req/sec; back off on 429
