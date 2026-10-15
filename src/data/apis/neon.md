@@ -89,6 +89,19 @@ Always use parameterized queries — never interpolate user input into SQL:
 cur.execute("SELECT id FROM projects WHERE id = %s", (project_id,))
 ```
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v2/projects` | Create project |
+| `GET /v2/projects` | List projects |
+| `GET /v2/projects/{project_id}` | Project details |
+| `DELETE /v2/projects/{project_id}` | Delete project |
+| `POST /v2/projects/{project_id}/branches` | Create branch |
+| `GET /v2/projects/{project_id}/branches` | List branches |
+| `POST /v2/projects/{project_id}/endpoints` | Create endpoint |
+| `GET /v2/projects/{project_id}/connection_uri` | Connection string |
+
 ## Real-world notes
 
 **Direct vs pooled.** Neon offers direct connections and a connection pooler. They behave differently for prepared statements, transactions, and migrations. Use direct connections for `pg_dump`/`pg_restore` and migrations; test the pooler separately before switching.
