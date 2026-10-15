@@ -72,3 +72,43 @@ Call the service from a backend so the access key is not exposed to visitors. Ca
 ## Decision notes
 
 Currencylayer is simple to integrate, but the free plan's non-commercial restriction is decisive for a product. Compare paid plans on quota, update frequency, source-currency switching, and overage policy.
+
+## Python example: live exchange rates (API key)
+
+```python
+import httpx
+from decimal import Decimal
+
+API_KEY = "your_currencylayer_key"
+BASE = "https://api.currencylayer.com"
+
+def live(currencies: list[str] | None = None, source: str = "USD") -> dict[str, Decimal]:
+    """Get live rates. Free plan is USD-source only and hourly."""
+    params = {"access_key": API_KEY, "source": source, "format": 1}
+    if currencies:
+        params["currencies"] = ",".join(currencies)
+    resp = httpx.get(f"{BASE}/live", params=params, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data.get("success"):
+        raise RuntimeError(f"CurrencyLayer error: {data.get('error', {}).get('info')}")
+    return {k: Decimal(str(v)) for k, v in data["quotes"].items()}
+
+def convert(amount: Decimal, from_: str, to: str) -> Decimal:
+    """Convert via USD pivot (free-plan compatible)."""
+    if from_ == "USD":
+        return amount * live([to])[f"USD{to}"]
+    if to == "USD":
+        return amount / live([from_])[f"USD{from_}"]
+    usd_amount = amount / live([from_])[f"USD{from_}"]
+    return usd_amount * live([to])[f"USD{to}"]
+
+print(live(["KRW", "EUR", "JPY"]))
+print("100 USD in KRW:", convert(Decimal("100"), "USD", "KRW"))
+```
+
+**Notes:**
+- Key goes in `access_key` query param; check `success` field — HTTP 200 can still be an error
+- Free plan: USD source only, hourly updates, 1000 calls/month — cache hard
+- Quotes are keyed like `USDKRW`; convert non-USD pairs via the USD pivot
+- For KRW-specific needs, BOK ECOS (also in this Atlas) is the authoritative free source
