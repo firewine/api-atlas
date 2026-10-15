@@ -50,6 +50,19 @@ Official programmatic access to FRED economic series, observations, releases, so
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /fred/series/observations` | Series observations (data points) |
+| `GET /fred/series` | Series metadata |
+| `GET /fred/series/search` | Search series |
+| `GET /fred/series/categories` | Series categories |
+| `GET /fred/category` | Category details |
+| `GET /fred/category/children` | Child categories |
+| `GET /fred/releases` | Economic releases |
+| `GET /fred/release/dates` | Release dates |
+
 ## Decision notes
 
 Best suited to u.s. macroeconomic time series and economic metadata and release calendars. Before production, verify observation revisions are normal. preserve units, frequency and seasonal adjustment metadata. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
