@@ -1,0 +1,17 @@
+---
+import { categories, type CategorySlug } from '../data/categories';
+
+interface Props {
+  activeCategory?: CategorySlug;
+}
+
+const { activeCategory } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<nav class="filter-row" aria-label="API categories">
+  <a class:list={{ active: !activeCategory }} aria-current={!activeCategory ? 'page' : undefined} href={`${base}/apis/`}>All</a>
+  {Object.entries(categories).map(([slug, category]) => (
+    <a class:list={{ active: activeCategory === slug }} aria-current={activeCategory === slug ? 'page' : undefined} href={`${base}/categories/${slug}/`}>{category.name}</a>
+  ))}
+</nav>
