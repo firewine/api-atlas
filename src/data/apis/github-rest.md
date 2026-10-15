@@ -50,6 +50,19 @@ GitHub's official REST surface for repositories, collaboration, Actions, Git dat
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /repos/{owner}/{repo}` | Repository details |
+| `GET /repos/{owner}/{repo}/issues` | List issues |
+| `POST /repos/{owner}/{repo}/issues` | Create issue |
+| `GET /repos/{owner}/{repo}/pulls` | List pull requests |
+| `GET /repos/{owner}/{repo}/contents/{path}` | File contents |
+| `GET /users/{username}` | User profile |
+| `GET /search/repositories` | Search repositories |
+| `GET /rate_limit` | Rate limit status |
+
 ## Decision notes
 
 Best suited to repository automation and pull-request and issue integrations. Before production, verify use fine-grained permissions. respect secondary limits and conditional requests. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
