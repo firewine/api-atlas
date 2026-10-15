@@ -6,7 +6,7 @@ const base = import.meta.env.BASE_URL;
 
 <BaseLayout title="Search" description="Search API Atlas provider profiles, comparisons, and integration guides." noIndex={true}>
   <header class="page-hero"><div class="shell">
-    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Search' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Search' }]} />
     <span class="eyebrow">Pagefind static search</span><h1 class="page-title">Search the atlas.</h1>
     <p class="lede">Search runs entirely against the index generated with the static build.</p>
   </div></header>
