@@ -69,6 +69,17 @@ curl "https://api.currencylayer.com/live?access_key=YOUR_ACCESS_KEY&currencies=K
 
 Call the service from a backend so the access key is not exposed to visitors. Cache responses in line with the plan's update frequency instead of spending quota on identical requests.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /live` | Real-time exchange rates (USD base) |
+| `GET /historical` | Historical rates for a date |
+| `GET /convert` | Convert between currencies |
+| `GET /list` | Supported currencies |
+| `GET /timeframe` | Rates over a date range |
+| `GET /change` | Currency change parameters |
+
 ## Decision notes
 
 Currencylayer is simple to integrate, but the free plan's non-commercial restriction is decisive for a product. Compare paid plans on quota, update frequency, source-currency switching, and overage policy.
