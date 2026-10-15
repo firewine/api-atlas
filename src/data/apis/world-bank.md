@@ -50,6 +50,17 @@ Public access to World Bank development indicators and their country, source, an
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v2/country/{code}/indicator/{indicator}` | Country indicator data |
+| `GET /v2/country` | List countries |
+| `GET /v2/country/{code}` | Country details |
+| `GET /v2/indicator/{indicator}` | Indicator metadata |
+| `GET /v2/region` | List regions |
+| `GET /v2/sources` | Data sources |
+
 ## Decision notes
 
 Best suited to cross-country development indicators and long-run public datasets. Before production, verify v1 endpoints no longer work. revisions and missing country-year values require explicit handling. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
