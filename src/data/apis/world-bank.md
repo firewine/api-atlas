@@ -53,3 +53,37 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to cross-country development indicators and long-run public datasets. Before production, verify v1 endpoints no longer work. revisions and missing country-year values require explicit handling. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: country indicators (no auth)
+
+```python
+import httpx
+
+BASE = "https://api.worldbank.org/v2"
+
+def get_indicator(country: str, indicator: str, per_page: int = 20) -> list[dict]:
+    """Fetch an indicator series. Metadata sits in element [0], data in [1]."""
+    resp = httpx.get(
+        f"{BASE}/country/{country}/indicator/{indicator}",
+        params={"format": "json", "per_page": per_page},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    rows = []
+    for entry in data[1] or []:
+        if entry["value"] is None:
+            continue
+        rows.append({"year": int(entry["date"]), "value": entry["value"]})
+    return rows
+
+# US GDP growth (annual %) — indicator NY.GDP.MKTP.KD.ZG
+for r in get_indicator("US", "NY.GDP.MKTP.KD.ZG", per_page=5):
+    print(r["year"], r["value"])
+```
+
+**Notes:**
+- No authentication required; `format=json` avoids XML
+- Response is a 2-element list: `[metadata, data]` — data may be `None` for bad queries
+- `value` is `None` for missing years; filter before use
+- Country codes are ISO3 (`US`, `KR`, `CN`); use `all` for every country (paginates)
