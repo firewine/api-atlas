@@ -59,6 +59,19 @@ curl -H "Authorization: Bearer $RENDER_API_KEY" \
 curl -X POST "https://api.render.com/deploy/srv-xxxx?key=yyyy"
 ```
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/services` | List services |
+| `POST /v1/services` | Create service |
+| `GET /v1/services/{serviceId}` | Service details |
+| `PATCH /v1/services/{serviceId}` | Update service |
+| `DELETE /v1/services/{serviceId}` | Delete service |
+| `GET /v1/services/{serviceId}/deploys` | List deploys |
+| `POST /v1/services/{serviceId}/deploys` | Trigger deploy |
+| `GET /v1/owners` | List owners |
+
 ## Real-world notes
 
 **Free tier sleep.** Free web services sleep after 15 minutes without requests. The first request after sleep triggers a cold start (can take 30+ seconds). Don't use uptime checks alone to prove availability.
