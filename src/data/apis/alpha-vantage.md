@@ -72,3 +72,48 @@ The documentation defines each function separately. Validate output metadata and
 ## Decision notes
 
 Alpha Vantage is easy to test, but the 25-request daily standard limit makes caching and a narrow refresh scope essential. Confirm commercial rights and any real-time exchange entitlements before shipping a user-facing product.
+
+## Python example: dividends and ticker search
+
+```python
+import httpx
+from decimal import Decimal
+
+API_KEY = "your_alpha_vantage_key"
+BASE = "https://www.alphavantage.co/query"
+
+def api_call(params: dict) -> dict:
+    """Call Alpha Vantage, raising on API-level errors."""
+    resp = httpx.get(BASE, params={**params, "apikey": API_KEY}, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    # Alpha Vantage returns errors as JSON fields, not HTTP codes
+    if "Error Message" in data:
+        raise ValueError(data["Error Message"])
+    if "Note" in data:  # rate limit hit
+        raise RuntimeError(f"Rate limited: {data['Note']}")
+    return data
+
+def get_dividends(symbol: str) -> list[dict]:
+    data = api_call({"function": "DIVIDENDS", "symbol": symbol})
+    return [
+        {"ex_date": k, "amount": Decimal(v["amount"])}
+        for k, v in data.get("data", {}).items()
+    ]
+
+def search_ticker(keywords: str) -> list[dict]:
+    data = api_call({"function": "SYMBOL_SEARCH", "keywords": keywords})
+    return [
+        {"symbol": m["1. symbol"], "name": m["2. name"], "type": m["3. type"]}
+        for m in data.get("bestMatches", [])
+    ]
+
+# Examples
+print(search_ticker("Schwab Dividend")[:2])
+print(get_dividends("SCHD")[:2])
+```
+
+**Notes:**
+- Free tier: 25 requests/day — cache aggressively, batch symbols
+- Always check for `"Note"` (rate limit) and `"Error Message"` fields; HTTP 200 does not mean success
+- Dividend data covers US equities; ex-dates are the keys in the response
