@@ -50,6 +50,17 @@ Official U.S. Treasury fiscal datasets with filtering, sorting, field selection,
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Pattern | Description |
+|---------|-------------|
+| `GET /v2/accounting/od/avg_interest_rates` | Average interest rates |
+| `GET /v2/accounting/od/debt_to_penny` | Debt to the penny |
+| `GET /v2/accounting/od/savings_bonds` | Savings bonds data |
+| `?filter=record_date:gte:2024-01-01` | Date range filter |
+| `?filter=security_type_desc:eq:Bill` | Equality filter |
+| `?sort=-record_date&page[size]=100` | Sort and pagination |
+
 ## Decision notes
 
 Best suited to federal debt and cash data and machine-readable fiscal series. Before production, verify each dataset has its own update cadence. read dataset metadata before combining series. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
