@@ -50,6 +50,19 @@ Merchant-of-record billing APIs for products, prices, customers, transactions, a
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /products` | List products |
+| `POST /products` | Create product |
+| `GET /products/{id}` | Product details |
+| `GET /prices` | List prices |
+| `POST /prices` | Create price |
+| `GET /customers` | List customers |
+| `GET /transactions` | List transactions |
+| `POST /transactions` | Create transaction |
+
 ## Decision notes
 
 Best suited to saas merchant-of-record billing and subscription lifecycle automation. Before production, verify sandbox and live credentials are separate. process notifications idempotently. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
