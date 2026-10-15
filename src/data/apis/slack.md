@@ -53,3 +53,34 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to workspace automation and interactive slack applications. Before production, verify request only necessary oauth scopes. verify signed inbound requests. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: post a message (bearer token)
+
+```python
+import httpx
+
+BOT_TOKEN = "xoxb-your-bot-token"
+BASE = "https://slack.com/api"
+
+def post_message(channel: str, text: str) -> dict:
+    """Post a message. Slack returns ok:false with an error string on failure."""
+    resp = httpx.post(
+        f"{BASE}/chat.postMessage",
+        headers={"Authorization": f"Bearer {BOT_TOKEN}"},
+        json={"channel": channel, "text": text},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    if not data.get("ok"):
+        raise RuntimeError(f"Slack error: {data.get('error')}")
+    return {"ts": data["ts"], "channel": data["channel"]}
+
+print(post_message("#general", "Hello from the API!"))
+```
+
+**Notes:**
+- Bot tokens start `xoxb-`; the bot must be invited to the channel first
+- Always check the `ok` field — HTTP 200 with `ok: false` means failure (`channel_not_found`, etc.)
+- Rate limits are tiered per method; respect `Retry-After` on 429
+- For rich layouts use `blocks`; `text` is still required as a fallback
