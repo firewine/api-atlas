@@ -13,19 +13,42 @@ export async function getStaticPaths() {
 interface Props { guide: CollectionEntry<'guides'> }
 const { guide } = Astro.props;
 const { Content } = await render(guide);
+const study = guide.data.caseStudy;
+const author = study?.review.author ?? 'API Atlas';
+const description = guide.data.description ?? guide.data.summary;
+const canonical = new URL(`${base}/guides/${guide.id}/`, Astro.site ?? Astro.url.origin).href;
 const articleSchema = {
   '@context': 'https://schema.org', '@type': 'TechArticle',
-  headline: guide.data.title, description: guide.data.summary,
+  headline: guide.data.title, description,
   dateModified: formatDate(guide.data.updatedAt),
-  author: { '@type': 'Organization', name: 'API Atlas' },
+  author: { '@type': study?.review.authorType ?? 'Organization', name: author },
+  mainEntityOfPage: canonical,
+  ...(study ? { citation: study.evidence.map((source) => source.url), inLanguage: 'en' } : {}),
 };
 ---
 
-<BaseLayout title={guide.data.title} description={guide.data.summary} jsonLd={articleSchema}>
+<BaseLayout title={guide.data.title} description={description} jsonLd={articleSchema} lang="en">
   <header class="page-hero"><div class="narrow">
     <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Guides', href: `${base}/guides/` }, { label: guide.data.title }]} />
     <span class="eyebrow">Guide {String(guide.data.order).padStart(2, '0')} · updated {formatDate(guide.data.updatedAt)}</span>
-    <h1 class="page-title">{guide.data.title}</h1><p class="lede">{guide.data.summary}</p>
+    <h1 class="page-title" data-pagefind-meta="title">{guide.data.h1 ?? guide.data.title}</h1><p class="lede">{guide.data.summary}</p>
+    <p>By <span data-guide-author>{author}</span> · Reviewed: <time datetime={formatDate(guide.data.updatedAt)}>{formatDate(guide.data.updatedAt)}</time></p>
   </div></header>
-  <section class="section-tight"><article class="narrow prose"><Content /></article></section>
+  <section class="section-tight"><article class="narrow prose">
+    <div data-guide-body><Content /></div>
+    {study && <>
+      <section aria-labelledby="case-evidence">
+        <h2 id="case-evidence">Sources and verification scope</h2>
+        <p>{study.verification.note}</p>
+        <ul>{study.evidence.map((source) => <li>
+          <a href={source.url} rel="noopener noreferrer">{source.id} ({source.kind})</a>
+          {' · checked: '}<time datetime={source.checkedAt}>{source.checkedAt}</time>
+        </li>)}</ul>
+      </section>
+      <section aria-labelledby="case-providers">
+        <h2 id="case-providers">Related providers</h2>
+        <ul>{study.providers.map((id) => <li><a href={`${base}/apis/${id}/`}>{id} API profile and official sources</a></li>)}</ul>
+      </section>
+    </>}
+  </article></section>
 </BaseLayout>

@@ -50,3 +50,5 @@ Weight the axes before seeing vendor prices: rights, coverage, correctness, late
 Run the same acceptance test against two candidates and save the results. Re-run it when the provider changes an API version, plan, or adjustment policy.
 
 Next: compare [EODHD and Massive](../../compare/eodhd-vs-massive/) or [EODHD and Alpha Vantage](../../compare/eodhd-vs-alpha-vantage/).
+
+For minute-bar completeness checks, read the [Massive missing aggregate bars case](../massive-polygon-missing-aggregate-bars/).

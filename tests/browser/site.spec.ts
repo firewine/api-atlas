@@ -65,3 +65,21 @@ test('Search reports a failed UI asset instead of leaving a blank page', async (
   await expect(page.getByRole('status')).toHaveText('Search could not load. Check that search assets are available, then reload.');
   await expect(page.getByRole('link', { name: 'APIs', exact: true })).toHaveAttribute('href', `${basePath}apis/`);
 });
+
+test('Guide body and matching article metadata are available without JavaScript or login', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    const response = await page.goto(`http://127.0.0.1:4173${basePath}guides/retry-and-backoff/`);
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('How to design API retries and backoff');
+    await expect(page.getByRole('heading', { name: 'Classify before retrying', exact: true })).toBeVisible();
+    await expect(page.locator('[data-guide-author]')).toHaveText('API Atlas');
+    await expect(page.locator('[data-guide-body] pre code')).toContainText('function backoff');
+    const schemas = JSON.parse(await page.locator('script[type="application/ld+json"]').first().textContent() ?? '[]');
+    const article = schemas.find((item: Record<string, unknown>) => item['@type'] === 'TechArticle');
+    expect(article.author.name).toBe(await page.locator('[data-guide-author]').textContent());
+    expect(article.dateModified).toBe(await page.locator('time').first().getAttribute('datetime'));
+    expect(article.mainEntityOfPage).toBe(await page.locator('link[rel="canonical"]').getAttribute('href'));
+  } finally { await context.close(); }
+});

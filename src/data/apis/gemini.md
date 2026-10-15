@@ -124,3 +124,5 @@ print(generate("What is a dividend? One sentence."))
 - Model names evolve fast; `gemini-2.5-flash` is the current efficient default — verify in docs
 - Free tier has strict RPM/TPD limits; check `candidates[].finishReason` for `MAX_TOKENS` / `SAFETY`
 - Use the official `google-genai` SDK for structured output and function calling
+
+For manually reconstructed function-call history, see the [Gemini thought_signature 400 case](../../guides/gemini-thought-signature-parallel-tool-calls/). It explains how to preserve parallel calls in their original model response.

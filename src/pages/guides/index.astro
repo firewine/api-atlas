@@ -16,7 +16,7 @@ const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.d
   <section class="section-tight"><div class="shell guide-grid">
     {guides.map((guide) => <a class="guide-card" href={`${base}/guides/${guide.id}/`}>
       <span class="category-count">Guide {String(guide.data.order).padStart(2, '0')}</span>
-      <h2>{guide.data.title}</h2><p>{guide.data.summary}</p>
+      <h2>{guide.data.caseStudy?.linkLabel ?? guide.data.title}</h2><p>{guide.data.summary}</p>
     </a>)}
   </div></section>
 </BaseLayout>

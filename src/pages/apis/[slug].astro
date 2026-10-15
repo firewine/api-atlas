@@ -16,6 +16,7 @@ interface Props { api: CollectionEntry<'apis'> }
 const { api } = Astro.props;
 const { Content } = await render(api);
 const category = getCategory(api.data.category);
+const caseStudies = (await getCollection('guides')).filter((guide) => guide.data.caseStudy?.providers.includes(api.id));
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
@@ -53,6 +54,10 @@ const articleSchema = {
           </dl>
         </section>
         <SourcePanel verifiedAt={api.data.verifiedAt} sourceUrls={api.data.sourceUrls} facts={api.data.mutableFacts} />
+        {caseStudies.length > 0 && <section aria-labelledby="practical-cases">
+          <h2 id="practical-cases">Practical integration cases</h2>
+          <ul>{caseStudies.map((guide) => <li><a href={`${base}/guides/${guide.id}/`}>{guide.data.caseStudy?.linkLabel}</a></li>)}</ul>
+        </section>}
       </article>
       <aside class="provider-meta" data-pagefind-ignore>
         <dl>

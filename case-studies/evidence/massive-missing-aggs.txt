@@ -1,0 +1,5 @@
+Source: https://massive.com/knowledge-base/article/why-are-there-missing-aggregates-in-massives-data
+Checked: 2026-10-15
+
+A window with no eligible trade produces no bar at all, rather than an empty one.
+Look at each trade's conditions array

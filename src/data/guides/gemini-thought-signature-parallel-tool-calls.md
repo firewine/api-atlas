@@ -1,0 +1,151 @@
+---
+"title": "Gemini API thought_signature 400 error: preserve parallel
+  function-call history"
+"h1": "Gemini API thought_signature 400 error: preserve parallel function-call
+  history"
+"description": "Resolve a Gemini API thought_signature 400 in parallel function
+  calling by preserving one model Content, its ordered parts, and the original
+  signature position."
+"summary": "A reported Gemini 3 Flash Preview 400 came from splitting parallel
+  function calls into separate model history entries. Keep the original response
+  grouping and signature position."
+"order": 8
+"updatedAt": "2026-10-15"
+"tags":
+  - "gemini"
+  - "function-calling"
+  - "troubleshooting"
+"caseStudy":
+  "slug": "gemini-thought-signature-parallel-tool-calls"
+  "problemId": "gemini-parallel-call-history-signature-400"
+  "titleParts":
+    "api": "Gemini API"
+    "problem": "thought_signature 400 error"
+    "solution": "preserve parallel function-call history"
+  "linkLabel": "Gemini API thought_signature 400: preserve parallel function-call history"
+  "providers":
+    - "gemini"
+  "searchIntent":
+    "primary":
+      "term": "Gemini thought_signature 400 parallel function calls"
+      "sourcePhrase": "400 errors come from client-side history reconstruction."
+      "evidenceIds":
+        - "gemini-author-correction"
+    "related":
+      - "term": "Gemini first parallel functionCall signature"
+        "sourcePhrase": "thought_signature is attached only to the first functionCall part"
+        "evidenceIds":
+          - "gemini-thought-doc"
+      - "term": "Gemini model Content parts grouping"
+        "sourcePhrase": "one `Content` with N `parts`"
+        "evidenceIds":
+          - "gemini-author-correction"
+      - "term": "Gemini Vertex AI @google/genai 1.38.0 signature issue"
+        "sourcePhrase": "`@google/genai` v1.38.0"
+        "evidenceIds":
+          - "gemini-initial-issue"
+    "status": "keyword-candidate"
+  "evidence":
+    - "id": "gemini-thought-doc"
+      "kind": "documentation"
+      "url": "https://ai.google.dev/gemini-api/docs/generate-content/thought-signatur\
+        es"
+      "checkedAt": "2026-10-15"
+      "snapshot": "case-studies/evidence/gemini-thought-doc.txt"
+      "sha256": "ead750bb8b43026a707c008b240158210d3530d67d0dd122a16b1c27040d1a78"
+      "excerpt": "the thought_signature is attached only to the first functionCall
+        part. Subsequent functionCall parts in the same response will not
+        contain a signature."
+    - "id": "gemini-initial-issue"
+      "kind": "documentation"
+      "url": "https://github.com/googleapis/js-genai/issues/1275"
+      "checkedAt": "2026-10-15"
+      "snapshot": "case-studies/evidence/gemini-initial-issue.txt"
+      "sha256": "b7b162db6c61b8e309e4d584f603e729751b802c6885581bb6d72983c30d817d"
+      "excerpt": "* Package version: `@google/genai` v1.38.0
+
+        * Model: `gemini-3-flash-preview`
+
+        * API: Vertex AI
+
+        * Region: `global`
+
+        400 INVALID_ARGUMENT"
+    - "id": "gemini-author-correction"
+      "kind": "code"
+      "url": "https://github.com/googleapis/js-genai/issues/1275#issuecomment-4316663\
+        989"
+      "checkedAt": "2026-10-15"
+      "snapshot": "case-studies/evidence/gemini-author-correction.txt"
+      "sha256": "550e59f8cb337f879eb90ed64e8384d54a30ecb790572260a1c13d6b34ea2ded"
+      "excerpt": "The 400 errors come from client-side history reconstruction.
+
+        group them back into one `Content` with N `parts`
+
+        parts: group.map(g => ({"
+  "technicalDetails":
+    - "kind": "field"
+      "value": "thought_signature"
+      "evidenceId": "gemini-thought-doc"
+    - "kind": "sdk-version"
+      "value": "v1.38.0"
+      "evidenceId": "gemini-initial-issue"
+    - "kind": "error-code"
+      "value": "400 INVALID_ARGUMENT"
+      "evidenceId": "gemini-initial-issue"
+  "verification":
+    "level": "source-review"
+    "note": "Source review on 2026-10-15 confirms the official parallel-call rule
+      and the correction by the issue author; no Gemini API call or SDK fix-version
+      test was performed."
+    "evidenceIds":
+      - "gemini-thought-doc"
+      - "gemini-author-correction"
+  "review":
+    "author": "차도녀 gpt may"
+    "authorType": "Person"
+    "checkedAt": "2026-10-15"
+    "titleMatchesBody": true
+    "distinctProblem": "A client-side Gemini history reconstruction error with
+      parallel function calls, distinct from aggregate-bar omissions and generic
+      API retries."
+    "noInventedResults": true
+---
+
+## Symptoms
+
+A manually reconstructed `generateContent` function-calling history can fail with `400 INVALID_ARGUMENT` saying a later function call is missing `thought_signature`. The [reported issue](https://github.com/googleapis/js-genai/issues/1275) used Node.js, `@google/genai` v1.38.0, Vertex AI `global`, and `gemini-3-flash-preview`. Its opening report blamed provider signature omissions. The [author later corrected that diagnosis](https://github.com/googleapis/js-genai/issues/1275#issuecomment-4316663989), including a logging artifact that appeared to duplicate a signature.
+
+## Cause
+
+For parallel calls in one model response, the [official thought-signature guide](https://ai.google.dev/gemini-api/docs/generate-content/thought-signatures) places `thought_signature` on the first `functionCall` part only. The author had extracted each call and replayed it as a separate `role: "model"` Content. That made later calls look like first calls in new steps, where signature validation applies. The absence of a signature on subsequent parts of the *same* response is expected.
+
+## Safe resolution
+
+Persist each model response as one Content with its complete ordered `parts`; replay that Content without moving, inventing, or copying signatures. Keep function responses associated with that same step in their returned order. The JSON below is a synthetic shape fixture, not a captured response or a usable signature:
+
+```json
+{
+  "contents": [
+    { "role": "user", "parts": [{ "text": "Check Paris and London weather." }] },
+    { "role": "model", "parts": [
+      { "functionCall": { "name": "weather", "args": { "city": "Paris" } }, "thoughtSignature": "SIGNATURE_FROM_THIS_RESPONSE" },
+      { "functionCall": { "name": "weather", "args": { "city": "London" } } }
+    ] },
+    { "role": "user", "parts": [
+      { "functionResponse": { "name": "weather", "response": { "city": "Paris", "tempC": 15 } } },
+      { "functionResponse": { "name": "weather", "response": { "city": "London", "tempC": 12 } } }
+    ] }
+  ]
+}
+```
+
+The placeholder must be replaced only by the exact signature returned on that first part. Do not merge calls from different sequential model responses. If storing calls separately, record their response identity and original part index so reconstruction can restore that same Content.
+
+## Verification
+
+Source review on 2026-10-15 confirms the official parallel-call rule and the correction by the issue author; no Gemini API call or SDK fix-version test was performed. Compare a locally captured response with the next request: one model Content should contain the same number and order of `functionCall` parts, and the signature should remain on the original part only. As a negative control, a synthetic split into separate model Contents has the structural defect described by the author; do not submit fabricated signatures to the service. Local static checks can inspect structure but cannot prove a live 400 is resolved.
+
+## Limitations
+
+This is a `generateContent` history diagnosis for the reported environment, not proof about every Gemini API, model, platform, or SDK release. The source review does not establish a particular SDK version that fixes custom history reconstruction. Built-in chat history may manage grouping, while custom serialization still needs inspection. No credentialed Vertex AI request was made.

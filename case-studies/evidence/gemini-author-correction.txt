@@ -1,0 +1,6 @@
+Source: https://github.com/googleapis/js-genai/issues/1275#issuecomment-4316663989
+Checked: 2026-10-15
+
+The 400 errors come from client-side history reconstruction.
+group them back into one `Content` with N `parts`
+parts: group.map(g => ({

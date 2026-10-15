@@ -93,6 +93,8 @@ Compare Massive plans on four axes: asset class, historical depth, feed latency,
 
 ## Python example: aggregates and ticker details
 
+The aggregate helper below reads only the first `results` page. For a long range, use the response's `next_url` or the SDK iterator and check the base-aggregate `limit`; see the [Massive missing minute bars case](../../guides/massive-polygon-missing-aggregate-bars/) before treating absent minutes as a data defect.
+
 ```python
 import httpx
 from decimal import Decimal

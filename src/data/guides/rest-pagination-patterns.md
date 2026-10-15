@@ -44,6 +44,8 @@ async function* listAll(firstUrl: string) {
 
 Adapt the field names, authentication, origin checks, and retry policy to the documented API.
 
+For a provider-specific example, see the [Massive missing aggregate bars case](../massive-polygon-missing-aggregate-bars/) and its `next_url` check.
+
 ## Expect a moving dataset
 
 Offset pagination can duplicate or skip records when rows are inserted during traversal. Prefer a stable sort plus cursor when available. If the API supports a snapshot time or `updated_before` boundary, freeze it at the start and reuse it for every page.

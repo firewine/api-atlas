@@ -1,0 +1,8 @@
+Source: https://github.com/googleapis/js-genai/issues/1275
+Checked: 2026-10-15
+
+* Package version: `@google/genai` v1.38.0
+* Model: `gemini-3-flash-preview`
+* API: Vertex AI
+* Region: `global`
+400 INVALID_ARGUMENT

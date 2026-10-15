@@ -17,17 +17,20 @@ Run the complete pre-merge contract with:
 npm run validate
 ```
 
-That command tests the shared validation contract, validates source content and Astro types, builds the static site and Pagefind index, then checks the generated catalog and distribution. GitHub Actions runs it for root and subpath deployments on pull requests and pushes to `main`, followed by production browser tests for Compare and Search. Manual workflow runs are also available.
+That command tests the shared validation contract, validates source content and Astro types, builds the static site and Pagefind index, then checks the generated catalog, Guide SEO and distribution. GitHub Actions runs it for root and subpath deployments on pull requests and pushes to `main`, followed by production browser tests for Compare, Search and static Guides. Manual workflow runs are also available.
 
 ## Content model
 
 Provider Markdown in `src/data/apis/` is the shared source for HTML and JSON. Mutable facts include an official source URL and verification date; provider profiles show that provenance directly. Additions must satisfy the schema in `src/content.config.ts` and the shared provenance rules in `src/lib/provider-provenance.mjs`. Follow the required fact keys and publishing steps in [Content authoring](docs/CONTENT_AUTHORING.md).
+
+Practical case studies use the existing Guides template. Generate one reviewed case with `npm run generate:case -- /path/to/reviewed-case.json`; start from `case-studies/template.json` and follow the evidence/SEO and post-deploy Search Console rules in [Content authoring](docs/CONTENT_AUTHORING.md). `validate:guides` checks the built pages and is part of the normal validation command.
 
 The seed catalog covers EODHD, BOK ECOS, the FSC fund-product API on data.go.kr, OpenAI, Anthropic, Gemini, Massive, Alpha Vantage, yfinance, and Currencylayer.
 
 Machine surfaces:
 
 - `/api/catalog.json`
+- `/api/guides.json`
 - `/api/providers/{slug}.json`
 - `/api/changes.json`
 - `/robots.txt`

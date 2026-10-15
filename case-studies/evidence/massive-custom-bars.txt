@@ -1,0 +1,8 @@
+Source: https://massive.com/docs/rest/stocks/aggregates/custom-bars
+Checked: 2026-10-15
+
+limit
+next_url
+Limits the number of base aggregates queried to create the aggregate results. Max 50000 and Default 5000.
+If present, this value can be used to fetch the next page of data.
+for a in client.list_aggs(

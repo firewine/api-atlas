@@ -10,6 +10,7 @@ interface Props {
   description?: string;
   canonicalPath?: string;
   noIndex?: boolean;
+  lang?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -19,6 +20,7 @@ const {
   canonicalPath = Astro.url.pathname,
   noIndex = false,
   jsonLd,
+  lang = 'en',
 } = Astro.props;
 
 const pageTitle = title === 'API Atlas' ? title : `${title} · API Atlas`;
@@ -49,7 +51,7 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -66,7 +68,7 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
     {noIndex && <meta name="robots" content="noindex,follow" />}
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas).replaceAll('<', '\\u003c')} />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

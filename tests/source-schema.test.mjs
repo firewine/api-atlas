@@ -18,6 +18,7 @@ test('Astro rejects undeclared source provenance during source sync, before any 
     await symlink(join(repository, 'node_modules'), join(directory, 'node_modules'), 'junction');
     await copyFile(join(repository, 'src/content.config.ts'), join(directory, 'src/content.config.ts'));
     await copyFile(join(repository, 'src/lib/provider-provenance.mjs'), join(directory, 'src/lib/provider-provenance.mjs'));
+    await copyFile(join(repository, 'src/lib/case-study.mjs'), join(directory, 'src/lib/case-study.mjs'));
     await writeFile(join(directory, 'package.json'), '{"type":"module"}\n');
     const source = await readFile(join(repository, 'src/data/apis/financial-modeling-prep.md'), 'utf8');
     const fixture = join(directory, 'src/data/apis/fixture.md');

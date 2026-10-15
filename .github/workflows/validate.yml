@@ -45,7 +45,7 @@ jobs:
         run: npm run validate
       - name: Install Chromium for production browser tests
         run: npx playwright install --with-deps chromium
-      - name: Verify Compare and Search in the production build
+      - name: Verify Compare, Search and static Guides in the production build
         run: npm run test:browser
       - name: Upload browser failure evidence
         if: failure()

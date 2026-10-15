@@ -1,0 +1,33 @@
+{
+  "title": "",
+  "h1": "",
+  "description": "",
+  "summary": "",
+  "order": 100,
+  "updatedAt": "",
+  "tags": [],
+  "caseStudy": {
+    "slug": "",
+    "problemId": "",
+    "titleParts": { "api": "", "problem": "", "solution": "" },
+    "linkLabel": "",
+    "providers": [],
+    "searchIntent": {
+      "primary": { "term": "", "sourcePhrase": "", "evidenceIds": [] },
+      "related": [
+        { "term": "", "sourcePhrase": "", "evidenceIds": [] },
+        { "term": "", "sourcePhrase": "", "evidenceIds": [] },
+        { "term": "", "sourcePhrase": "", "evidenceIds": [] }
+      ],
+      "status": "keyword-candidate"
+    },
+    "evidence": [
+      { "id": "", "kind": "code", "url": "", "checkedAt": "", "snapshot": "", "sha256": "", "excerpt": "" },
+      { "id": "", "kind": "documentation", "url": "", "checkedAt": "", "snapshot": "", "sha256": "", "excerpt": "" }
+    ],
+    "technicalDetails": [],
+    "verification": { "level": "source-review", "note": "", "evidenceIds": [] },
+    "review": { "author": "", "authorType": "Person", "checkedAt": "", "titleMatchesBody": true, "distinctProblem": "", "noInventedResults": true }
+  },
+  "sections": { "symptoms": "", "cause": "", "solution": "", "verification": "", "limitations": "" }
+}

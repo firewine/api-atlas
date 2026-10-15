@@ -17,7 +17,7 @@ const categorySlugs = [...new Set(catalog.providers.map((provider) => provider.c
 const required = [
   'index.html', 'apis/index.html', 'categories/index.html', 'compare/index.html', 'guides/index.html',
   'changes/index.html', 'sources/index.html', 'about/index.html', 'search/index.html', '404.html',
-  'api/catalog.json', 'api/changes.json', 'robots.txt', 'sitemap.xml', 'llms.txt',
+  'api/catalog.json', 'api/changes.json', 'api/guides.json', 'robots.txt', 'sitemap.xml', 'llms.txt',
   'scripts/compare.js', 'scripts/search.js', 'pagefind/pagefind.js', 'pagefind/pagefind-ui.js', 'pagefind/pagefind-ui.css',
   ...providerSlugs.flatMap((slug) => [`apis/${slug}/index.html`, `api/providers/${slug}.json`]),
   ...comparisonSlugs.map((slug) => `compare/${slug}/index.html`),
@@ -48,6 +48,7 @@ function outputFile(pathname) {
 const files = await walk(dist.pathname);
 const htmlFiles = files.filter((file) => extname(file) === '.html');
 const forbiddenAdCode = /adsbygoogle|googlesyndication|doubleclick|data-ad-client/i;
+const anchorDocuments = new Map();
 for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
   const relative = file.slice(dist.pathname.length);
@@ -63,7 +64,7 @@ for (const file of htmlFiles) {
       errors.push(`${relative}: protocol-relative URL ${reference}`);
       continue;
     }
-    if (reference.startsWith('#') || /^(?:mailto:|tel:|data:)/.test(reference)) continue;
+    if (/^(?:mailto:|tel:|data:)/.test(reference)) continue;
     if (reference === 'https://getbeta.app' || reference === 'https://getbeta.app/') continue;
     let url;
     try { url = new URL(reference, publicUrl); }
@@ -73,7 +74,16 @@ for (const file of htmlFiles) {
       errors.push(`${relative}: URL escapes BASE_PATH: ${reference}`);
       continue;
     }
-    if (!existsSync(outputFile(url.pathname))) errors.push(`${relative}: broken internal URL ${reference}`);
+    const target = outputFile(url.pathname);
+    if (!existsSync(target)) {
+      errors.push(`${relative}: broken internal URL ${reference}`);
+      continue;
+    }
+    if (url.hash) {
+      if (!anchorDocuments.has(target.href)) anchorDocuments.set(target.href, await readFile(target, 'utf8'));
+      const ids = [...anchorDocuments.get(target.href).matchAll(/\b(?:id|name)="([^"]*)"/g)].map((entry) => entry[1]);
+      if (!ids.includes(decodeURIComponent(url.hash.slice(1)))) errors.push(`${relative}: broken internal anchor ${reference}`);
+    }
   }
   const schema = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
   if (!schema) {
@@ -116,6 +126,10 @@ if (locations.some((location) => !location.startsWith(siteRoot))) errors.push('s
 if (locations.some((location) => /\/(?:api|search)\//.test(new URL(location).pathname))) errors.push('sitemap.xml: machine or noindex route included');
 for (const slug of providerSlugs) {
   if (!locations.includes(`${siteRoot}apis/${slug}/`)) errors.push(`sitemap.xml: missing provider ${slug}`);
+}
+if (new Set(locations).size !== locations.length) errors.push('sitemap.xml: duplicate canonical URLs');
+for (const slug of guideSlugs) {
+  if (!locations.includes(`${siteRoot}guides/${slug}/`)) errors.push(`sitemap.xml: missing guide ${slug}`);
 }
 
 if (errors.length) {

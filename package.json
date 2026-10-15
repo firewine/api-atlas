@@ -10,11 +10,13 @@
     "check": "astro sync && astro check",
     "validate:content": "node scripts/validate-content.mjs",
     "verify:dist": "node scripts/verify-dist.mjs",
-    "validate": "npm test && npm run check && npm run build && npm run validate:content && npm run verify:dist",
+    "validate": "npm test && npm run check && npm run build && npm run validate:content && npm run validate:guides && npm run verify:dist",
     "astro": "astro",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
-    "validate:ci": "npm run validate && npm run test:browser"
+    "validate:ci": "npm run validate && npm run test:browser",
+    "generate:case": "node scripts/generate-case-study.mjs",
+    "validate:guides": "node scripts/validate-guides.mjs"
   },
   "dependencies": {
     "@astrojs/check": "latest",
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
-    "pagefind": "latest"
+    "pagefind": "latest",
+    "yaml": "2.9.1"
   }
 }

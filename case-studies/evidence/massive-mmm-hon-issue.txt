@@ -1,0 +1,5 @@
+Source: https://github.com/massive-com/client-python/issues/1028
+Checked: 2026-10-15
+
+Possible missing 1-minute aggregates: MMM and HON (Stocks Basic)
+Did these intervals have zero qualifying trades because of trade-condition filtering, or do they represent an ingestion/data gap?

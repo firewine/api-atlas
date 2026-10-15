@@ -43,3 +43,5 @@ Avoid a lowest-common-denominator abstraction that hides useful differences. Cap
 Repeat the evaluation after a model deprecation, major price or quota change, sustained quality drift, or new workflow requirement. Do not automatically migrate because a new model name appeared.
 
 Next: compare [OpenAI and Anthropic](../../compare/openai-vs-anthropic/) or [OpenAI and Gemini](../../compare/openai-vs-gemini/).
+
+For a concrete function-calling failure, read the [Gemini thought_signature 400 case](../gemini-thought-signature-parallel-tool-calls/).

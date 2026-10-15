@@ -1,0 +1,4 @@
+Source: https://massive.com/blog/aggs-api-updates
+Checked: 2026-10-15
+
+This parameter will limit the number of base aggregate bars that are used to generate the final result.
