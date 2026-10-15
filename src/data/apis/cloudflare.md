@@ -53,3 +53,42 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to edge-platform automation and dns and zone management. Before production, verify prefer narrowly scoped tokens. account and zone identifiers are required by many operations. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: list zones (bearer token)
+
+```python
+import httpx
+
+API_TOKEN = "your_cloudflare_api_token"
+BASE = "https://api.cloudflare.com/client/v4"
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
+
+def api_get(path: str, params: dict | None = None) -> dict:
+    """GET helper. Cloudflare nests results and reports success explicitly."""
+    resp = httpx.get(f"{BASE}{path}", headers=HEADERS, params=params or {}, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    if not data.get("success"):
+        raise RuntimeError(f"Cloudflare errors: {data.get('errors')}")
+    return data
+
+def list_zones() -> list[dict]:
+    zones, page = [], 1
+    while True:
+        data = api_get("/zones", {"page": page, "per_page": 50})
+        zones.extend(data["result"])
+        info = data["result_info"]
+        if page >= info["total_pages"]:
+            break
+        page += 1
+    return zones
+
+for z in list_zones():
+    print(z["name"], z["status"], z["plan"]["name"])
+```
+
+**Notes:**
+- Prefer scoped API tokens over the global API key; tokens need explicit zone/account permissions
+- Every response has `success` + `errors` — check it, don't rely on HTTP status alone
+- Pagination via `result_info.total_pages`; default page size is 20
+- Rate limit 1200 req/5min per account; 429s should back off
