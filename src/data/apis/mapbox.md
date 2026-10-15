@@ -53,3 +53,41 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to custom maps and navigation and geocoding and routing. Before production, verify token scopes and url restrictions matter. caching and data-display terms are product-specific. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: forward geocoding (access token)
+
+```python
+import httpx
+from urllib.parse import quote
+
+TOKEN = "your_mapbox_access_token"
+BASE = "https://api.mapbox.com/geocoding/v5/mapbox.places"
+
+def geocode(query: str, limit: int = 5, country: str | None = None) -> list[dict]:
+    """Forward-geocode a place name. Token goes in the query string."""
+    params = {"access_token": TOKEN, "limit": limit}
+    if country:
+        params["country"] = country
+    resp = httpx.get(f"{BASE}/{quote(query)}.json", params=params, timeout=30)
+    if resp.status_code == 401:
+        raise RuntimeError("Invalid access token")
+    resp.raise_for_status()
+    return [
+        {
+            "name": f["place_name"],
+            "lon": f["center"][0],
+            "lat": f["center"][1],
+            "relevance": f["relevance"],
+        }
+        for f in resp.json().get("features", [])
+    ]
+
+for r in geocode("Gangnam Station", country="KR"):
+    print(r["name"], r["lat"], r["lon"])
+```
+
+**Notes:**
+- Token in `access_token` query param; restrict token scopes/URLs in the dashboard
+- Billing is per-request; geocoding has a generous free tier (100k req/month)
+- `country` param (ISO2) narrows results and saves ambiguous-query calls
+- Cache geocode results — place coordinates rarely change
