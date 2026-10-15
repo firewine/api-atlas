@@ -23,13 +23,21 @@ cautions: ["/stock/candle (historical OHLCV) returns 403 on free tier.", "Free t
 verifiedAt: "2026-10-15"
 sourceUrls: ["https://finnhub.io/docs/api", "https://finnhub.io/pricing"]
 mutableFacts:
-  - label: "Free tier rate limit"
-    value: "60 calls/min"
-    sourceUrl: "https://finnhub.io/pricing"
-    verifiedAt: "2026-10-15"
   - label: "Base URL"
     value: "https://finnhub.io/api/v1"
     sourceUrl: "https://finnhub.io/docs/api"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "API key via token query param or X-Finnhub-Token header"
+    sourceUrl: "https://finnhub.io/docs/api"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Free tier: 60 calls/min; paid tiers raise limits"
+    sourceUrl: "https://finnhub.io/pricing"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "60 calls/min free; 30 req/sec global cap"
+    sourceUrl: "https://finnhub.io/pricing"
     verifiedAt: "2026-10-15"
 ---
 
