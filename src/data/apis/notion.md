@@ -50,6 +50,19 @@ A workspace content API for pages, blocks, data sources, comments, users, search
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1/pages` | Create a page |
+| `GET /v1/pages/{page_id}` | Retrieve a page |
+| `PATCH /v1/pages/{page_id}` | Update page properties |
+| `POST /v1/databases/{db_id}/query` | Query a database |
+| `POST /v1/databases` | Create a database |
+| `GET /v1/blocks/{block_id}/children` | List block children |
+| `PATCH /v1/blocks/{block_id}` | Update a block |
+| `GET /v1/search` | Search pages/databases |
+
 ## Decision notes
 
 Best suited to knowledge-base integrations and content workflow automation. Before production, verify notion-version is required. respect retry-after for 429 and 529 responses. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
