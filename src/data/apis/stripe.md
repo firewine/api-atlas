@@ -50,6 +50,19 @@ A mature payments and billing API covering checkout, payment intents, subscripti
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1/customers` | Create customer |
+| `GET /v1/customers/{id}` | Customer details |
+| `POST /v1/payment_intents` | Create payment intent |
+| `GET /v1/charges` | List charges |
+| `POST /v1/refunds` | Create refund |
+| `GET /v1/invoices` | List invoices |
+| `POST /v1/subscriptions` | Create subscription |
+| `GET /v1/balance` | Account balance |
+
 ## Decision notes
 
 Best suited to online payments and billing and marketplace and platform payments. Before production, verify verify webhook signatures. use idempotency keys for safely retried writes. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
