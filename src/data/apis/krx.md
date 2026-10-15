@@ -21,7 +21,7 @@ protocols: ["REST"]
 bestFor: ["Korean stock market data", "KOSPI/KOSDAQ prices", "ETF information"]
 cautions: ["Documentation is primarily in Korean.", "Real-time data requires commercial license.", "Some endpoints change without notice."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://www.krx.co.kr/"]
+sourceUrls: ["https://www.krx.co.kr/", "https://www.krx.co.kr/main/main.jsp"]
 mutableFacts:
   - label: "Base"
     value: "https://www.krx.co.kr"
