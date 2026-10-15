@@ -53,3 +53,47 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to repository automation and pull-request and issue integrations. Before production, verify use fine-grained permissions. respect secondary limits and conditional requests. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: repo info and issues
+
+```python
+import httpx
+
+TOKEN = "your_github_token"  # fine-grained PAT recommended
+BASE = "https://api.github.com"
+HEADERS = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+}
+
+def get_repo(owner: str, repo: str) -> dict:
+    resp = httpx.get(f"{BASE}/repos/{owner}/{repo}", headers=HEADERS, timeout=30)
+    if resp.status_code == 404:
+        raise ValueError("Repo not found or no access")
+    resp.raise_for_status()
+    return resp.json()
+
+def list_issues(owner: str, repo: str, state: str = "open", per_page: int = 30) -> list[dict]:
+    """List issues. Paginate via the Link header for more pages."""
+    resp = httpx.get(
+        f"{BASE}/repos/{owner}/{repo}/issues",
+        headers=HEADERS,
+        params={"state": state, "per_page": per_page},
+        timeout=30,
+    )
+    if resp.status_code == 403 and "rate limit" in resp.text.lower():
+        reset = resp.headers.get("x-ratelimit-reset", "?")
+        raise RuntimeError(f"Rate limited until epoch {reset}")
+    resp.raise_for_status()
+    return resp.json()
+
+repo = get_repo("firewine", "api-atlas")
+print(repo["full_name"], "stars:", repo["stargazers_count"])
+```
+
+**Notes:**
+- Send `X-GitHub-Api-Version: 2022-11-28`; unauthenticated calls get 60 req/hour, authed 5000
+- Watch `x-ratelimit-remaining` / `x-ratelimit-reset` headers; secondary limits can 403 bursts
+- Pagination uses the `Link` header (`rel="next"`); don't guess page counts
+- Prefer fine-grained PATs with minimal repo scopes over classic tokens
