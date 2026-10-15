@@ -53,3 +53,38 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to transactional messaging and delivery-status workflows. Before production, verify regulatory registration may be required. validate twilio webhook signatures. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: send an SMS (basic auth)
+
+```python
+import httpx
+from httpx import BasicAuth
+
+ACCOUNT_SID = "your_account_sid"
+AUTH_TOKEN = "your_auth_token"
+FROM_NUMBER = "+15551234567"  # your Twilio number
+
+def send_sms(to: str, body: str) -> dict:
+    """Send an SMS. Twilio uses basic auth + form-encoded bodies."""
+    resp = httpx.post(
+        f"https://api.twilio.com/2010-04-01/Accounts/{ACCOUNT_SID}/Messages.json",
+        auth=BasicAuth(ACCOUNT_SID, AUTH_TOKEN),
+        data={"From": FROM_NUMBER, "To": to, "Body": body},
+        timeout=30,
+    )
+    if resp.status_code == 401:
+        raise RuntimeError("Invalid Account SID / Auth Token")
+    resp.raise_for_status()
+    msg = resp.json()
+    if msg.get("status") in ("failed", "undelivered"):
+        raise RuntimeError(f"SMS failed: {msg.get('error_message')}")
+    return {"sid": msg["sid"], "status": msg["status"]}
+
+print(send_sms("+15559876543", "Hello from the API!"))
+```
+
+**Notes:**
+- Basic auth with Account SID as username, Auth Token as password
+- Trial accounts can only message verified numbers and prepend a trial notice
+- The `2010-04-01` path segment is the API version — still current
+- Check message `status`/`error_code` after sending; 201 Created doesn't mean delivered
