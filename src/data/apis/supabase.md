@@ -50,6 +50,19 @@ Auto-generated REST and GraphQL data APIs backed by a project's Postgres schema,
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /rest/v1/{table}` | Query table rows |
+| `POST /rest/v1/{table}` | Insert rows |
+| `PATCH /rest/v1/{table}` | Update rows |
+| `DELETE /rest/v1/{table}` | Delete rows |
+| `POST /auth/v1/signup` | User signup |
+| `POST /auth/v1/token?grant_type=password` | User login |
+| `GET /auth/v1/user` | Current user |
+| `POST /storage/v1/object/{bucket}/{path}` | Upload file |
+
 ## Decision notes
 
 Best suited to postgres-backed applications and rapid crud apis with row-level security. Before production, verify never expose the service-role key. row-level security must be designed and tested. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
