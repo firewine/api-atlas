@@ -45,6 +45,17 @@ mutableFacts:
 
 DART (Data Analysis, Retrieval and Transfer System) is Korea's equivalent of the US SEC EDGAR — the official source for corporate filings, financial statements, and disclosures.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/list.json` | Filing list search |
+| `GET /api/company.json` | Company overview |
+| `GET /api/fnlttSinglAcntAll.json` | Full financial statements |
+| `GET /api/fnlttMultiAcnt.json` | Multi-company financials |
+| `GET /api/corpCode.xml` | Corp code mapping (XML) |
+| `GET /api/document.xml` | Filing document |
+
 ## Python example: company filings
 
 ```python
