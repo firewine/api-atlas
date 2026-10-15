@@ -1,0 +1,30 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/app/services/seibro_stock_dividend_source.py
+Scope: bounded source review, not a live provider response
+
+        async def total_count() -> int:
+            receipt = await self._request(client, "divStatInfoListCnt", LIST_TASK, parameters, result)
+            count = _singleton(receipt).get("LIST_CNT", "")
+            if not count.isdigit() or int(count) > MAX_DIVIDEND_PROVIDER_EVENTS:
+                raise SeibroStockSourceError("stock_total_count_invalid_or_exceeded")
+            return int(count)
+
+        total = await total_count()
+        rows: list[dict[str, str]] = []
+        seen: set[tuple[tuple[str, str], ...]] = set()
+        # Always fetch the exact terminal range beyond the pinned total.
+        for offset in range(0, total + PAGE_SIZE, PAGE_SIZE):
+            page_params = {**parameters, "START_PAGE": str(offset + 1), "END_PAGE": str(offset + PAGE_SIZE)}
+            page = _vector(await self._request(client, "divStatInfoPList", LIST_TASK, page_params, result))
+            if len(page) != min(PAGE_SIZE, max(0, total - offset)):
+                raise SeibroStockSourceError("stock_page_coverage_mismatch")
+            for row in page:
+                fingerprint = tuple(sorted(row.items()))
+                if fingerprint in seen:
+                    raise SeibroStockSourceError("stock_repeated_or_overlapping_page")
+                seen.add(fingerprint)
+            rows.extend(page)
+            await asyncio.sleep(0)
+        if len(rows) != total or await total_count() != total:
+            raise SeibroStockSourceError("stock_total_count_drift")
+        return rows

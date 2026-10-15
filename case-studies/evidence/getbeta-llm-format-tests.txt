@@ -1,0 +1,9 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/tests/test_llm_provider_bounds.py
+Scope: bounded source review, not a live provider response
+
+        assert result.provider == "openai"
+        anthropic_client.messages.create.assert_not_called()
+        forwarded = openai_client.chat.completions.create.call_args.kwargs
+        assert forwarded["response_format"] is response_format
+

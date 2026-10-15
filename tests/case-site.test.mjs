@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { stripVTControlCharacters } from 'node:util';
+import { parse } from 'yaml';
 import { caseRecipe, codeSnapshot, docSnapshot } from './fixtures/case-recipe.mjs';
 
 test('isolated generated case builds static HTML, linked profiles and sitemap; build checks reject mutations', async () => {
@@ -40,7 +41,13 @@ test('isolated generated case builds static HTML, linked profiles and sitemap; b
     assert.equal(distribution.status, 0, distribution.output);
     const valid = run('scripts/validate-guides.mjs');
     assert.equal(valid.status, 0, valid.output);
-    assert.match(valid.output, /10 guides, 3 reviewed cases/);
+    const sourceFiles = (await readdir(join(repo, 'src/data/guides'))).filter((name) => name.endsWith('.md'));
+    const sourceMetadata = await Promise.all(sourceFiles.map(async (name) => {
+      const source = await readFile(join(repo, 'src/data/guides', name), 'utf8');
+      return parse(source.match(/^---\n([\s\S]*?)\n---/)[1]);
+    }));
+    const caseCount = sourceMetadata.filter((entry) => entry.caseStudy).length + 1;
+    assert.match(valid.output, new RegExp(`${sourceFiles.length + 1} guides, ${caseCount} reviewed cases`));
     const built = join(root, 'dist/guides/fixture-empty-page/index.html');
     const html = await readFile(built, 'utf8');
     assert.match(html, /<h1[^>]*>Fixture API 빈 페이지 누락: empty_page 감지<\/h1>/);

@@ -1,0 +1,16 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/app/services/llm/base.py
+Scope: bounded source review, not a live provider response
+
+def provider_operation_deadline(timeout_s: float) -> float:
+    """Return the monotonic deadline shared by one logical operation."""
+    return time.monotonic() + timeout_s
+
+
+def remaining_provider_timeout(deadline: float) -> float:
+    """Return remaining operation time or fail before another SDK call."""
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise TimeoutError("LLM provider deadline exceeded")
+    return min(remaining, PROVIDER_TIMEOUT_SECONDS)
+

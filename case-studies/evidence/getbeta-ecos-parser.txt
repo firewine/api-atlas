@@ -1,0 +1,23 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/app/services/bok_exchange_rate_service.py
+Scope: bounded source review, not a live provider response
+
+                item_name = row.get('ITEM_NAME1') or row.get('ITEM_NAME2') or ''
+                item_name_lower = str(item_name).lower()
+                
+                # 미국달러 관련 항목 확인
+                if '미국달러' in item_name or 'usd' in item_name_lower:
+                    data_value = row.get('DATA_VALUE')
+                    if data_value:
+                        try:
+                            rate_value = float(str(data_value).replace(",", ""))
+                            logger.debug(f"Found USD rate: {item_name} = {rate_value}")
+                            return Decimal(str(rate_value))
+                        except (ValueError, TypeError):
+...
+            first_row = rows[0]
+            if isinstance(first_row, dict):
+                for key_candidate in ("DATA_VALUE", "DATA", "DATA_VAL", "DATA_VALUE_"):
+                    if key_candidate in first_row:
+                        try:
+                            rate_value = float(str(first_row[key_candidate]).replace(",", ""))

@@ -1,0 +1,7 @@
+Checked: 2026-10-16
+Source: https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=chat
+Scope: bounded source review, not a live provider response
+
+response_format
+json_object
+JSON mode will not guarantee the output matches any specific schema

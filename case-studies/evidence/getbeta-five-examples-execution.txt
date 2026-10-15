@@ -1,0 +1,15 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/api-atlas/blob/main/case-studies/evidence/getbeta-five-examples-execution.txt
+Scope: bounded source review, not a live provider response
+
+Checked: 2026-10-16
+Scope: deterministic reduced Python snippets; synthetic inputs; no network or provider SDK calls
+Python: 3.9.6
+Command: python3 tests/fixtures/check-getbeta-cases.py (code blocks supplied as JSON on stdin)
+Exit code: 0
+eodhd-dividend-delay-cache-refresh: synthetic fixture passed
+seibro-dividend-pagination-count-mismatch: synthetic fixture passed
+ecos-usd-currency-identity-validation: synthetic fixture passed
+llm-retry-fallback-shared-timeout-budget: synthetic fixture passed
+llm-structured-output-fallback-response-format: synthetic fixture passed
+

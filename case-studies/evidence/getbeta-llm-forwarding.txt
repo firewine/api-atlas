@@ -1,0 +1,14 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/app/services/llm/factory.py
+Scope: bounded source review, not a live provider response
+
+            response = call(
+                messages,
+                model=effective_model,
+                response_format=response_format,
+                temperature=temperature,
+                max_tokens=resolved_max_tokens,
+                timeout_s=remaining_timeout,
+                **({"before_attempt": guard_transport} if before_attempt is not None else {}),
+            )
+            ensure_provider_deadline(deadline)

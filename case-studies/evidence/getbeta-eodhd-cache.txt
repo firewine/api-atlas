@@ -1,0 +1,22 @@
+Checked: 2026-10-16
+Source: https://github.com/firewine/getbeta/blob/890c2531b76c2fad834da80c58ac166908afdde1/app/services/eodhd_api_client.py
+Scope: bounded source review, not a live provider response
+
+    _DIV_TTL = 60 * 60 * 24 * 7  # 7 days for dividend lists
+...
+        cache_key = f"bulk_div-v2-decimal:{exchange}:{date}"
+        if not skip_cache:
+            cached = self._store.get_cache(cache_key)
+            if exact_dividend_cache_rows(cached, bulk=True):
+                logger.info(f"Bulk dividends cache HIT for {exchange} on {date}")
+                return cached
+        try:
+            result = await self.get_bulk_dividends_result(exchange, date, use_demo=use_demo)
+        except httpx.HTTPStatusError as exc:
+            if raise_on_error:
+                raise RuntimeError(
+...
+    async def get_bulk_dividends_result(
+        self, exchange: str = "US", date: Optional[str] = None, *, use_demo: bool = False,
+    ) -> BulkDividendFetchResult:
+        """Uncached scheduled observation with explicit row rejection counts."""

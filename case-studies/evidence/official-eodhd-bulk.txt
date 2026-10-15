@@ -1,0 +1,6 @@
+Checked: 2026-10-16
+Source: https://eodhd.com/financial-apis/bulk-api-eod-splits-dividends
+Scope: bounded source review, not a live provider response
+
+One request, one exchange, one day.
+type=dividends

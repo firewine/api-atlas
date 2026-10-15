@@ -83,3 +83,34 @@ test('Guide body and matching article metadata are available without JavaScript 
     expect(article.mainEntityOfPage).toBe(await page.locator('link[rel="canonical"]').getAttribute('href'));
   } finally { await context.close(); }
 });
+
+test('All five requested practical cases are discoverable and readable without JavaScript', async ({ browser }) => {
+  const cases = [
+    ['eodhd-dividend-delay-cache-refresh', 'EODHD missing dividend data: handle delayed updates and cache refreshes'],
+    ['seibro-dividend-pagination-count-mismatch', 'SEIBRO dividend API pagination: reconcile count and collected rows'],
+    ['ecos-usd-currency-identity-validation', 'ECOS exchange rate API: prevent selecting a non-USD currency'],
+    ['llm-retry-fallback-shared-timeout-budget', 'LLM API retries and fallback: avoid applying timeout budgets twice'],
+    ['llm-structured-output-fallback-response-format', 'LLM structured output: preserve response_format through fallback'],
+  ];
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    await page.goto(`http://127.0.0.1:4173${basePath}guides/`);
+    for (const [slug, title] of cases) {
+      await expect(page.getByRole('link', { name: title, exact: false })).toHaveAttribute('href', `${basePath}guides/${slug}/`);
+    }
+    for (const [slug, title] of cases) {
+      const response = await page.goto(`http://127.0.0.1:4173${basePath}guides/${slug}/`);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+      await expect(page.locator('[data-guide-body]').getByRole('heading', { level: 2 })).toHaveText(['Symptoms', 'Cause', 'Safe resolution', 'Verification', 'Limitations']);
+      await expect(page.locator('[data-guide-body] pre code')).toBeVisible();
+      await expect(page.locator('[data-guide-author]')).toHaveText('API Atlas');
+      const canonical = new URL(`${basePath}guides/${slug}/`, process.env.SITE_URL ?? 'https://api-atlas.pages.dev').href;
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', canonical);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    }
+    await page.goto(`http://127.0.0.1:4173${basePath}apis/seibro/`);
+    await expect(page.getByRole('link', { name: cases[1][1], exact: true })).toHaveAttribute('href', `${basePath}guides/${cases[1][0]}/`);
+  } finally { await context.close(); }
+});

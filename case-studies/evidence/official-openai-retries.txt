@@ -1,0 +1,6 @@
+Checked: 2026-10-16
+Source: https://developers.openai.com/api/reference/python
+Scope: bounded source review, not a live provider response
+
+max_retries=0
+0 disables retries.
