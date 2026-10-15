@@ -50,6 +50,17 @@ Mapping platform APIs for maps, tiles, styles, geocoding, navigation, routing, a
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /geocoding/v5/mapbox.places/{query}.json` | Forward geocoding |
+| `GET /geocoding/v5/mapbox.places/{lng},{lat}.json` | Reverse geocoding |
+| `GET /directions/v5/mapbox/driving/{coords}` | Driving directions |
+| `GET /directions/v5/mapbox/walking/{coords}` | Walking directions |
+| `GET /styles/v1/{user}/{style}` | Map styles |
+| `GET /tilesets/v1/{user}.{tileset}` | Tilesets |
+
 ## Decision notes
 
 Best suited to custom maps and navigation and geocoding and routing. Before production, verify token scopes and url restrictions matter. caching and data-display terms are product-specific. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
