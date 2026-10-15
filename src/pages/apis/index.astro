@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProviderCard from '../../components/ProviderCard.astro';
 import { categories } from '../../data/categories';
 import { sortApis } from '../../lib/content';
+const base = import.meta.env.BASE_URL;
 
 const apis = sortApis(await getCollection('apis'));
 ---
@@ -17,7 +18,7 @@ const apis = sortApis(await getCollection('apis'));
       <h1 class="page-title">The API catalog.</h1>
       <p class="lede">Each profile is an editorial summary with visible official sources and dated mutable facts.</p>
       <nav class="filter-row" aria-label="API categories">
-        <a class="active" href="/apis/">All</a>
+        <a class="active" href={`${base}apis/`}>All</a>
         {Object.entries(categories).map(([slug, category]) => <a href={`/categories/${slug}/`}>{category.name}</a>)}
       </nav>
     </div>
