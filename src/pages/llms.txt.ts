@@ -6,6 +6,8 @@ export const prerender = true;
 
 export const GET: APIRoute = async ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
+  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
+  const abs = (p: string) => baseHref + p.replace(/^\//, '');
   const apis = sortApis(await getCollection('apis'));
   const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
   const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
@@ -15,23 +17,23 @@ export const GET: APIRoute = async ({ site }) => {
     '> A concise, static, source-backed catalog of APIs. Mutable facts show official sources and verification dates.',
     '',
     '## Machine-readable indexes',
-    `- [Catalog JSON](${new URL('/api/catalog.json', origin).href}): Normalized provider catalog`,
-    `- [Changes JSON](${new URL('/api/changes.json', origin).href}): Meaningful catalog and policy changes`,
+    `- [Catalog JSON](${abs('/api/catalog.json')}): Normalized provider catalog`,
+    `- [Changes JSON](${abs('/api/changes.json')}): Meaningful catalog and policy changes`,
     '',
     '## Provider profiles',
-    ...apis.map((api) => `- [${api.data.name}](${new URL(`/apis/${api.id}/`, origin).href}): ${api.data.summary}`),
+    ...apis.map((api) => `- [${api.data.name}](${abs(`/apis/${api.id}/`)}): ${api.data.summary}`),
     '',
     '## Comparisons',
     ...comparisons.map(
-      (c) => `- [${c.data.title}](${new URL(`/compare/${c.id}/`, origin).href}): ${c.data.verdict}`,
+      (c) => `- [${c.data.title}](${abs(`/compare/${c.id}/`)}): ${c.data.verdict}`,
     ),
     '',
     '## Guides',
-    ...guides.map((guide) => `- [${guide.data.title}](${new URL(`/guides/${guide.id}/`, origin).href}): ${guide.data.summary}`),
+    ...guides.map((guide) => `- [${guide.data.title}](${abs(`/guides/${guide.id}/`)}): ${guide.data.summary}`),
     '',
     '## Policies',
-    `- [Source and crawler policy](${new URL('/sources/', origin).href})`,
-    `- [About API Atlas](${new URL('/about/', origin).href})`,
+    `- [Source and crawler policy](${abs('/sources/')})`,
+    `- [About API Atlas](${abs('/about/')})`,
     '',
     'Official vendor documentation remains authoritative. API Atlas does not mirror full vendor docs.',
   ];
