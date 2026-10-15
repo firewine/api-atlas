@@ -50,6 +50,19 @@ Method-oriented APIs for Slack messages, conversations, users, files, views, and
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Method | Description |
+|--------|-------------|
+| `chat.postMessage` | Send a message |
+| `chat.update` | Update a message |
+| `conversations.list` | List channels |
+| `conversations.history` | Channel message history |
+| `conversations.members` | Channel members |
+| `users.list` | List workspace users |
+| `files.upload` | Upload a file |
+| `auth.test` | Verify token |
+
 ## Decision notes
 
 Best suited to workspace automation and interactive slack applications. Before production, verify request only necessary oauth scopes. verify signed inbound requests. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
