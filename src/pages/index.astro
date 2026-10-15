@@ -54,7 +54,7 @@ const featured = ['openai', 'eodhd', 'bok-ecos', 'massive', 'gemini', 'yfinance'
         {Object.entries(categories).map(([slug, category]) => {
           const count = apis.filter((api) => api.data.category === slug).length;
           return (
-            <a class="category-card" href={`/categories/${slug}/`} style={`--card-accent:${category.accent}`}>
+            <a class="category-card" href={`${base}/categories/${slug}/`} style={`--card-accent:${category.accent}`}>
               <span class="category-count">{String(count).padStart(2, '0')} providers</span>
               <h3>{category.name}</h3>
               <p>{category.description}</p>
@@ -73,7 +73,7 @@ const featured = ['openai', 'eodhd', 'bok-ecos', 'massive', 'gemini', 'yfinance'
       </div>
       <div class="guide-grid">
         {guides.slice(0, 4).map((guide) => (
-          <a class="guide-card" href={`/guides/${guide.id}/`}>
+          <a class="guide-card" href={`${base}/guides/${guide.id}/`}>
             <span class="category-count">Guide {String(guide.data.order).padStart(2, '0')}</span>
             <h3>{guide.data.title}</h3>
             <p>{guide.data.summary}</p>
