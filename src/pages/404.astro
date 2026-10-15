@@ -3,5 +3,5 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout title="Not found" description="This API Atlas page does not exist." noIndex={true}>
-  <section class="hero"><div class="shell"><span class="eyebrow">404</span><h1 class="page-title">That route fell off the map.</h1><p class="lede">Try the catalog or search the atlas.</p><div class="hero-actions"><a class="button" href={`${base}apis/`}>Browse APIs</a><a class="button secondary" href={`${base}search/`}>Search</a></div></div></section>
+  <section class="hero"><div class="shell"><span class="eyebrow">404</span><h1 class="page-title">That route fell off the map.</h1><p class="lede">Try the catalog or search the atlas.</p><div class="hero-actions"><a class="button" href={`${base}/apis/`}>Browse APIs</a><a class="button secondary" href={`${base}/search/`}>Search</a></div></div></section>
 </BaseLayout>
