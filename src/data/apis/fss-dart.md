@@ -3,7 +3,7 @@ name: "FSS DART API"
 provider: "Financial Supervisory Service"
 category: "public-data"
 status: "active"
-officialDocs: "https://opendart.fss.or.kr/"
+officialDocs: "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
 homepage: "https://dart.fss.or.kr/"
 baseUrl: "https://opendart.fss.or.kr/api"
 auth: "API key (crtfc_key) in query parameter"
@@ -14,18 +14,30 @@ errors: "status/message fields in response"
 webhooks: "Not supported"
 sdks: ["Community Python wrappers"]
 summary: "Korea's official corporate filing system (like US EDGAR) — financial statements, disclosures, and company info for KOSPI/KOSDAQ listed companies."
-pricing: "Free with API key registration"
-rateLimit: "10,000 requests/day per key"
+pricing: "Generally free with an approved key; FSS may announce paid services"
+rateLimit: "Error 020 generally occurs after 20,000 requests; configured limits may differ"
 formats: ["XML", "JSON"]
 protocols: ["REST"]
 bestFor: ["Korean company filings", "Financial statements (XBRL)", "Disclosure search"]
-cautions: ["API key required (free registration at opendart.fss.or.kr).", "Documentation is in Korean.", "XBRL parsing requires additional libraries."]
+cautions: ["API key required; review the issued key limit.", "Documentation is in Korean.", "XBRL parsing requires additional libraries."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://opendart.fss.or.kr/", "https://dart.fss.or.kr/"]
+sourceUrls: ["https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001", "https://opendart.fss.or.kr/intro/terms.do", "https://opendart.fss.or.kr/"]
 mutableFacts:
-  - label: "Rate limit"
-    value: "10,000 requests/day"
-    sourceUrl: "https://opendart.fss.or.kr/"
+  - label: "Base URL"
+    value: "https://opendart.fss.or.kr/api"
+    sourceUrl: "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "crtfc_key query parameter with an issued API key"
+    sourceUrl: "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Generally free; FSS terms allow announced paid services"
+    sourceUrl: "https://opendart.fss.or.kr/intro/terms.do"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "Error 020 generally after 20,000 requests; configured limits may differ"
+    sourceUrl: "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
     verifiedAt: "2026-10-15"
 ---
 
@@ -89,7 +101,7 @@ def get_financial_statement(corp_code: str, bsns_year: str, reprt_code: str = "1
 ```
 
 **Notes:**
-- Free API key at [opendart.fss.or.kr](https://opendart.fss.or.kr/) — 10,000 requests/day
+- Apply for an API key at [OpenDART](https://opendart.fss.or.kr/). The official guide describes error 020 generally after 20,000 requests, while individual configured limits may differ.
 - `corp_code` is DART's internal ID, not the stock ticker — download `corpCode.xml` to map
 - Financial statements available in XBRL; JSON API returns key account data
 - All documentation in Korean; use browser translation if needed

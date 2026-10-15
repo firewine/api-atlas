@@ -3,10 +3,10 @@ name: "KRX API"
 provider: "Korea Exchange"
 category: "market-data"
 status: "active"
-officialDocs: "https://www.krx.co.kr/"
-homepage: "https://www.krx.co.kr/"
-baseUrl: "https://www.krx.co.kr/api"
-auth: "Varies by data product; some require registration"
+officialDocs: "https://openapi.krx.co.kr/contents/OPP/INFO/service/OPPINFO004.cmd"
+homepage: "https://openapi.krx.co.kr/"
+baseUrl: "Service-specific URL in the approved KRX OPEN API specification"
+auth: "Issued key in AUTH_KEY request header; service use requires approval"
 versioning: "Product-specific"
 resourceGroups: ["Stock prices", "ETF/ETN", "Derivatives", "Bond", "Market statistics"]
 pagination: "Date-range based queries"
@@ -14,24 +14,36 @@ errors: "Korean-language error messages"
 webhooks: "Not supported"
 sdks: ["Community Python wrappers"]
 summary: "Official market data from Korea Exchange — KOSPI, KOSDAQ, ETF prices, and trading statistics."
-pricing: "Free for delayed data; real-time requires license"
-rateLimit: "Undisclosed; use reasonable request rates"
-formats: ["JSON", "CSV", "XML"]
+pricing: "No blanket API price stated in reviewed terms; noncommercial use only"
+rateLimit: "Up to 10,000 requests per key per day under current terms"
+formats: ["JSON", "XML"]
 protocols: ["REST"]
 bestFor: ["Korean stock market data", "KOSPI/KOSDAQ prices", "ETF information"]
-cautions: ["Documentation is primarily in Korean.", "Real-time data requires commercial license.", "Some endpoints change without notice."]
+cautions: ["KRX OPEN API terms restrict use to noncommercial purposes and prohibit third-party redistribution.", "Authentication key and service approval are required.", "Use the approved service specification for its exact request URL."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://www.krx.co.kr/", "https://www.krx.co.kr/main/main.jsp"]
+sourceUrls: ["https://openapi.krx.co.kr/contents/OPP/INFO/service/OPPINFO004.cmd", "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp", "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO003.jsp", "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=JvJFzlAENzZlPBDNGAWC"]
 mutableFacts:
-  - label: "Base"
-    value: "https://www.krx.co.kr"
-    sourceUrl: "https://www.krx.co.kr/"
+  - label: "Base URL"
+    value: "Service-specific URL; consult the approved API specification"
+    sourceUrl: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO003.jsp"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "Issued key in AUTH_KEY request header; service approval required"
+    sourceUrl: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=JvJFzlAENzZlPBDNGAWC"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "No blanket fee stated in reviewed OPEN API terms; noncommercial use only"
+    sourceUrl: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "10,000 requests or fewer per key per day (00:00–24:00)"
+    sourceUrl: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp"
     verifiedAt: "2026-10-15"
 ---
 
 # KRX API
 
-Korea Exchange provides official Korean market data. The primary web interface is in Korean; API access patterns vary by data product.
+Korea Exchange provides official Korean market data. Use the official KRX OPEN API portal to request a key and approval for each service. The request URL is specific to the approved API specification.
 
 ## Python example: KRX stock data via pykrx
 
@@ -56,5 +68,5 @@ print(f"ETF count: {len(etf_tickers)}")
 
 **Notes:**
 - `pykrx` scrapes KRX web endpoints; not an official API client
-- For production, evaluate KRX's official data products and licensing
+- The OPEN API terms limit use to noncommercial purposes, prohibit third-party redistribution, and cap each key at 10,000 requests per day. Review the official terms before integrating
 - Korean market holidays differ from US — use `pykrx`'s calendar or KRX holiday data

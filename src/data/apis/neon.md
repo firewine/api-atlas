@@ -14,18 +14,30 @@ errors: "Standard HTTP errors with JSON detail"
 webhooks: "Not natively supported"
 sdks: ["JavaScript", "Python via community"]
 summary: "Serverless PostgreSQL platform with branching, autoscaling, and a management REST API."
-pricing: "Free tier with usage limits, paid plans for higher compute/storage"
-rateLimit: "API rate limits per account tier"
+pricing: "Free: 100 projects, 100 CU-hours/month and 1 GB storage per project; paid usage-based Launch/Scale plans"
+rateLimit: "700 requests/minute; additional route and operation burst limits apply"
 formats: ["JSON"]
 protocols: ["REST", "PostgreSQL wire protocol"]
 bestFor: ["Serverless Postgres", "Database branching for dev/test", "Auto-suspending databases"]
 cautions: ["Direct connections and pooled connections behave differently — test both.", "Free tier computes suspend after inactivity; first query has cold-start latency.", "Always use SSL with verify-full in production."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://neon.com/docs/reference/api", "https://neon.com/docs/connect/connect-from-any-app"]
+sourceUrls: ["https://neon.com/docs/reference/api", "https://neon.com/docs/reference/api/get-started", "https://neon.com/docs/reference/api/key-concepts", "https://neon.com/pricing"]
 mutableFacts:
-  - label: "Management API base"
+  - label: "Base URL"
     value: "https://console.neon.tech/api/v2"
-    sourceUrl: "https://neon.com/docs/reference/api"
+    sourceUrl: "https://neon.com/docs/reference/api/get-started"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "API key in Authorization: Bearer header"
+    sourceUrl: "https://neon.com/docs/reference/api/get-started"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Free: 100 projects, 100 CU-hours/month and 1 GB storage per project; Launch/Scale usage-based"
+    sourceUrl: "https://neon.com/pricing"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "700 requests/minute; 40 requests/second burst per route; key creation 10 requests/second"
+    sourceUrl: "https://neon.com/docs/reference/api/key-concepts"
     verifiedAt: "2026-10-15"
 ---
 

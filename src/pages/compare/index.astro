@@ -2,8 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { sortApis, type ApiEntry } from '../../lib/content';
-const base = import.meta.env.BASE_URL;
+import { formatDate, sortApis, type ApiEntry } from '../../lib/content';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const apis = sortApis(await getCollection('apis'));
 const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
@@ -20,7 +20,7 @@ const rows: Array<[string, (api: ApiEntry) => string]> = [
 
 <BaseLayout title="Compare APIs" description="Compare normalized API facts and open source-backed head-to-head guides.">
   <header class="page-hero"><div class="shell">
-    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'Compare' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Compare' }]} />
     <span class="eyebrow">Decision desk</span><h1 class="page-title">Compare without the marketing fog.</h1>
     <p class="lede">Use the matrix for orientation, then open a substantive comparison for tradeoffs and source context.</p>
   </div></header>
@@ -41,21 +41,8 @@ const rows: Array<[string, (api: ApiEntry) => string]> = [
   <section class="section" style="background:var(--paper-deep)"><div class="shell">
     <div class="section-heading"><div><span class="eyebrow">Head to head</span><h2>Substantive comparisons.</h2></div><p>Every comparison points back to provider-level official sources.</p></div>
     <div class="comparison-grid">{comparisons.map((comparison) => <a class="comparison-card" href={`${base}/compare/${comparison.id}/`}>
-      <span class="category-count">Verified 2026-09-13</span><h3>{comparison.data.title}</h3><p>{comparison.data.summary}</p>
+      <span class="category-count">Verified {formatDate(comparison.data.verifiedAt)}</span><h3>{comparison.data.title}</h3><p>{comparison.data.summary}</p>
     </a>)}</div>
   </div></section>
-  <script is:inline>
-    const boxes = Array.from(document.querySelectorAll('.compare-picker input'));
-    const note = document.querySelector('#compare-note');
-    const refresh = (changed) => {
-      let selected = boxes.filter((box) => box.checked);
-      if (selected.length > 4 && changed) changed.checked = false;
-      selected = boxes.filter((box) => box.checked);
-      const ids = new Set(selected.map((box) => box.value));
-      document.querySelectorAll('[data-provider]').forEach((cell) => { cell.hidden = !ids.has(cell.dataset.provider); });
-      note.textContent = selected.length < 2 ? 'Select at least two providers.' : `${selected.length} providers selected.`;
-    };
-    boxes.forEach((box) => box.addEventListener('change', () => refresh(box)));
-    refresh();
-  </script>
+  <script type="module" src={`${base}/scripts/compare.js`} is:inline></script>
 </BaseLayout>

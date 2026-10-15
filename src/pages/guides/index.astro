@@ -2,14 +2,14 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout title="API integration guides" description="Original, task-oriented guides for choosing, integrating, and maintaining APIs.">
   <header class="page-hero"><div class="shell">
-    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'Guides' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Guides' }]} />
     <span class="eyebrow">{guides.length} practical playbooks</span><h1 class="page-title">Guides for the work between endpoints.</h1>
     <p class="lede">Selection, security, pagination, retries, verification, specifications, and change tracking.</p>
   </div></header>

@@ -6,8 +6,8 @@ export const prerender = true;
 
 export const GET: APIRoute = async ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
-  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
-  const abs = (p: string) => baseHref + p.replace(/^\//, '');
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const abs = (p: string) => new URL(`${base}${p}`, origin).href;
   const apis = sortApis(await getCollection('apis'));
   const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
   const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);

@@ -1,6 +1,6 @@
 # API Atlas
 
-API Atlas is a static-first, source-backed API knowledge base. The catalog ships 25 provider profiles, category indexes, comparisons, integration guides, a change ledger, Pagefind search, and machine-readable catalog surfaces.
+API Atlas is a static-first, source-backed API knowledge base. The catalog ships 30 provider profiles, category indexes, comparisons, integration guides, a change ledger, Pagefind search, and machine-readable catalog surfaces.
 
 ## Local development
 
@@ -36,7 +36,12 @@ Machine surfaces:
 
 ## Deployment
 
-The output is static and deployable from `dist/` to Cloudflare Pages. Set `SITE_URL` to the production HTTPS origin during the build so canonical links, the sitemap, robots file, and `llms.txt` use the final domain.
+The output is static and deployable from `dist/` to Cloudflare Pages. Set `SITE_URL` to the production HTTPS origin and `BASE_PATH` to the public mount path during the build. These values determine internal links, canonical URLs, the sitemap, robots file, `llms.txt`, and the search index URLs. Rebuild when the mount path changes.
+
+```bash
+SITE_URL=https://api-atlas.pages.dev BASE_PATH=/ npm run validate
+SITE_URL=https://getbeta.app BASE_PATH=/api-atlas/ npm run validate
+```
 
 The exact Pages setup and post-deploy verification procedure are documented in `docs/CLOUDFLARE_PAGES.md`.
 

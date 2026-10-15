@@ -5,7 +5,7 @@ category: "developer-platform"
 status: "active"
 officialDocs: "https://docs.oracle.com/en-us/iaas/api/"
 homepage: "https://www.oracle.com/cloud/"
-baseUrl: "https://iaas.{region}.oraclecloud.com"
+baseUrl: "Service-specific regional endpoints, e.g. https://iaas.us-ashburn-1.oraclecloud.com"
 auth: "RSA key pair with API key fingerprint, signed requests"
 versioning: "Service-specific API versions in endpoint paths"
 resourceGroups: ["Compute", "Networking", "Block Storage", "Identity", "Database"]
@@ -15,17 +15,33 @@ webhooks: "Events service with Notifications integration"
 sdks: ["Python", "Java", "Go", "TypeScript", "Ruby", ".NET"]
 summary: "REST APIs for provisioning and managing Oracle Cloud Infrastructure resources including compute instances, networking, and storage."
 pricing: "Pay-as-you-go plus Always Free tier (Ampere A1, AMD E2 Micro)"
-rateLimit: "Service-specific throttling with 429 responses and retry-after"
+rateLimit: "Many APIs throttle with HTTP 429; use exponential backoff"
 formats: ["JSON"]
 protocols: ["REST"]
 bestFor: ["Cloud infrastructure automation", "Free tier ARM instances", "Enterprise Oracle workloads"]
-cautions: ["Availability domain names include a prefix (e.g. ncBE:US-SANJOSE-1-AD-1) — using it raw in query parameters returns 401.", "Free tier A1 capacity is frequently exhausted; expect OutOfCapacity errors and retry.", "API signing requires precise header canonicalization."]
+cautions: ["Always Free A1 availability depends on home-region capacity.", "API requests require signed authentication.", "Many API requests throttle with HTTP 429; use exponential backoff."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://docs.oracle.com/en-us/iaas/api/", "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/signingrequests.htm"]
+sourceUrls: ["https://docs.oracle.com/en-us/iaas/api/", "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/usingapi.htm", "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/signingrequests.htm", "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm"]
 mutableFacts:
+  - label: "Base URL"
+    value: "Service-specific regional endpoint; iaas.us-ashburn-1.oraclecloud.com is one example"
+    sourceUrl: "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/usingapi.htm"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "Signed API requests with an RSA signing key"
+    sourceUrl: "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/usingapi.htm"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Pay As You Go plus Always Free resources; A1 includes 1,500 OCPU-hours and 9,000 GB-hours/month"
+    sourceUrl: "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "Many API requests return HTTP 429 when throttled; use exponential backoff"
+    sourceUrl: "https://docs.oracle.com/en-us/iaas/Content/API/Concepts/usingapi.htm"
+    verifiedAt: "2026-10-15"
   - label: "Always Free A1 shape"
-    value: "VM.Standard.A1.Flex, up to 4 OCPU / 24 GB RAM"
-    sourceUrl: "https://www.oracle.com/cloud/free/"
+    value: "VM.Standard.A1.Flex; Always Free tenancies: 2 OCPUs and 12 GB memory total"
+    sourceUrl: "https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm"
     verifiedAt: "2026-10-15"
 ---
 
@@ -61,11 +77,11 @@ oci compute instance launch \
 
 ## Real-world notes
 
-**Availability domain prefix.** The AD name as shown in the Console includes a tenancy-specific prefix (e.g. `ncBE:US-SANJOSE-1-AD-1`). Passing the bare `US-SANJOSE-1-AD-1` or misusing the prefixed form in query parameters can return 401. Use the exact value from `oci iam availability-domain list`.
+**Availability domains.** Use the availability domain name returned for your tenancy and region by `oci iam availability-domain list`.
 
-**Out of capacity.** Free tier A1 shapes are capacity-constrained. `OutOfCapacity` / `TooManyRequests` are normal — implement a retry loop with backoff rather than treating them as fatal errors.
+**Always Free A1.** The current allowance for Always Free tenancies is 2 OCPUs and 12 GB memory total. A1 capacity in the home region can be temporarily unavailable. Handle throttling with exponential backoff.
 
-**Hung calls.** Launch calls can occasionally hang with no response. Wrap CLI invocations in a timeout (e.g. `timeout 150`) and retry.
+**API endpoints.** OCI uses service-specific regional endpoints; `iaas` is one example, not a universal base URL.
 
 ## Pagination
 

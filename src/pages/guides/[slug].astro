@@ -3,7 +3,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { formatDate } from '../../lib/content';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export async function getStaticPaths() {
   const guides = await getCollection('guides');
@@ -23,7 +23,7 @@ const articleSchema = {
 
 <BaseLayout title={guide.data.title} description={guide.data.summary} jsonLd={articleSchema}>
   <header class="page-hero"><div class="narrow">
-    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'Guides', href: '/guides/' }, { label: guide.data.title }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Guides', href: `${base}/guides/` }, { label: guide.data.title }]} />
     <span class="eyebrow">Guide {String(guide.data.order).padStart(2, '0')} · updated {formatDate(guide.data.updatedAt)}</span>
     <h1 class="page-title">{guide.data.title}</h1><p class="lede">{guide.data.summary}</p>
   </div></header>

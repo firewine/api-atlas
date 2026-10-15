@@ -4,8 +4,8 @@ export const prerender = true;
 
 export const GET: APIRoute = ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
-  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
-  const abs = (p: string) => baseHref + p.replace(/^\//, '');
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const abs = (p: string) => new URL(`${base}${p}`, origin).href;
   const body = `# Search and retrieval crawlers are allowed; training controls are separate.
 # Policy verified against official crawler documentation on 2026-09-13.
 User-agent: OAI-SearchBot

@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout title="About" description="API Atlas is a static-first, source-backed API knowledge base.">
   <header class="page-hero"><div class="narrow">
-    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'About' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'About' }]} />
     <span class="eyebrow">About API Atlas</span><h1 class="page-title">A map, not another maze.</h1>
     <p class="lede">Vendor docs are authoritative but optimized for their own product. API Atlas is the concise decision layer that points back to them.</p>
   </div></header>

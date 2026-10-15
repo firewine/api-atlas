@@ -15,17 +15,29 @@ webhooks: "Deploy hooks via deploy hook URLs"
 sdks: ["Community clients"]
 summary: "Cloud platform API for managing web services, databases, background workers, and deployments."
 pricing: "Free tier with limitations, paid plans per service type"
-rateLimit: "Rate limits per API key"
+rateLimit: "Endpoint-specific; most GET requests share 400/minute per user"
 formats: ["JSON"]
 protocols: ["REST"]
 bestFor: ["Simple cloud deployments", "Docker web services", "Preview environments"]
-cautions: ["Free tier services sleep after 15 minutes of inactivity.", "Auto-deploy is off by default — verify deploy settings.", "Secret Files and environment variables are managed separately."]
+cautions: ["Free web services spin down after 15 minutes without inbound traffic.", "API rate limits vary by endpoint and usually apply per user; deploy hooks are per service.", "Review the current service plan and deployment settings before production use."]
 verifiedAt: "2026-10-15"
-sourceUrls: ["https://render.com/docs/api", "https://render.com/docs/free"]
+sourceUrls: ["https://render.com/docs/api", "https://render.com/docs/free", "https://api-docs.render.com/reference/rate-limiting", "https://api-docs.render.com/reference/list-services"]
 mutableFacts:
-  - label: "Management API base"
+  - label: "Base URL"
     value: "https://api.render.com/v1"
+    sourceUrl: "https://api-docs.render.com/reference/list-services"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "API key in Authorization: Bearer header"
     sourceUrl: "https://render.com/docs/api"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Free web services have limits; paid plans vary by service type"
+    sourceUrl: "https://render.com/docs/free"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "Endpoint-specific; most GET requests share 400/minute per user"
+    sourceUrl: "https://api-docs.render.com/reference/rate-limiting"
     verifiedAt: "2026-10-15"
 ---
 
@@ -51,6 +63,6 @@ curl -X POST "https://api.render.com/deploy/srv-xxxx?key=yyyy"
 
 **Free tier sleep.** Free web services sleep after 15 minutes without requests. The first request after sleep triggers a cold start (can take 30+ seconds). Don't use uptime checks alone to prove availability.
 
-**render.yaml vs dashboard.** A `render.yaml` blueprint defines initial defaults, but dashboard changes override it. Don't assume the YAML reflects current production settings — check the dashboard.
+**Rate limits.** Limits vary by endpoint. Most GET requests share a 400-per-minute limit per user; deploy hooks are limited per service. Handle HTTP 429 with backoff.
 
-**Secret Files.** Sensitive values go in Secret Files (mounted at `/etc/secrets/`), not plain environment variables. Reference them via `*_FILE` env vars in your app.
+**API keys.** Keep keys in a secret store and revoke any exposed key through Render account settings.

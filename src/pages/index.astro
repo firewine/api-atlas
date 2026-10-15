@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProviderCard from '../components/ProviderCard.astro';
 import { categories } from '../data/categories';
 import { sortApis } from '../lib/content';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const apis = sortApis(await getCollection('apis'));
 const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
@@ -47,7 +47,7 @@ const featured = ['openai', 'eodhd', 'bok-ecos', 'massive', 'gemini', 'yfinance'
   <section class="section">
     <div class="shell">
       <div class="section-heading">
-        <div><span class="eyebrow">Browse by problem</span><h2>Four useful starting points.</h2></div>
+        <div><span class="eyebrow">Browse by problem</span><h2>Explore by problem.</h2></div>
         <p>Categories are deliberately broad in the MVP. The provider page holds the nuance.</p>
       </div>
       <div class="category-grid">

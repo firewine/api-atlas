@@ -14,6 +14,7 @@ export const sortApis = (apis: ApiEntry[]) =>
   [...apis].sort((a, b) => a.data.name.localeCompare(b.data.name));
 
 export function apiToJson(api: ApiEntry) {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return {
     id: api.id,
     name: api.data.name,
@@ -44,7 +45,7 @@ export function apiToJson(api: ApiEntry) {
       ...fact,
       verifiedAt: formatDate(fact.verifiedAt),
     })),
-    humanUrl: `/apis/${api.id}/`,
-    jsonUrl: `/api/providers/${api.id}.json`,
+    humanUrl: `${base}/apis/${api.id}/`,
+    jsonUrl: `${base}/api/providers/${api.id}.json`,
   };
 }

@@ -2,7 +2,7 @@
 import type { ApiEntry } from '../lib/content';
 import { formatDate } from '../lib/content';
 import { getCategory } from '../data/categories';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 interface Props {
   api: ApiEntry;

@@ -14,8 +14,8 @@ const escapeXml = (value: string) => value
 
 export const GET: APIRoute = async ({ site }) => {
   const origin = site ?? new URL('https://api-atlas.pages.dev');
-  const baseHref = origin.href.endsWith('/') ? origin.href : origin.href + '/';
-  const abs = (p: string) => baseHref + p.replace(/^\//, '');
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const abs = (p: string) => new URL(`${base}${p}`, origin).href;
   const [apis, guides, comparisons] = await Promise.all([
     getCollection('apis'),
     getCollection('guides'),
