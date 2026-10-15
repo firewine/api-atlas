@@ -50,6 +50,17 @@ Programmable messaging APIs for SMS, MMS, WhatsApp, media, and delivery callback
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /2010-04-01/Accounts/{sid}/Messages.json` | Send SMS/MMS |
+| `GET /2010-04-01/Accounts/{sid}/Messages.json` | List messages |
+| `GET /2010-04-01/Accounts/{sid}/Messages/{sid}.json` | Message details |
+| `POST /2010-04-01/Accounts/{sid}/Calls.json` | Make a call |
+| `GET /2010-04-01/Accounts/{sid}/Calls.json` | List calls |
+| `GET /2010-04-01/Accounts/{sid}.json` | Account details |
+
 ## Decision notes
 
 Best suited to transactional messaging and delivery-status workflows. Before production, verify regulatory registration may be required. validate twilio webhook signatures. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
