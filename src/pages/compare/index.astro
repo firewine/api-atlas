@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { sortApis, type ApiEntry } from '../../lib/content';
+const base = import.meta.env.BASE_URL;
 
 const apis = sortApis(await getCollection('apis'));
 const comparisons = (await getCollection('comparisons')).sort((a, b) => a.data.order - b.data.order);
@@ -32,14 +33,14 @@ const rows: Array<[string, (api: ApiEntry) => string]> = [
     <p id="compare-note" role="status" class="category-count" data-pagefind-ignore>Select between two and four providers.</p>
     <div class="table-scroll">
       <table class="compare-table">
-        <thead><tr><th scope="col">Fact</th>{apis.map((api, index) => <th scope="col" data-provider={api.id} hidden={index >= 3}><a href={`/apis/${api.id}/`}>{api.data.name}</a></th>)}</tr></thead>
+        <thead><tr><th scope="col">Fact</th>{apis.map((api, index) => <th scope="col" data-provider={api.id} hidden={index >= 3}><a href={`${base}/apis/${api.id}/`}>{api.data.name}</a></th>)}</tr></thead>
         <tbody>{rows.map(([label, value]) => <tr><th scope="row">{label}</th>{apis.map((api, index) => <td data-provider={api.id} hidden={index >= 3}>{value(api)}</td>)}</tr>)}</tbody>
       </table>
     </div>
   </div></section>
   <section class="section" style="background:var(--paper-deep)"><div class="shell">
     <div class="section-heading"><div><span class="eyebrow">Head to head</span><h2>Substantive comparisons.</h2></div><p>Every comparison points back to provider-level official sources.</p></div>
-    <div class="comparison-grid">{comparisons.map((comparison) => <a class="comparison-card" href={`/compare/${comparison.id}/`}>
+    <div class="comparison-grid">{comparisons.map((comparison) => <a class="comparison-card" href={`${base}/compare/${comparison.id}/`}>
       <span class="category-count">Verified 2026-09-13</span><h3>{comparison.data.title}</h3><p>{comparison.data.summary}</p>
     </a>)}</div>
   </div></section>
