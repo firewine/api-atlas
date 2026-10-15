@@ -74,6 +74,18 @@ curl "https://generativelanguage.googleapis.com/v1beta/models/YOUR_MODEL:generat
 
 Use the official model list at integration time. Quotas belong to the project, so creating more keys does not multiply the available allowance.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1beta/models/{model}:generateContent` | Generate text content |
+| `POST /v1beta/models/{model}:streamGenerateContent` | Streaming generation |
+| `POST /v1beta/models/{model}:embedContent` | Generate embeddings |
+| `POST /v1beta/models/{model}:countTokens` | Count tokens |
+| `GET /v1beta/models` | List available models |
+| `GET /v1beta/tunedModels` | List tuned models |
+| `POST /v1beta/tunedModels` | Create tuned model |
+
 ## Decision notes
 
 Separate stable integration facts from model-specific facts. The base API and authentication pattern are relatively stable; model IDs, preview status, token limits, prices, and quotas need dated verification.
