@@ -73,3 +73,42 @@ SDKs populate the standard headers, but a raw HTTP integration must send the API
 ## Decision notes
 
 Choose between direct Anthropic access and a cloud marketplace based on required features, identity controls, regional availability, and existing cloud commitments—not model name alone.
+
+## Python example: messages API
+
+```python
+import httpx
+
+API_KEY = "your_anthropic_api_key"
+BASE = "https://api.anthropic.com/v1"
+
+def message(prompt: str, model: str = "claude-sonnet-4-5", max_tokens: int = 1024) -> str:
+    """Send a message. The anthropic-version header is required."""
+    resp = httpx.post(
+        f"{BASE}/messages",
+        headers={
+            "x-api-key": API_KEY,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        },
+        json={
+            "model": model,
+            "max_tokens": max_tokens,
+            "messages": [{"role": "user", "content": prompt}],
+        },
+        timeout=60,
+    )
+    if resp.status_code == 429:
+        raise RuntimeError("Rate limited — back off and retry")
+    resp.raise_for_status()
+    data = resp.json()
+    return "".join(b.get("text", "") for b in data["content"] if b["type"] == "text")
+
+print(message("Explain dividends in one sentence."))
+```
+
+**Notes:**
+- Auth uses `x-api-key` header (not Bearer); `anthropic-version: 2023-06-01` is mandatory
+- Response `content` is a list of blocks — concatenate `text` blocks
+- Check `stop_reason` (`end_turn`, `max_tokens`, `tool_use`) to handle truncation
+- Use the official `anthropic` SDK for streaming and tool use in production
