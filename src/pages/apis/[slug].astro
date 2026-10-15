@@ -31,7 +31,7 @@ const articleSchema = {
 <BaseLayout title={api.data.name} description={api.data.summary} jsonLd={articleSchema}>
   <header class="page-hero" style={`--accent:${category.accent}`}>
     <div class="shell">
-      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'APIs', href: '/apis/' }, { label: api.data.name }]} />
+      <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'APIs', href: '/apis/' }, { label: api.data.name }]} />
       <span class="eyebrow">{category.name} · {api.data.status}</span>
       <h1 class="page-title" data-pagefind-meta="title">{api.data.name}</h1>
       <p class="lede">{api.data.summary}</p>
