@@ -53,3 +53,45 @@ Authenticate exactly as the provider documents, keep credentials out of client b
 ## Decision notes
 
 Best suited to postgres-backed applications and rapid crud apis with row-level security. Before production, verify never expose the service-role key. row-level security must be designed and tested. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
+
+## Python example: query a table (two headers)
+
+```python
+import httpx
+
+PROJECT_REF = "your_project_ref"
+ANON_KEY = "your_anon_key"  # or service_role key server-side (never in browser)
+BASE = f"https://{PROJECT_REF}.supabase.co/rest/v1"
+HEADERS = {
+    "apikey": ANON_KEY,
+    "Authorization": f"Bearer {ANON_KEY}",
+}
+
+def select(table: str, **filters) -> list[dict]:
+    """Select rows. Filters use PostgREST syntax: col=eq.value."""
+    params = {k: f"eq.{v}" for k, v in filters.items()}
+    params["select"] = "*"
+    resp = httpx.get(f"{BASE}/{table}", headers=HEADERS, params=params, timeout=30)
+    resp.raise_for_status()
+    return resp.json()
+
+def insert(table: str, row: dict) -> dict:
+    resp = httpx.post(
+        f"{BASE}/{table}",
+        headers={**HEADERS, "Prefer": "return=representation"},
+        json=row,
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()[0]
+
+# Example: read tasks
+for t in select("tasks", status="open")[:5]:
+    print(t["id"], t.get("title"))
+```
+
+**Notes:**
+- Both `apikey` and `Authorization: Bearer` headers are required on REST calls
+- `service_role` key bypasses Row Level Security — server-side only, never in frontend code
+- RLS policies decide what anon/authenticated roles can see; test them, don't assume
+- Use `Prefer: return=representation` on writes to get the inserted row back
