@@ -23,13 +23,21 @@ cautions: ["Credits are weighted by endpoint — heavy endpoints cost more.", "F
 verifiedAt: "2026-10-15"
 sourceUrls: ["https://twelvedata.com/docs", "https://twelvedata.com/pricing"]
 mutableFacts:
-  - label: "Free tier"
-    value: "800 credits/day, 8 credits/min"
-    sourceUrl: "https://twelvedata.com/pricing"
-    verifiedAt: "2026-10-15"
   - label: "Base URL"
     value: "https://api.twelvedata.com"
     sourceUrl: "https://twelvedata.com/docs"
+    verifiedAt: "2026-10-15"
+  - label: "Authentication"
+    value: "API key via apikey query param or Authorization header"
+    sourceUrl: "https://twelvedata.com/docs"
+    verifiedAt: "2026-10-15"
+  - label: "Pricing"
+    value: "Free: 800 credits/day; paid from $79/mo"
+    sourceUrl: "https://twelvedata.com/pricing"
+    verifiedAt: "2026-10-15"
+  - label: "Rate limits"
+    value: "Free: 8 credits/min, 800 credits/day"
+    sourceUrl: "https://twelvedata.com/pricing"
     verifiedAt: "2026-10-15"
 ---
 
