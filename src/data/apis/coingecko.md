@@ -50,6 +50,19 @@ Crypto asset prices, metadata, markets, exchanges, NFTs, and onchain datasets. T
 
 Authenticate exactly as the provider documents, keep credentials out of client bundles, and retain upstream request identifiers when available. Pagination, retries, caching, and webhook verification should be implemented per product rather than inferred from another API.
 
+## Key endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v3/ping` | API status check |
+| `GET /api/v3/simple/price` | Simple price for coins |
+| `GET /api/v3/simple/supported_vs_currencies` | Supported currencies |
+| `GET /api/v3/coins/markets` | Market data list |
+| `GET /api/v3/coins/{id}` | Coin details |
+| `GET /api/v3/coins/{id}/market_chart` | Historical market chart |
+| `GET /api/v3/coins/list` | All supported coins |
+| `GET /api/v3/global` | Global crypto market data |
+
 ## Decision notes
 
 Best suited to crypto market discovery and broad asset and exchange metadata. Before production, verify asset ids are safer than ticker symbols. freshness and endpoint access vary by plan. Mutable limits, prices, and versions were checked on 2026-09-13 and should be rechecked at purchase or deployment time.
