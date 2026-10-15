@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Source and crawler policy" description="How API Atlas verifies claims, records provenance, and controls crawler access.">
   <header class="page-hero"><div class="narrow">
-    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Source policy' }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Source policy' }]} />
     <span class="eyebrow">Editorial policy</span><h1 class="page-title">Every changing claim needs a trail.</h1>
     <p class="lede">API Atlas summarizes official material; it does not replace or mirror it.</p>
   </div></header>
