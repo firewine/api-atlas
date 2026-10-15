@@ -25,6 +25,9 @@ bestFor:
 cautions:
   - "Personal plans are not a substitute for a commercial data license."
   - "Real-time coverage and exchange entitlements vary by plan."
+  - "Dividend payment-date coverage is uneven: a September 2026 bulk pull of /api/div found paymentDate null in about 6,700 records across 2,792 symbols, with Korean listings most affected (reported to EODHD support). Treat payment-date fields as coverage-dependent, not guaranteed."
+  - "Some dividend records pair an ex-date with an earlier payment date (observed September 2026, reported to support). Validate date ordering before building payment calendars."
+  - "For ETFs, the EOD close's session basis — regular vs extended hours, primary vs consolidated — is not fully documented, and the isPrimary flag's meaning for a given listing is ambiguous (queried October 2026). Confirm methodology before comparing closes against issuer NAV."
 verifiedAt: "2026-09-13"
 sourceUrls:
   - "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes"
@@ -48,7 +51,7 @@ mutableFacts:
     verifiedAt: "2026-09-13"
   - label: "Free allowance"
     value: "20 API calls per day with a one-year EOD history window"
-    sourceUrl: "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes"
+    sourceUrl: "https://eodhd.com/pricing"
     verifiedAt: "2026-09-13"
   - label: "Paid entry point"
     value: "EOD Historical Data — All World is listed at USD 19.99/month on monthly billing"
@@ -64,7 +67,7 @@ EODHD exposes a family of market-data endpoints rather than one narrow feed. The
 ## Request shape
 
 ```bash
-curl "https://eodhd.com/api/eod/AAPL.US?api_token=YOUR_TOKEN&fmt=json"
+curl "https://eodhd.com/api/eod/AAPL.US?api_token=<redacted>
 ```
 
 The EOD endpoint defaults to CSV. Set `fmt=json` when a JSON response is easier to consume. Keep the token server-side even though query-string authentication is supported.
@@ -72,3 +75,5 @@ The EOD endpoint defaults to CSV. Set `fmt=json` when a JSON response is easier 
 ## Decision notes
 
 EODHD is a practical fit when a product wants broad market coverage from one integration. Before production use, match every required dataset to the actual plan and license; a personal subscription does not automatically grant redistribution rights.
+
+Field-level spot checks are worth the effort: dividend date fields and close-price session definitions have shown gaps in practice, so validate the exact fields a product depends on against a second source before treating them as authoritative.
