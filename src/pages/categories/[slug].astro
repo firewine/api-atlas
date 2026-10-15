@@ -19,7 +19,7 @@ const apis = sortApis((await getCollection('apis')).filter((api) => api.data.cat
 
 <BaseLayout title={category.name} description={category.description}>
   <header class="page-hero"><div class="shell">
-    <Breadcrumbs items={[{ label: 'Home', href: `${base}/` }, { label: 'Categories', href: '/categories/' }, { label: category.name }]} />
+    <Breadcrumbs items={[{ label: 'Home', href: base }, { label: 'Categories', href: '/categories/' }, { label: category.name }]} />
     <span class="eyebrow">{category.eyebrow} · {apis.length} profiles</span>
     <h1 class="page-title">{category.name}</h1><p class="lede">{category.description}</p>
   </div></header>
