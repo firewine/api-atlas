@@ -1,0 +1,11 @@
+Source: https://docs.alpaca.markets/us/reference/stockbars
+Checked: 2026-10-16
+Review note: Official historical bars reference: query fields, inclusive end, plan-aware end default, feed documentation, and pagination reviewed.
+
+Selected excerpt:
+https://data.alpaca.markets/v2/stocks/bars
+next_page_token
+page_token
+feed
+end
+Defaults to sip

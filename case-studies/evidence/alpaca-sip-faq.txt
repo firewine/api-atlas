@@ -1,0 +1,9 @@
+Source: https://docs.alpaca.markets/us/docs/market-data-faq
+Checked: 2026-10-16
+Review note: Official FAQ: review of entitlement, historical end boundary and feed coverage. The error body is a vendor example, not a live response captured for this article.
+
+Selected excerpt:
+{"code":42210000,"message":"subscription does not permit querying recent SIP data"}
+at least 15 minutes old
+IEX
+SIP

@@ -1,0 +1,201 @@
+---
+"title": "Alpaca API recent SIP data error: choose delayed SIP or explicit IEX"
+"h1": "Alpaca API recent SIP data error: choose delayed SIP or explicit IEX"
+"description": "Resolve Alpaca error 42210000 by using an eligible historical
+  SIP end time or explicit IEX coverage, without silently replacing consolidated
+  market data."
+"summary": "Alpaca Basic can reject recent SIP requests. Choose a historical SIP
+  window outside the restricted interval, or explicitly accept IEX-only coverage
+  before changing feeds."
+"order": 15
+"updatedAt": "2026-10-16"
+"tags":
+  - "alpaca"
+  - "sip"
+  - "iex"
+  - "market-data"
+"caseStudy":
+  "slug": "alpaca-api-recent-sip-data-error-iex"
+  "problemId": "alpaca-basic-recent-sip-entitlement-feed"
+  "titleParts":
+    "api": "Alpaca API"
+    "problem": "recent SIP data error"
+    "solution": "choose delayed SIP or explicit IEX"
+  "linkLabel": "Alpaca recent SIP error: delayed history and explicit IEX coverage"
+  "providers":
+    - "alpaca"
+  "searchIntent":
+    "primary":
+      "term": "Alpaca recent SIP data error 42210000"
+      "sourcePhrase": "subscription does not permit querying recent SIP data"
+      "evidenceIds":
+        - "alpaca-sip-faq"
+    "related":
+      - "term": "Alpaca Basic historical SIP end time"
+        "sourcePhrase": "at least 15 minutes old"
+        "evidenceIds":
+          - "alpaca-sip-faq"
+      - "term": "Alpaca IEX versus SIP feed"
+        "sourcePhrase": "IEX"
+        "evidenceIds":
+          - "alpaca-sip-faq"
+      - "term": "alpaca-py StockBarsRequest explicit feed"
+        "sourcePhrase": "StockBarsRequest"
+        "evidenceIds":
+          - "alpaca-py-request-model"
+    "status": "keyword-candidate"
+  "evidence":
+    - "id": "alpaca-sip-faq"
+      "kind": "documentation"
+      "url": "https://docs.alpaca.markets/us/docs/market-data-faq"
+      "checkedAt": "2026-10-16"
+      "snapshot": "case-studies/evidence/alpaca-sip-faq.txt"
+      "sha256": "17b2c968cd8837d57d71fd37b2a700e38e437b297b9aacd950ac55cc09dbdf46"
+      "excerpt": "{\"code\":42210000,\"message\":\"subscription does not permit
+        querying recent SIP data\"}
+
+        at least 15 minutes old
+
+        IEX
+
+        SIP"
+    - "id": "alpaca-stockbars-reference"
+      "kind": "documentation"
+      "url": "https://docs.alpaca.markets/us/reference/stockbars"
+      "checkedAt": "2026-10-16"
+      "snapshot": "case-studies/evidence/alpaca-stockbars-reference.txt"
+      "sha256": "fea7e033778a28650286dfac0b1931c4b216e730b2420f5baffc59edc376a061"
+      "excerpt": "https://data.alpaca.markets/v2/stocks/bars
+
+        next_page_token
+
+        page_token
+
+        feed
+
+        end
+
+        Defaults to sip"
+    - "id": "alpaca-py-request-model"
+      "kind": "code"
+      "url": "https://github.com/alpacahq/alpaca-py/blob/0c6f1e5234271874591fe12b62b9\
+        1f749b681792/alpaca/data/requests.py"
+      "checkedAt": "2026-10-16"
+      "snapshot": "case-studies/evidence/alpaca-py-request-model.txt"
+      "sha256": "151c8b6d4c32f9d0470f403b7bc954c30280141ee6ccd83ae5fe2dc840c89453"
+      "excerpt": "class StockBarsRequest(BaseBarsRequest):
+
+        \    feed: Optional[DataFeed] = None"
+    - "id": "alpaca-legacy-394"
+      "kind": "documentation"
+      "url": "https://github.com/alpacahq/alpaca-trade-api-python/issues/394"
+      "checkedAt": "2026-10-16"
+      "snapshot": "case-studies/evidence/alpaca-legacy-394.txt"
+      "sha256": "21c1e5d6683b71b582047f0ef07088c3aee471b0352823a32d4b72bd74e89777"
+      "excerpt": "\"end is too late for subscription\" Error
+
+        Closed
+
+        on Mar 8, 2021"
+  "technicalDetails":
+    - "kind": "error-code"
+      "value": "42210000"
+      "evidenceId": "alpaca-sip-faq"
+    - "kind": "field"
+      "value": "feed"
+      "evidenceId": "alpaca-stockbars-reference"
+    - "kind": "field"
+      "value": "end"
+      "evidenceId": "alpaca-stockbars-reference"
+    - "kind": "field"
+      "value": "next_page_token"
+      "evidenceId": "alpaca-stockbars-reference"
+  "verification":
+    "level": "source-review"
+    "note": "Source review on 2026-10-16 confirms the documented entitlement
+      boundary and request fields; no authenticated Alpaca API request or live
+      SDK test was performed."
+    "evidenceIds":
+      - "alpaca-sip-faq"
+      - "alpaca-stockbars-reference"
+      - "alpaca-py-request-model"
+  "review":
+    "author": "차도녀 gpt may"
+    "authorType": "Person"
+    "checkedAt": "2026-10-16"
+    "titleMatchesBody": true
+    "distinctProblem": "Alpaca Basic recent-SIP entitlement and feed-coverage
+      selection; distinct from aggregate completeness, pagination counts,
+      caching delays and LLM retry cases."
+    "noInventedResults": true
+---
+
+## Symptoms
+
+A stock-data request returns JSON code `42210000` with `subscription does not permit querying recent SIP data`. This is an application error code, not an HTTP status number. The [official FAQ](https://docs.alpaca.markets/us/docs/market-data-faq) shows this body for a latest SIP trade request without the required subscription. Record the actual HTTP status, endpoint, feed and interval separately; do not assume every 403 or 422 has this cause.
+
+## Cause
+
+Basic real-time equities cover IEX, a single exchange; SIP combines exchange reporting. The [plan overview](https://docs.alpaca.markets/us/docs/about-market-data-api) distinguishes Basic from Algo Trader Plus. For historical SIP without that subscription, the FAQ requires `end` to be at least 15 minutes old. Latest and snapshot SIP requests have a subscription requirement; adding a historical cutoff to those endpoints is not a workaround.
+
+Defaults are not a reliable application contract: the FAQ describes a subscription-dependent best feed, the [bars reference](https://docs.alpaca.markets/us/reference/stockbars) lists a SIP default and plan-aware `end`, while [SDK request documentation](https://alpaca.markets/sdks/python/api_reference/data/stock/requests.html) describes `end` as now. The [pinned alpaca-py request source](https://github.com/alpacahq/alpaca-py/blob/0c6f1e5234271874591fe12b62b91f749b681792/alpaca/data/requests.py) allows an omitted feed. Set both fields explicitly rather than inferring wire behavior from one default description.
+
+## Safe resolution
+
+Choose the dataset before issuing a request:
+
+1. For delayed consolidated history on Basic, use `/v2/stocks/bars`, explicit `feed=sip`, and an eligible `end`. Keep `start` no later than `end`.
+2. If the product accepts a single-exchange view, deliberately choose `feed=iex` and label returned data as IEX-only. Do not compare its volume with a consolidated total as if coverage were identical.
+3. If recent consolidated data is required, verify the account entitlement. Stop with an actionable subscription message rather than retrying the same denied request or silently substituting IEX.
+
+This standard-library helper only plans Basic stock-bars requests. It rejects a recent SIP window instead of changing the requested feed or silently shortening the interval.
+
+```python
+from datetime import datetime, timedelta, timezone
+
+
+def stock_bar_request(*, symbols, start, end, feed, now):
+    # Pure request planning: no credentials and no network calls.
+    if feed not in {"sip", "iex"}:
+        raise ValueError("Choose sip or iex explicitly")
+    if not symbols or any(not isinstance(s, str) or not s.strip() for s in symbols):
+        raise ValueError("Provide stock symbols")
+    for value in (start, end, now):
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("Use timezone-aware datetimes")
+    start, end, now = (v.astimezone(timezone.utc) for v in (start, end, now))
+    if start > end or end > now:
+        raise ValueError("Invalid or future interval")
+    if feed == "sip" and end > now - timedelta(minutes=15):
+        raise ValueError("Basic SIP end must be at least 15 minutes old")
+    stamp = lambda value: value.isoformat().replace("+00:00", "Z")
+    return {
+        "url": "https://data.alpaca.markets/v2/stocks/bars",
+        "params": {"symbols": ",".join(symbols), "timeframe": "1Min",
+                   "start": stamp(start), "end": stamp(end),
+                   "feed": feed, "adjustment": "raw", "limit": 1000},
+        "coverage": "consolidated SIP" if feed == "sip" else "IEX only",
+    }
+
+
+now = datetime.now(timezone.utc)
+end = now - timedelta(minutes=16)
+request = stock_bar_request(symbols=["AAPL"], start=end - timedelta(hours=1),
+                            end=end, feed="sip", now=now)
+```
+
+Pass the resulting URL and params to an authenticated server-side HTTP client with the documented key/secret headers and a finite timeout. Check its HTTP status and JSON error body before treating it as data. On `42210000`, stop this request path and surface the entitlement choice; generic retry/backoff cannot grant permission. Continue historical pagination using `next_page_token` as the next request's `page_token`, retaining all original query fields. The snippet is not a complete downloader.
+
+For current Python SDK integrations, use `alpaca-py` request objects such as `StockBarsRequest` with `feed=DataFeed.SIP` or `DataFeed.IEX` and explicit aware timestamps. Pin and test the version used by your application. Keep feed, interval, timeframe, adjustment and observation time in cache provenance; never cache an IEX result under a SIP key.
+
+## Verification
+
+Source review on 2026-10-16 confirms the documented entitlement boundary and request fields; no authenticated Alpaca API request or live SDK test was performed.
+
+The companion repository test runs the published pure-Python helper with synthetic clock values only. Check a SIP request ending 16 minutes ago and the exact 15-minute boundary as positive controls. A request ending 14 minutes 59 seconds ago must fail; the same recent interval with explicitly chosen IEX must remain IEX-only. Also reject a missing/unknown feed, naive time, future end and reversed interval. These fixtures do not prove account entitlement or clock synchronization.
+
+For a later authorized live check, compare the same symbol/window with explicit feeds and capture status, application code, returned timestamps and every continuation page without secrets. A Basic latest-SIP request is the documented negative control; eligible historical SIP and explicit IEX are entitlement-dependent positive controls. Do not interpret empty bars during a quiet interval as proof of failure. No live controls were run here.
+
+## Limitations
+
+The [legacy issue #394](https://github.com/alpacahq/alpaca-trade-api-python/issues/394) was opened in March 2021 and is closed; its repository was archived in June 2026. It provides historical context for end-time confusion, not evidence of a current alpaca-py bug. No installed SDK version is claimed. The helper covers Basic US equities historical bars, not paid-SIP authorization, Broker API, options, crypto, WebSocket authentication or order execution. Its one-minute safety margin is an editorial implementation choice; synchronize clocks and recheck current entitlement rules. Source and offline fixture review do not establish real API success, production deployment, Search Console indexing or search demand. See the [Alpaca provider profile](../../apis/alpaca/) for scoped pricing and limits.

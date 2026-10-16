@@ -1,0 +1,7 @@
+Source: https://github.com/alpacahq/alpaca-py/blob/0c6f1e5234271874591fe12b62b91f749b681792/alpaca/data/requests.py
+Checked: 2026-10-16
+Review note: Selected non-contiguous source lines from current alpaca-py request models at the pinned commit; no SDK execution or installed version claim.
+
+Selected excerpt:
+class StockBarsRequest(BaseBarsRequest):
+    feed: Optional[DataFeed] = None
