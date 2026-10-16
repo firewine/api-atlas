@@ -1,36 +1,70 @@
 import { expect, test } from '@playwright/test';
 
 const basePath = process.env.BASE_PATH ?? '/';
-const initial = ['Fact', 'Alpha Vantage', 'BOK ECOS', 'Claude API'];
+type CompareProvider = {
+  name: string; category: string; auth: string; baseUrl: string;
+  pricing: string; rateLimit: string; protocols: string[]; formats: string[];
+};
 
 test('Compare keeps checked providers, visible columns and data in sync', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('response', (response) => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
+  const response = await page.request.get('api/catalog.json');
+  expect(response.ok()).toBeTruthy();
+  const catalog = await response.json();
+  const providers: CompareProvider[] = [...catalog.providers].sort((a, b) => a.name.localeCompare(b.name));
+  expect(providers.length).toBeGreaterThanOrEqual(5);
+  const initial = providers.slice(0, 3);
+  const fourth = providers[3];
+  const fifth = providers[4];
   await page.goto('compare/');
-  const headers = page.getByRole('table').getByRole('columnheader');
-  await expect(headers).toHaveText(initial);
-  await page.getByRole('checkbox', { name: 'Cloudflare API', exact: true }).check();
-  await expect(headers).toHaveText([...initial, 'Cloudflare API']);
-  await expect(page.getByRole('row', { name: 'Category market-data public-data ai developer-platform', exact: true })).toBeVisible();
-  await page.getByRole('checkbox', { name: 'CoinGecko API', exact: true }).click();
-  await expect(page.getByRole('checkbox', { name: 'CoinGecko API', exact: true })).not.toBeChecked();
+  const table = page.getByRole('table');
+  const headers = table.getByRole('columnheader');
+  const checkbox = (provider: CompareProvider) => page.getByRole('checkbox', { name: provider.name, exact: true });
+  const assertSelection = async (selected: CompareProvider[]) => {
+    const ordered = [...selected].sort((a, b) => a.name.localeCompare(b.name));
+    await expect(headers).toHaveText(['Fact', ...ordered.map((provider) => provider.name)]);
+    await expect(page.locator('.compare-picker input:checked')).toHaveCount(ordered.length);
+    for (const provider of ordered) await expect(checkbox(provider)).toBeChecked();
+    const rows: Array<[string, (provider: CompareProvider) => string]> = [
+      ['Category', (provider) => provider.category],
+      ['Authentication', (provider) => provider.auth],
+      ['Base URL', (provider) => provider.baseUrl],
+      ['Pricing shape', (provider) => provider.pricing],
+      ['Rate limits', (provider) => provider.rateLimit],
+      ['Protocols', (provider) => provider.protocols.join(', ')],
+      ['Formats', (provider) => provider.formats.join(', ')],
+    ];
+    for (const [label, value] of rows) {
+      const row = table.getByRole('row').filter({ has: page.getByRole('rowheader', { name: label, exact: true }) });
+      await expect(row.getByRole('cell')).toHaveText(ordered.map(value));
+    }
+  };
+  await assertSelection(initial);
+  await checkbox(fourth).check();
+  await assertSelection([...initial, fourth]);
+  await checkbox(fifth).click();
+  await expect(checkbox(fifth)).not.toBeChecked();
   await expect(page.getByRole('status')).toHaveText('4 providers selected.');
-  await expect(headers).toHaveText([...initial, 'Cloudflare API']);
-  await page.getByRole('checkbox', { name: 'Alpha Vantage', exact: true }).uncheck();
-  await page.getByRole('checkbox', { name: 'BOK ECOS', exact: true }).uncheck();
-  await expect(headers).toHaveText(['Fact', 'Claude API', 'Cloudflare API']);
-  await expect(page.getByRole('row', { name: 'Category ai developer-platform', exact: true })).toBeVisible();
-  await page.getByRole('checkbox', { name: 'Claude API', exact: true }).uncheck();
-  await page.getByRole('checkbox', { name: 'Cloudflare API', exact: true }).uncheck();
-  await expect(headers).toHaveText(['Fact']);
+  await assertSelection([...initial, fourth]);
+  await checkbox(initial[0]).uncheck();
+  await checkbox(initial[1]).uncheck();
+  await assertSelection([initial[2], fourth]);
+  await checkbox(initial[2]).uncheck();
+  await checkbox(fourth).uncheck();
+  await assertSelection([]);
   await expect(page.getByRole('status')).toHaveText('Select at least two providers.');
-  await page.getByRole('checkbox', { name: 'OpenAI API', exact: true }).press('Space');
-  await page.getByRole('checkbox', { name: 'Gemini API', exact: true }).press('Space');
-  await expect(headers).toHaveText(['Fact', 'Gemini API', 'OpenAI API']);
+  const keyboardProviders = ['OpenAI API', 'Gemini API'].map((name) => {
+    const provider = providers.find((item) => item.name === name);
+    expect(provider, `Keyboard test provider ${name} is present`).toBeDefined();
+    return provider!;
+  });
+  for (const provider of keyboardProviders) await checkbox(provider).press('Space');
+  await assertSelection(keyboardProviders);
   await expect(page.getByRole('status')).toHaveText('2 providers selected.');
   await page.reload();
-  await expect(headers).toHaveText(initial);
+  await assertSelection(initial);
   expect(errors).toEqual([]);
 });
 
