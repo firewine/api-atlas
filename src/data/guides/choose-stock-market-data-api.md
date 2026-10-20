@@ -39,6 +39,11 @@ Download a small “golden set” containing a split, dividend, delisting, symbo
 
 Store provider timestamps and raw responses during the test. Two APIs can use the same field name while applying different adjustment rules.
 
+If you prototype this check with yfinance, start with the [Adj Close and
+MultiIndex integration case](../yfinance-adj-close-auto-adjust-multiindex/).
+It shows why `auto_adjust` and column shape must be explicit before comparing
+prices, while the split and dividend test still needs actual observations.
+
 ## Model the real workload
 
 Estimate `symbols × resources × refreshes`, then add initial backfill, retries, repair jobs, and development environments. Decide whether bulk files or grouped requests change the economics. Measure response size, latency, compression, pagination, and throttling with production-like concurrency.

@@ -1,0 +1,10 @@
+Source: https://github.com/ranaroussi/yfinance/issues/2308
+Checked: 2026-10-20
+Public issue excerpt (report, not a reproduction by this guide):
+
+Using yf.download(ticker) the adjusted Close is missing
+
+no error message just the item missing
+
+YF.download() has changed argument auto_adjust default to True
+using yf.download('AAPL',auto_adjust=False)

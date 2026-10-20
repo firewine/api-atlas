@@ -1,0 +1,14 @@
+Source: https://github.com/ranaroussi/yfinance/blob/1.7.0/yfinance/utils.py
+Checked: 2026-10-20
+Public code excerpt from tag 1.7.0:
+
+def auto_adjust(data):
+    col_order = data.columns
+    df = data.copy()
+    ratio = (df["Adj Close"] / df["Close"]).to_numpy()
+    df["Adj Open"] = df["Open"] * ratio
+    df["Adj High"] = df["High"] * ratio
+    df["Adj Low"] = df["Low"] * ratio
+    df.drop(["Open", "High", "Low", "Close"], axis=1, inplace=True)
+    df.rename(columns={"Adj Open": "Open", "Adj High": "High",
+                       "Adj Low": "Low", "Adj Close": "Close"}, inplace=True)

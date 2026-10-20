@@ -1,0 +1,7 @@
+Source: https://github.com/ranaroussi/yfinance/commit/2081dca0b224512ff768f9c5e6bd9c658a3b8339
+Checked: 2026-10-20
+Public commit excerpt:
+
+docs: explain default price adjustment and Close vs Adj Close (fixes #860)
+
+Prices are default adjusted for dividends (`auto_adjust=True`)

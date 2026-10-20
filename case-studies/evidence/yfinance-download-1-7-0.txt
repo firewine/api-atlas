@@ -1,0 +1,18 @@
+Source: https://github.com/ranaroussi/yfinance/blob/1.7.0/yfinance/multi.py
+Checked: 2026-10-20
+Public code excerpt from tag 1.7.0:
+
+def download(tickers, start=None, end=None, actions=False, threads=True,
+             ignore_tz=None, group_by='column', auto_adjust=True, back_adjust=False,
+             repair=False, keepna=False, progress=True, period=period_default, interval="1d",
+             prepost=False, rounding=False, timeout=10, session=None,
+             multi_level_index=True) -> Union[_pd.DataFrame, None]:
+
+...
+
+data = _pd.concat(ctx.dfs.values(), axis=1, sort=True,
+                  keys=ctx.dfs.keys(), names=['Ticker', 'Price'])
+if group_by == 'column' and isinstance(data.columns, _pd.MultiIndex):
+    data.columns = data.columns.swaplevel(0, 1)
+if not multi_level_index and len(tickers) == 1:
+    data = data.droplevel(0 if group_by == 'ticker' else 1, axis=1).rename_axis(None, axis=1)

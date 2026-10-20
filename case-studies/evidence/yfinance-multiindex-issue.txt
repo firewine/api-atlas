@@ -1,0 +1,8 @@
+Source: https://github.com/ranaroussi/yfinance/issues/2193
+Checked: 2026-10-20
+Public issue excerpt (report, not a reproduction by this guide):
+
+yf.Download for a single ticker now produces columns with an un-wanted multi-index
+
+df = yf.download(tickers=[ticker], start=start_date, end=end_date, multi_level_index=False)
+Seems we have lost AdjClose ?

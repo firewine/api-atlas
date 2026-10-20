@@ -77,6 +77,14 @@ print(history.tail())
 
 Pin the package version for reproducible work and expect upstream response behavior to evolve.
 
+For `yf.download()` in the reviewed 1.7.0 source, `auto_adjust=True` and
+`multi_level_index=True` are defaults. [Project documentation](https://ranaroussi.github.io/yfinance/advanced/price_adjustment.html)
+explains that `Close` is already adjusted for splits and dividends in that mode;
+`auto_adjust=False` retains a separate `Adj Close` alongside Yahoo OHLC that is
+already split-adjusted. For a single ticker, `multi_level_index=False` produces
+flat columns. Read the [missing Adj Close and MultiIndex integration case](../../guides/yfinance-adj-close-auto-adjust-multiindex/)
+for explicit options and verification steps (source review: 2026-10-20).
+
 ## Key functions (unofficial library, not a REST API)
 
 | Function | Description |

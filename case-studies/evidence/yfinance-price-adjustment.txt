@@ -1,0 +1,7 @@
+Source: https://ranaroussi.github.io/yfinance/advanced/price_adjustment.html
+Checked: 2026-10-20
+Public documentation excerpt:
+
+By default, `Ticker.history()` and `yf.download()` return prices adjusted for splits and dividends (`auto_adjust=True`). This means the `Close` column is already the adjusted close — there is no separate `Adj Close` column in this mode.
+
+Pass `auto_adjust=False` to get Yahoo’s split-adjusted OHLC together with an `Adj Close` column that also includes dividends.
