@@ -1,0 +1,9 @@
+Checked: 2026-10-20
+Source: https://github.com/firewine/getbeta/blob/c4d29bbb49c9e1a30c782430e5028b595860a26b/app/services/seibro_dividend_collection_service.py
+Scope: selected exact code lines at the pinned revision; not a live provider response
+
+if kind == "청산분배":
+record = self._parse_date(row.get("RGT_STD_DT", ""))
+payment = self._parse_date(row.get("TH1_PAY_TERM_BEGIN_DT", ""))
+amount = self._parse_amount(row.get("ESTM_STDPRC", ""))
+ticker=ticker, ex_date=None, record_date=fact.record_date,

@@ -1,0 +1,7 @@
+Checked: 2026-10-20
+Source: https://github.com/firewine/getbeta/blob/c4d29bbb49c9e1a30c782430e5028b595860a26b/app/services/seibro_stock_dividend_collection_service.py
+Scope: selected exact code lines at the pinned revision; not a live provider response
+
+raise SeibroConflictError("stock_correction_cross_source_requires_bridge")
+raise SeibroConflictError("stock_correction_ex_date_requires_bridge")
+reason = "stock_existing_event_not_observed"

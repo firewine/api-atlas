@@ -8,7 +8,7 @@
   observation. Reusing that observation for seven days can hide a later update;
   scheduled collection needs a fresh observation and explicit coverage limits."
 "order": 10
-"updatedAt": "2026-10-16"
+"updatedAt": "2026-10-20"
 "tags":
   - "practical-case"
   - "eodhd"
@@ -160,7 +160,7 @@
   "review":
     "author": "API Atlas"
     "authorType": "Organization"
-    "checkedAt": "2026-10-16"
+    "checkedAt": "2026-10-20"
     "titleMatchesBody": true
     "distinctProblem": "A successful dividend request can still return an incomplete
       observation. Reusing that observation for seven days can hide a later
@@ -211,3 +211,5 @@ The checked-in tests extract this published Python block and exercise the same s
 Cache bypass cannot create a dividend that the provider has not published. Revisit a defined lookback window, preserve observation time and source dates, and separately reconcile revisions older than that window. A bypass does not invalidate stale entries used by other readers. The example does not normalize monetary precision, prove financial completeness, or measure live publication delay. The original application's tests were read as evidence, not rerun here. See the [EODHD profile](../../apis/eodhd/) and [retry guide](../retry-and-backoff/).
 
 Implementation evidence was reviewed at pinned GetBeta revision `890c2531b76c`. Source-repository links may require access; the public code above is a reduced adaptation without credentials or customer data. Search expressions are candidates, with no search-volume, indexing or ranking claim.
+
+Editorial update (2026-10-20): this historical cache case does not describe the current KR dividend source policy. See the [EODHD and SEIBRO market-routing case](../eodhd-seibro-korean-dividend-source-selection/) for the Korean date-field coverage limit and the reviewed source selection.

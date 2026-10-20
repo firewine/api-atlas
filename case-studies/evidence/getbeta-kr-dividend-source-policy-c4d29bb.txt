@@ -1,0 +1,7 @@
+Checked: 2026-10-20
+Source: https://github.com/firewine/getbeta/blob/c4d29bbb49c9e1a30c782430e5028b595860a26b/app/services/dividend_source_policy.py
+Scope: selected exact code lines at the pinned revision; not a live provider response
+
+KR-listed dividends use SEIBRO (2026-10-17 product decision). Other stored
+return normalize_stored_market_value(market) != "KR" or str(source or "").strip().upper() == "SEIBRO"
+return or_(~korean_listing, func.upper(func.trim(MasterDividend.data_source)) == "SEIBRO")

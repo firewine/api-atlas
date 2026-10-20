@@ -1,0 +1,7 @@
+Checked: 2026-10-20
+Source: https://github.com/firewine/getbeta/blob/c4d29bbb49c9e1a30c782430e5028b595860a26b/scripts/seibro_backfill_state.py
+Scope: selected exact code lines at the pinned revision; not a live provider response
+
+"""Complete/partial are terminal; running/unknown always require review.
+JSON and PostgreSQL cannot commit atomically. Reserve a durable `running`
+raise ValueError("seibro_unknown_outcome_requires_review")

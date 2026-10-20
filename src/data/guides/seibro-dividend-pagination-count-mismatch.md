@@ -8,7 +8,7 @@
   window is complete. Pin the count, validate page coverage and duplicates, and
   refuse an unstable window before confirming financial facts."
 "order": 11
-"updatedAt": "2026-10-16"
+"updatedAt": "2026-10-20"
 "tags":
   - "practical-case"
   - "seibro"
@@ -176,7 +176,7 @@
   "review":
     "author": "API Atlas"
     "authorType": "Organization"
-    "checkedAt": "2026-10-16"
+    "checkedAt": "2026-10-20"
     "titleMatchesBody": true
     "distinctProblem": "Receiving the last nonempty page is not enough to prove a
       dividend window is complete. Pin the count, validate page coverage and
@@ -234,3 +234,5 @@ The checked-in tests extract this published Python block and exercise the same s
 Equal counts do not establish that every row is the right financial fact or that the source snapshot was immutable. A production adapter still needs bounded pages/bytes/time, issuer and share-class identity, confirmed cash-dividend status, amount and payment-date cross-checks. `SHOTN_ISIN` is a short security code in the reviewed integration, not a full ISIN. This is not a claim that the historical source discrepancy was repaired or that splitting windows has already recovered it. The [SEIBRO profile](../../apis/seibro/) documents the research status; the [pagination guide](../rest-pagination-patterns/) covers general traversal patterns.
 
 Implementation evidence was reviewed at pinned GetBeta revision `890c2531b76c`. Source-repository links may require access; the public code above is a reduced adaptation without credentials or customer data. Search expressions are candidates, with no search-volume, indexing or ranking claim.
+
+Editorial update (2026-10-20): the strict count rule above illustrates the pinned historical adapter. The [later EODHD and SEIBRO source-selection case](../eodhd-seibro-korean-dividend-source-selection/) describes the reviewed stock adapter's bounded exception for a stable overstated count with a verified empty tail. That exception does not certify complete history.
