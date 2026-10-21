@@ -1,33 +1,27 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { copyFile, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { stripVTControlCharacters } from 'node:util';
+import { createAstroProject } from './fixtures/astro-project.mjs';
 
 test('Astro rejects undeclared source provenance during source sync, before any build', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'atlas-source-contract-'));
-  const repository = fileURLToPath(new URL('../', import.meta.url));
+  const { root: directory, repository, cli } = await createAstroProject('atlas-source-contract-');
   try {
     await mkdir(join(directory, 'src/lib'), { recursive: true });
     await mkdir(join(directory, 'src/data/apis'), { recursive: true });
     await mkdir(join(directory, 'src/data/guides'), { recursive: true });
     await mkdir(join(directory, 'src/data/comparisons'), { recursive: true });
-    await symlink(join(repository, 'node_modules'), join(directory, 'node_modules'), 'junction');
     await copyFile(join(repository, 'src/content.config.ts'), join(directory, 'src/content.config.ts'));
     await copyFile(join(repository, 'src/lib/provider-provenance.mjs'), join(directory, 'src/lib/provider-provenance.mjs'));
     await copyFile(join(repository, 'src/lib/case-study.mjs'), join(directory, 'src/lib/case-study.mjs'));
     await copyFile(join(repository, 'src/lib/translation-schema.mjs'), join(directory, 'src/lib/translation-schema.mjs'));
-    await writeFile(join(directory, 'package.json'), '{"type":"module"}\n');
     const source = await readFile(join(repository, 'src/data/apis/financial-modeling-prep.md'), 'utf8');
     const fixture = join(directory, 'src/data/apis/fixture.md');
     await writeFile(fixture, source);
-    const astroPackage = JSON.parse(await readFile(join(repository, 'node_modules/astro/package.json'), 'utf8'));
-    const cli = join(repository, 'node_modules/astro', astroPackage.bin.astro);
     const run = () => spawnSync(process.execPath, [cli, 'sync', '--root', directory], {
-      encoding: 'utf8', timeout: 30000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', FORCE_COLOR: '1' },
+      cwd: directory, encoding: 'utf8', timeout: 30000, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', FORCE_COLOR: '1' },
     });
     const valid = run();
     assert.ifError(valid.error);

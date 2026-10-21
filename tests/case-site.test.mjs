@@ -1,17 +1,15 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { stripVTControlCharacters } from 'node:util';
 import { parse } from 'yaml';
 import { caseRecipe, codeSnapshot, docSnapshot } from './fixtures/case-recipe.mjs';
+import { createAstroProject } from './fixtures/astro-project.mjs';
 
 test('isolated generated case builds static HTML, linked profiles and sitemap; build checks reject mutations', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'atlas-case-site-'));
-  const repo = fileURLToPath(new URL('../', import.meta.url));
+  const { root, repository: repo } = await createAstroProject('atlas-case-site-', { site: 'https://getbeta.app', base: '/api-atlas/' });
   const env = { ...process.env, SITE_URL: 'https://getbeta.app', BASE_PATH: '/api-atlas/', ASTRO_TELEMETRY_DISABLED: '1' };
   const run = (script, args = []) => {
     const result = spawnSync(process.execPath, [join(root, script), ...args], { cwd: root, env, encoding: 'utf8', timeout: 60000 });
@@ -19,9 +17,8 @@ test('isolated generated case builds static HTML, linked profiles and sitemap; b
     return { status: result.status, output: stripVTControlCharacters(result.stdout + result.stderr) };
   };
   try {
-    for (const path of ['src', 'public', 'scripts', 'package.json', 'astro.config.mjs', 'tsconfig.json']) await cp(join(repo, path), join(root, path), { recursive: true });
+    for (const path of ['src', 'public', 'scripts', 'package.json', 'tsconfig.json']) await cp(join(repo, path), join(root, path), { recursive: true });
     await cp(join(repo, 'case-studies/evidence'), join(root, 'case-studies/evidence'), { recursive: true });
-    await symlink(join(repo, 'node_modules'), join(root, 'node_modules'), 'junction');
     await writeFile(join(root, 'case-studies/evidence/fixture-code.txt'), codeSnapshot);
     await writeFile(join(root, 'case-studies/evidence/fixture-doc.txt'), docSnapshot);
     const inputPath = join(root, 'recipe.json');
@@ -31,7 +28,7 @@ test('isolated generated case builds static HTML, linked profiles and sitemap; b
     const generated = join(root, 'src/data/guides/fixture-empty-page.md');
     const astroPackage = JSON.parse(await readFile(join(root, 'node_modules/astro/package.json'), 'utf8'));
     const cli = `node_modules/astro/${astroPackage.bin.astro}`;
-    const build = run(cli, ['build']);
+    const build = run(cli, ['build', '--root', root]);
     assert.equal(build.status, 0, build.output);
     const pagefindPackage = JSON.parse(await readFile(join(root, 'node_modules/pagefind/package.json'), 'utf8'));
     const pagefindCli = typeof pagefindPackage.bin === 'string' ? pagefindPackage.bin : pagefindPackage.bin.pagefind;
@@ -83,7 +80,7 @@ test('isolated generated case builds static HTML, linked profiles and sitemap; b
     const invalid = source.replace('"h1": "Fixture API 빈 페이지 누락: empty_page 감지"', '"h1": "Unrelated keywords"');
     assert.notEqual(invalid, source);
     await writeFile(generated, invalid);
-    const invalidSource = run(cli, ['sync']);
+    const invalidSource = run(cli, ['sync', '--root', root]);
     assert.equal(invalidSource.status, 1, invalidSource.output);
     assert.match(invalidSource.output, /Case requires description and matching title\/H1/);
   } finally { await rm(root, { recursive: true, force: true }); }
