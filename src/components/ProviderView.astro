@@ -1,0 +1,88 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import SourcePanel from './SourcePanel.astro';
+import { getCategory } from '../data/categories';
+import { formatDate } from '../lib/content';
+import { contentLink, route, translatedRoutes, koreanCategories, koreanStatus } from '../lib/i18n';
+import { getKoreanGuides } from '../lib/translations';
+interface Props { api: CollectionEntry<'apis'>; translation?: CollectionEntry<'koApis'> }
+const { api, translation } = Astro.props;
+const locale = translation ? 'ko' : 'en';
+const ko = locale === 'ko';
+const published = await translatedRoutes();
+const translatedGuides = await getKoreanGuides();
+const koreanCases = translatedGuides.filter(({source}) => source.data.caseStudy?.providers.includes(api.id));
+const title = translation?.data.title ?? api.data.name;
+const summary = translation?.data.summary ?? api.data.summary;
+const description = translation?.data.description ?? api.data.summary;
+const { Content } = await render(translation ?? api);
+const category = getCategory(api.data.category);
+const caseStudies = (await getCollection('guides')).filter((guide) => guide.data.caseStudy?.providers.includes(api.id));
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: ko ? title : `${api.data.name} API profile`,
+  inLanguage: locale,
+  description,
+  dateModified: formatDate(api.data.verifiedAt),
+  author: { '@type': 'Organization', name: 'API Atlas' },
+  mainEntityOfPage: new URL(route(`apis/${api.id}/`, locale), Astro.site ?? Astro.url.origin).href,
+  citation: api.data.sourceUrls,
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={articleSchema} lang={locale}>
+  <header class="page-hero" style={`--accent:${category.accent}`}>
+    <div class="shell">
+      <Breadcrumbs lang={locale} items={[{ label: ko ? '홈' : 'Home', href: route('', locale) }, { label: ko ? 'API 목록 (영문)' : 'APIs', href: route('apis/') }, { label: title }]} />
+      <span class="eyebrow">{ko ? koreanCategories[api.data.category] : category.name} · {ko ? koreanStatus[api.data.status] : api.data.status}</span>
+      <h1 class="page-title" data-pagefind-meta="title">{title}</h1>
+      <p class="lede">{summary}</p>
+      {translation && <p>번역 검토일: <time datetime={translation.data.translationReviewedAt}>{translation.data.translationReviewedAt}</time></p>}
+    </div>
+  </header>
+  <section class="section-tight">
+    <div class="shell detail-grid">
+      <article class="prose">
+        <div data-translation-body={translation ? true : undefined}><Content /></div>
+        <section aria-labelledby="integration-surface">
+          <h2 id="integration-surface">{ko ? '연동 정보 · 원문 값(영문)' : 'Integration surface'}</h2>
+          <dl class="integration-list">
+            <div><dt>{ko ? '버전 정책' : 'Versioning'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.versioning}</dd></div>
+            <div><dt>{ko ? '리소스 범위' : 'Resource groups'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.resourceGroups.join(', ')}</dd></div>
+            <div><dt>{ko ? '페이지 구분' : 'Pagination'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.pagination}</dd></div>
+            <div><dt>{ko ? '오류' : 'Errors'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.errors}</dd></div>
+            <div><dt>{ko ? '웹훅' : 'Webhooks'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.webhooks}</dd></div>
+            <div><dt>{ko ? '공식 SDK' : 'Official SDKs'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.sdks.length ? api.data.sdks.join(', ') : (ko ? '검토한 공식 출처에서 확인하지 못했습니다.' : 'None confirmed in the reviewed official sources.')}</dd></div>
+          </dl>
+        </section>
+        <SourcePanel verifiedAt={api.data.verifiedAt} sourceUrls={api.data.sourceUrls} facts={api.data.mutableFacts} lang={locale} />
+        {caseStudies.length > 0 && <section aria-labelledby="practical-cases">
+          <h2 id="practical-cases">{ko ? '실전 연동 사례' : 'Practical integration cases'}</h2>
+          <ul>{caseStudies.map((guide) => { const link = contentLink(`guides/${guide.id}/`, locale, published); const translated = ko ? translatedGuides.find(({source}) => source.id === guide.id)?.translation : undefined; return <li><a href={link.href}>{translated?.data.linkLabel ?? guide.data.caseStudy?.linkLabel}{link.suffix}</a></li>; })}</ul>
+        </section>}
+        {!ko && koreanCases.length > 0 && <section aria-labelledby="korean-cases" lang="ko">
+          <h2 id="korean-cases">한국어 연동 사례</h2>
+          <ul>{koreanCases.map(({source, translation}) => <li><a href={route(`guides/${source.id}/`, 'ko')}>{translation.data.linkLabel ?? translation.data.title}</a></li>)}</ul>
+        </section>}
+      </article>
+      <aside class="provider-meta" data-pagefind-ignore>
+        <dl>
+          <div><dt>{ko ? '공급자' : 'Provider'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.provider}</dd></div>
+          <div><dt>{ko ? '카테고리' : 'Category'}</dt><dd><a href={route(`categories/${api.data.category}/`)}>{ko ? `${koreanCategories[api.data.category]} (영문)` : category.name}</a></dd></div>
+          <div><dt>{ko ? '상태' : 'Status'}</dt><dd>{ko ? koreanStatus[api.data.status] : api.data.status}</dd></div>
+          <div><dt>{ko ? '기본 URL' : 'Base URL'}</dt><dd><code>{api.data.baseUrl}</code></dd></div>
+          <div><dt>{ko ? '인증' : 'Authentication'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.auth}</dd></div>
+          <div><dt>{ko ? '가격·이용권 (영문)' : 'Pricing'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.pricing}</dd></div>
+          <div><dt>{ko ? '호출 한도 (영문)' : 'Limits'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.rateLimit}</dd></div>
+          <div><dt>{ko ? '형식' : 'Formats'}</dt><dd lang={ko ? 'en' : undefined}>{api.data.formats.join(', ')}</dd></div>
+          <div><dt>{ko ? '원문 확인일' : 'Verified'}</dt><dd><time datetime={formatDate(api.data.verifiedAt)}>{formatDate(api.data.verifiedAt)}</time></dd></div>
+        </dl>
+        <a class="button" href={api.data.officialDocs} rel="noopener noreferrer">{ko ? '공식 문서' : 'Official docs'} ↗</a>
+        <a class="button secondary" href={route(`api/providers/${api.id}.json`)}>{ko ? '공급자 JSON (영문)' : 'Provider JSON'}</a>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

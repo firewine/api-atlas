@@ -27,6 +27,12 @@ Practical case studies use the existing Guides template. Generate one reviewed c
 
 The seed catalog covers EODHD, BOK ECOS, the FSC fund-product API on data.go.kr, OpenAI, Anthropic, Gemini, Massive, Alpha Vantage, yfinance, and Currencylayer.
 
+Korean pages live under `/ko/` (or `/api-atlas/ko/` when mounted in GetBeta).
+They use separate display overlays and the original providers, facts and evidence.
+Only reviewed translations get reciprocal language links; the existing English
+URLs and machine endpoints remain the canonical sources for their contracts.
+See the Korean overlay rules in [Content authoring](docs/CONTENT_AUTHORING.md).
+
 Machine surfaces:
 
 - `/api/catalog.json`

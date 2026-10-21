@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { getKoreanGuides } from '../../../lib/translations';
+import { route, guidePriority } from '../../../lib/i18n';
+const guides = (await getKoreanGuides()).sort((a,b) => guidePriority(a.source.id) - guidePriority(b.source.id));
+---
+<BaseLayout lang="ko" title="한국어 API 연동 가이드" description="세이브로 배당 수집, EODHD 한국 배당 출처 분리, ECOS 환율 검증과 yfinance 컬럼 문제를 출처·검증 범위와 함께 읽어보세요.">
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs lang="ko" items={[{label:'홈',href:route('', 'ko')},{label:'가이드'}]} />
+    <span class="eyebrow">한국어 가이드 {guides.length}개</span>
+    <h1 class="page-title">API 연동에서 확인해야 할 문제와 해결</h1>
+    <p class="lede">한국 배당금 수집의 건수·날짜 검증부터 시작하세요. 원문의 코드 검토, 합성 시험, 실제 호출 여부를 구분하며 번역 자체를 새로운 API 검증으로 표시하지 않습니다.</p>
+  </div></header>
+  <section class="section-tight"><div class="shell guide-grid">
+    {guides.map(({source,translation}) => <a class="guide-card" href={route(`guides/${source.id}/`, 'ko')}><h2>{translation.data.linkLabel ?? translation.data.title}</h2><p>{translation.data.summary}</p></a>)}
+  </div></section>
+</BaseLayout>

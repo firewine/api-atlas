@@ -6,9 +6,10 @@ interface Crumb {
 
 interface Props {
   items: Crumb[];
+  lang?: 'en' | 'ko';
 }
 
-const { items } = Astro.props;
+const { items, lang = 'en' } = Astro.props;
 const base = Astro.site ?? Astro.url.origin;
 const schema = {
   '@context': 'https://schema.org',
@@ -22,7 +23,7 @@ const schema = {
 };
 ---
 
-<nav class="breadcrumbs" aria-label="Breadcrumb" data-pagefind-ignore>
+<nav class="breadcrumbs" aria-label={lang === 'ko' ? '현재 위치' : 'Breadcrumb'} data-pagefind-ignore>
   <ol>
     {items.map((item: Crumb, index: number) => (
       <li>
@@ -32,4 +33,4 @@ const schema = {
     ))}
   </ol>
 </nav>
-<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replaceAll('<', '\\u003c')} />

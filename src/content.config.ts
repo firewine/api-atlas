@@ -3,6 +3,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { CORE_FACT_KEYS, isVerificationDate, validateProviderProvenance } from './lib/provider-provenance.mjs';
 import { caseStudySchema, caseTitle } from './lib/case-study.mjs';
+import { koreanApiSchema, koreanComparisonSchema, koreanGuideSchema } from './lib/translation-schema.mjs';
 
 const verificationDate = z.string().refine(isVerificationDate, 'Use a valid YYYY-MM-DD date')
   .transform((value) => new Date(`${value}T00:00:00Z`));
@@ -86,4 +87,19 @@ const comparisons = defineCollection({
   }),
 });
 
-export const collections = { apis, guides, comparisons };
+const koGuides = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/ko/guides' }),
+  schema: koreanGuideSchema,
+});
+
+const koApis = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/ko/apis' }),
+  schema: koreanApiSchema,
+});
+
+const koComparisons = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/data/ko/comparisons' }),
+  schema: koreanComparisonSchema,
+});
+
+export const collections = { apis, guides, comparisons, koGuides, koApis, koComparisons };

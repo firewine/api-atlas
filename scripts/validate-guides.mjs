@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { caseStudySchema, duplicateCaseIssues } from '../src/lib/case-study.mjs';
 import { verifyCaseEvidence } from './case-evidence.mjs';
 import { guideOutputIssues, hasDescriptiveLink } from './guide-output.mjs';
+import { loadKoreanRegistry, translatedGuideRecord } from './translation-content.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = new URL('../dist/', import.meta.url);
@@ -13,7 +14,8 @@ const siteRoot = new URL(`${base}/`, site).href;
 if (site.origin === 'https://getbeta.app' && base !== '/api-atlas') throw new Error('GetBeta production builds require BASE_PATH=/api-atlas/');
 /** @type {import('./guide-output.mjs').GuideRecord[]} */
 const guides = JSON.parse(await readFile(new URL('api/guides.json', dist), 'utf8'));
-const errors = duplicateCaseIssues(guides.map((guide) => ({ ...guide, problemId: guide.caseStudy?.problemId })));
+const translations = (await loadKoreanRegistry(root)).guides.map(translatedGuideRecord);
+const errors = duplicateCaseIssues([...guides, ...translations].map((guide) => ({ ...guide, problemId: guide.caseStudy?.problemId })));
 const index = await readFile(new URL('guides/index.html', dist), 'utf8');
 const sitemap = await readFile(new URL('sitemap.xml', dist), 'utf8');
 const sitemapEntries = [...sitemap.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>\s*<\/url>/g)];

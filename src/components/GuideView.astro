@@ -1,0 +1,53 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { formatDate } from '../lib/content';
+import { contentLink, route, translatedRoutes } from '../lib/i18n';
+interface Props { guide: CollectionEntry<'guides'>; translation?: CollectionEntry<'koGuides'> }
+const { guide, translation } = Astro.props;
+const locale = translation ? 'ko' : 'en';
+const ko = locale === 'ko';
+const display = translation?.data ?? guide.data;
+const published = await translatedRoutes();
+const { Content } = await render(translation ?? guide);
+const study = guide.data.caseStudy;
+const author = study?.review.author ?? 'API Atlas';
+const description = display.description ?? display.summary;
+const canonical = new URL(route(`guides/${guide.id}/`, locale), Astro.site ?? Astro.url.origin).href;
+const articleSchema = {
+  '@context': 'https://schema.org', '@type': 'TechArticle',
+  headline: display.title, description, inLanguage: locale,
+  dateModified: formatDate(guide.data.updatedAt),
+  author: { '@type': study?.review.authorType ?? 'Organization', name: author },
+  mainEntityOfPage: canonical,
+  ...(study ? { citation: study.evidence.map((source) => source.url) } : {}),
+};
+---
+
+<BaseLayout title={display.title} description={description} jsonLd={articleSchema} lang={locale}>
+  <header class="page-hero"><div class="narrow">
+    <Breadcrumbs lang={locale} items={[{ label: ko ? '홈' : 'Home', href: route('', locale) }, { label: ko ? '가이드' : 'Guides', href: route('guides/', locale) }, { label: display.title }]} />
+    <span class="eyebrow">{ko ? '가이드' : 'Guide'} {String(guide.data.order).padStart(2, '0')} · {ko ? '원문 확인일' : 'updated'} {formatDate(guide.data.updatedAt)}</span>
+    <h1 class="page-title" data-pagefind-meta="title">{display.h1 ?? display.title}</h1><p class="lede">{display.summary}</p>
+    <p>{ko ? '작성' : 'By'} <span data-guide-author>{author}</span> · {ko ? '원문 검토일:' : 'Reviewed:'} <time datetime={formatDate(guide.data.updatedAt)}>{formatDate(guide.data.updatedAt)}</time></p>
+    {translation && <p>번역 검토일: <time datetime={translation.data.translationReviewedAt}>{translation.data.translationReviewedAt}</time> · 원문 검증 범위를 유지한 한국어 번역입니다.</p>}
+  </div></header>
+  <section class="section-tight"><article class="narrow prose">
+    <div data-guide-body><Content /></div>
+    {study && <>
+      <section aria-labelledby="case-evidence">
+        <h2 id="case-evidence">{ko ? '출처와 검증 범위' : 'Sources and verification scope'}</h2>
+        <p>{translation?.data.verificationNote ?? study.verification.note}</p>
+        <ul>{study.evidence.map((source) => <li>
+          <a href={source.url} rel="noopener noreferrer">{source.id} ({source.kind})</a>
+          {ko ? ' · 확인일: ' : ' · checked: '}<time datetime={source.checkedAt}>{source.checkedAt}</time>
+        </li>)}</ul>
+      </section>
+      <section aria-labelledby="case-providers">
+        <h2 id="case-providers">{ko ? '관련 공급자' : 'Related providers'}</h2>
+        <ul>{study.providers.map((id) => { const link = contentLink(`apis/${id}/`, locale, published); return <li><a href={link.href}>{id} {ko ? 'API 소개와 공식 출처' : 'API profile and official sources'}{link.suffix}</a></li>; })}</ul>
+      </section>
+    </>}
+  </article></section>
+</BaseLayout>

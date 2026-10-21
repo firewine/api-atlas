@@ -104,6 +104,25 @@ SITE_URL=https://getbeta.app BASE_PATH=/api-atlas/ npm run validate:ci
 
 테스트는 격리 임시 사이트에서 합성 사례를 생성·빌드한 뒤 canonical/공급자 링크/사이트맵/내부 링크/스키마를 의도적으로 망가뜨려 실패하는지 확인한다. 합성 사례는 실제 `src/data/guides/`에 남기지 않는다. 브라우저 검사는 JavaScript를 끈 상태의 직접 Guide 접근도 확인한다.
 
+## 한국어 표시용 번역
+
+영문 원본은 기존 컬렉션에 유지하고 한국어 Markdown은 `src/data/ko/`의
+`apis`, `guides`, `comparisons`에 둡니다. 파일명과 `sourceId`는 원본 ID와 같아야 하며
+`sourceRevision`에는 원문 Markdown 전체 바이트의 SHA-256을 기록합니다.
+본문을 검토한 날짜는 `translationReviewedAt`에 기록합니다. 번역으로 원문 사실의
+`verifiedAt`·`checkedAt`이나 검증 등급을 갱신하지 않습니다.
+
+번역은 제목·H1·description·summary·본문을 소유하고, 원본의 가격·한도·증거·스냅샷·
+기술 값·출처 날짜는 원본에서 참조합니다. 사례 번역은 `verificationNote`와 설명적인
+`linkLabel`을 제공하며 `증상 → 원인 → 안전한 해결 → 검증 → 한계` 절을 유지합니다.
+지원되지 않는 원문 주장까지 번역하지 말고 검토된 범위와 제외 사유를 기록합니다.
+문서 조사·구현 확인·합성 시험·실제 호출 검증을 구분합니다.
+
+`validate:translations`는 원문 연결·revision·중복·실제 HTML·사이트맵·언어 쌍을
+검사하며 `validate`에 포함됩니다. 번역이 없는 링크는 영문이라고 표시하고 정확한
+영문 경로로 연결합니다. 검색 화면은 noindex를 유지하고 사이트맵/hreflang에서 제외합니다.
+root/subpath `validate:ci`의 실제 브라우저 검색도 통과해야 합니다.
+
 ## 배포 후 Search Console 확인
 
 실제 사례가 배포된 뒤 사이트 소유자의 Search Console에서 다음을 직접 확인하고 별도 검증 기록에 남긴다. 도구 접근이나 조회 결과가 없으면 **미검증/대기**로 기록한다.

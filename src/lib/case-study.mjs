@@ -9,6 +9,10 @@ const https = z.url().refine((value) => new URL(value).protocol === 'https:', 'U
 const keyword = z.object({ term: text, sourcePhrase: text, evidenceIds: z.array(text).min(1) }).strict();
 
 export const CASE_SECTIONS = Object.freeze(['Symptoms', 'Cause', 'Safe resolution', 'Verification', 'Limitations']);
+export const CASE_SECTIONS_BY_LOCALE = Object.freeze({
+  en: CASE_SECTIONS,
+  ko: Object.freeze(['증상', '원인', '안전한 해결', '검증', '한계']),
+});
 export const caseStudySchema = z.object({
   slug,
   problemId: slug,
@@ -101,18 +105,40 @@ export function caseMarkdown(input) {
   return CASE_SECTIONS.map((heading, index) => `## ${heading}\n\n${Object.values(input.sections)[index]}\n`).join('\n');
 }
 
-/** @param {{slug: string, title: string, description: string, summary: string, body: string, problemId?: string}[]} records */
+/** @typedef {{slug: string, title: string, description: string, summary: string, body: string, problemId?: string, locale?: 'en' | 'ko', sourceId?: string}} CaseIdentityRecord */
+
+/** Only a declared Korean overlay of this exact English source can share an identity.
+ * @param {CaseIdentityRecord} a @param {CaseIdentityRecord} b
+ */
+function isTranslationPair(a, b) {
+  const original = (a.locale ?? 'en') === 'en' ? a : b;
+  const translation = original === a ? b : a;
+  return (original.locale ?? 'en') === 'en' && !original.sourceId && translation.locale === 'ko' &&
+    translation.sourceId === original.slug && translation.slug === original.slug && translation.problemId === original.problemId;
+}
+
+/** @param {CaseIdentityRecord[]} records */
 export function duplicateCaseIssues(records) {
   /** @type {string[]} */
   const errors = [];
+  for (const record of records) {
+    if (record.locale === 'ko' && !records.some((other) => isTranslationPair(record, other))) {
+      errors.push(`Invalid translation identity: ${record.slug} must reference its actual English source and problemId`);
+    }
+    if ((record.locale ?? 'en') === 'en' && record.sourceId) errors.push(`English source cannot declare a translation sourceId: ${record.slug}`);
+  }
   for (const field of /** @type {const} */ (['slug', 'title', 'description', 'problemId'])) {
+    /** @type {Map<string, CaseIdentityRecord[]>} */
     const seen = new Map();
     for (const record of records) {
       const value = record[field];
       if (!value) continue;
       const normalized = normalizeCaseText(value);
-      if (seen.has(normalized)) errors.push(`Duplicate ${field}: ${seen.get(normalized)} and ${record.slug}`);
-      seen.set(normalized, record.slug);
+      const previous = seen.get(normalized) ?? [];
+      for (const other of previous) {
+        if (!isTranslationPair(other, record)) errors.push(`Duplicate ${field}: ${other.slug} and ${record.slug}`);
+      }
+      seen.set(normalized, [...previous, record]);
     }
   }
   const cases = records.filter((record) => record.problemId);
@@ -120,6 +146,7 @@ export function duplicateCaseIssues(records) {
     const tokens = (/** @type {string} */ value) => new Set(value.normalize('NFKC').toLowerCase().match(/[\p{L}\p{N}_]+/gu) ?? []);
     const a = tokens(cases[i].body);
     for (const b of cases.slice(i + 1)) {
+      if (isTranslationPair(cases[i], b)) continue;
       const other = tokens(b.body);
       const overlap = [...a].filter((token) => other.has(token)).length;
       if (overlap / new Set([...a, ...other]).size >= 0.9) errors.push(`Substantially duplicated case body: ${cases[i].slug} and ${b.slug}`);

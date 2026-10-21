@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { route, type Locale } from '../lib/i18n';
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props;
+const ko = lang === 'ko';
+---
+<BaseLayout lang={lang} title={ko ? '한국어 API 검색' : 'Search'} description={ko ? '한국어 API 소개와 주식 데이터·배당·yfinance 연동 가이드를 검색합니다.' : 'Search API Atlas provider profiles, comparisons, and integration guides.'} noIndex={true}>
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs lang={lang} items={[{ label: ko ? '홈' : 'Home', href: route('', lang) }, { label: ko ? '검색' : 'Search' }]} />
+    <span class="eyebrow">{ko ? '한국어 문서 검색' : 'Pagefind static search'}</span>
+    <h1 class="page-title">{ko ? 'API 연동에 필요한 정보를 찾아보세요.' : 'Search the atlas.'}</h1>
+    <p class="lede">{ko ? '주식 데이터 API 선택, 배당 지급일 누락, Adj Close와 같은 문제를 검색할 수 있습니다. 영문 문서는 English 검색에서 확인하세요.' : 'Search runs entirely against the index generated with the static build.'}</p>
+  </div></header>
+  <section class="section-tight" data-pagefind-ignore><div class="shell search-wrap">
+    <link href={route('pagefind/pagefind-ui.css')} rel="stylesheet" />
+    <div id="search" data-base-path={route()}></div>
+    <p id="search-status" role="status">{ko ? '검색을 준비하고 있습니다…' : 'Loading search…'}</p>
+    <noscript>{ko ? '검색에는 JavaScript가 필요합니다. ' : 'Search requires JavaScript. Browse the '}<a href={route(ko ? 'guides/' : 'apis/', lang)}>{ko ? '한국어 가이드 목록' : 'API catalog'}</a>{ko ? '에서 문서를 찾아보세요.' : ' instead.'}</noscript>
+    <script src={route('pagefind/pagefind-ui.js')} is:inline></script>
+    <script type="module" src={route('scripts/search.js')} is:inline></script>
+  </div></section>
+</BaseLayout>

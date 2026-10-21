@@ -18,6 +18,7 @@ const providers = comparison.data.providers.map((id) => apis.find((api) => api.i
 const { Content } = await render(comparison);
 const articleSchema = {
   '@context': 'https://schema.org', '@type': 'TechArticle',
+  inLanguage: 'en',
   headline: comparison.data.title, description: comparison.data.summary,
   dateModified: formatDate(comparison.data.verifiedAt), citation: comparison.data.sourceUrls,
   author: { '@type': 'Organization', name: 'API Atlas' },

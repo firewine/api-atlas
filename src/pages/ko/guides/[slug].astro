@@ -1,0 +1,8 @@
+---
+import GuideView from '../../../components/GuideView.astro';
+import { getKoreanGuides } from '../../../lib/translations';
+export async function getStaticPaths() {
+  return (await getKoreanGuides()).map(({source, translation}) => ({ params: { slug: source.id }, props: { guide: source, translation } }));
+}
+---
+<GuideView guide={Astro.props.guide} translation={Astro.props.translation} />

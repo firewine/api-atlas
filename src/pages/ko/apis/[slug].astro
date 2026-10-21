@@ -1,0 +1,8 @@
+---
+import ProviderView from '../../../components/ProviderView.astro';
+import { getKoreanApis } from '../../../lib/translations';
+export async function getStaticPaths() {
+  return (await getKoreanApis()).map(({source, translation}) => ({ params: { slug: source.id }, props: { api: source, translation } }));
+}
+---
+<ProviderView api={Astro.props.api} translation={Astro.props.translation} />

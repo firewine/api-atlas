@@ -13,6 +13,7 @@ const providerSlugs = catalog.providers.map((provider) => provider.id);
 const sourceSlugs = async (kind) => (await readdir(new URL(`../src/data/${kind}/`, import.meta.url)))
   .filter((name) => name.endsWith('.md')).map((name) => name.slice(0, -3));
 const [comparisonSlugs, guideSlugs] = await Promise.all([sourceSlugs('comparisons'), sourceSlugs('guides')]);
+const [koApiSlugs, koGuideSlugs, koComparisonSlugs] = await Promise.all([sourceSlugs('ko/apis'), sourceSlugs('ko/guides'), sourceSlugs('ko/comparisons')]);
 const categorySlugs = [...new Set(catalog.providers.map((provider) => provider.category))];
 const required = [
   'index.html', 'apis/index.html', 'categories/index.html', 'compare/index.html', 'guides/index.html',
@@ -23,6 +24,10 @@ const required = [
   ...comparisonSlugs.map((slug) => `compare/${slug}/index.html`),
   ...guideSlugs.map((slug) => `guides/${slug}/index.html`),
   ...categorySlugs.map((slug) => `categories/${slug}/index.html`),
+  'ko/index.html', 'ko/guides/index.html', 'ko/search/index.html',
+  ...koApiSlugs.map((slug) => `ko/apis/${slug}/index.html`),
+  ...koGuideSlugs.map((slug) => `ko/guides/${slug}/index.html`),
+  ...koComparisonSlugs.map((slug) => `ko/compare/${slug}/index.html`),
 ];
 const errors = [];
 for (const relativePath of required) {
@@ -70,6 +75,10 @@ for (const file of htmlFiles) {
     try { url = new URL(reference, publicUrl); }
     catch { errors.push(`${relative}: invalid URL ${reference}`); continue; }
     if (url.origin !== site.origin) continue;
+    // These existing GetBeta explanations/tools are deliberate cross-product links.
+    if (url.origin === 'https://getbeta.app' && !url.search && !url.hash &&
+      ['https://getbeta.app/learn/payment-vs-ex-date', 'https://getbeta.app/learn/ttm-yield',
+        'https://getbeta.app/tools/dividend-calculator'].includes(reference)) continue;
     if (!url.pathname.startsWith(`${prefix}/`)) {
       errors.push(`${relative}: URL escapes BASE_PATH: ${reference}`);
       continue;
@@ -92,7 +101,8 @@ for (const file of htmlFiles) {
     try {
       const schemas = JSON.parse(schema[1]);
       const website = schemas.find((item) => item['@type'] === 'WebSite');
-      if (website?.url !== siteRoot || website?.potentialAction?.target !== `${siteRoot}search/?q={search_term_string}`) {
+      const localizedRoot = relative.startsWith('ko/') ? `${siteRoot}ko/` : siteRoot;
+      if (website?.url !== localizedRoot || website?.potentialAction?.target !== `${localizedRoot}search/?q={search_term_string}`) {
         errors.push(`${relative}: WebSite JSON-LD has wrong site or search URL`);
       }
       for (const item of schemas) {

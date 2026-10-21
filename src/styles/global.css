@@ -32,6 +32,8 @@ code:not(pre code) { border-radius: 4px; background: var(--paper-deep); padding:
 .site-header nav a, .search-link { color: #cfd8d2; font-size: .88rem; font-weight: 650; text-decoration: none; }
 .site-header nav a:hover, .search-link:hover, .site-header nav a[aria-current="page"] { color: var(--white); }
 .search-link { justify-self: end; display: inline-flex; align-items: center; gap: .4rem; }
+.header-actions { display: flex; justify-self: end; align-items: center; gap: 1rem; }
+.language-switch { color: #cfd8d2; font-size: .88rem; white-space: nowrap; }
 
 main { min-height: 72vh; }
 .shell { width: min(calc(100% - 2.5rem), var(--max)); margin-inline: auto; }

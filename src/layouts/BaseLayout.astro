@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import { formatDate } from '../lib/content';
+import { route, routeKey, translatedRoutes, type Locale } from '../lib/i18n';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const latestCatalogReview = formatDate(new Date(Math.max(...(await getCollection('apis')).map((entry) => entry.data.verifiedAt.getTime()))));
 
@@ -10,7 +11,7 @@ interface Props {
   description?: string;
   canonicalPath?: string;
   noIndex?: boolean;
-  lang?: string;
+  lang?: Locale;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -26,7 +27,16 @@ const {
 const pageTitle = title === 'API Atlas' ? title : `${title} · API Atlas`;
 const canonical = new URL(canonicalPath, Astro.site ?? Astro.url.origin);
 const currentPath = Astro.url.pathname;
-const navItems = [
+const ko = lang === 'ko';
+const key = routeKey(currentPath);
+const hasTranslation = (await translatedRoutes()).has(key);
+const alternates = hasTranslation && !noIndex ? ['en', 'ko'] as const : [];
+const navItems = ko ? [
+  [route('apis/'), 'API 목록 (영문)'],
+  [route('categories/'), '카테고리 (영문)'],
+  [route('compare/'), '비교 (영문)'],
+  [route('guides/', 'ko'), '가이드'],
+] : [
   [`${base}/apis/`, 'APIs'],
   [`${base}/categories/`, 'Categories'],
   [`${base}/compare/`, 'Compare'],
@@ -38,11 +48,12 @@ const siteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'API Atlas',
-  url: new URL(`${base}/`, Astro.site ?? Astro.url.origin).href,
+  inLanguage: lang,
+  url: new URL(route('', lang), Astro.site ?? Astro.url.origin).href,
   description,
   potentialAction: {
     '@type': 'SearchAction',
-    target: `${new URL(`${base}/search/`, Astro.site ?? Astro.url.origin).href}?q={search_term_string}`,
+    target: `${new URL(route('search/', lang), Astro.site ?? Astro.url.origin).href}?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
 };
@@ -59,6 +70,7 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((locale) => <link rel="alternate" hreflang={locale} href={new URL(route(key, locale), Astro.site ?? Astro.url.origin).href} />)}
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="manifest" href={`${base}/site.webmanifest`} />
     <meta name="theme-color" content="#0d1512" />
@@ -71,37 +83,39 @@ const schemas = jsonLd ? [siteSchema, ...(Array.isArray(jsonLd) ? jsonLd : [json
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas).replaceAll('<', '\\u003c')} />
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="skip-link" href="#main-content">{ko ? '본문 바로가기' : 'Skip to content'}</a>
     <header class="site-header" data-pagefind-ignore>
-      <a class="brand" href={`${base}/`} aria-label="API Atlas home">
+      <a class="brand" href={route('', lang)} aria-label={ko ? 'API Atlas 한국어 홈' : 'API Atlas home'}>
         <span class="brand-mark" aria-hidden="true">A:</span>
         <span>API Atlas</span>
       </a>
-      <nav aria-label="Primary navigation">
+      <nav aria-label={ko ? '주 메뉴' : 'Primary navigation'}>
         {navItems.map(([href, label]) => (
           <a href={href} aria-current={currentPath.startsWith(href) ? 'page' : undefined}>{label}</a>
         ))}
       </nav>
-      <a class="search-link" href={`${base}/search/`} aria-label="Search API Atlas">
-        <span aria-hidden="true">⌕</span> Search
+      <div class="header-actions"><a class="search-link" href={route('search/', lang)} aria-label={ko ? 'API Atlas 검색' : 'Search API Atlas'}>
+        <span aria-hidden="true">⌕</span> {ko ? '검색' : 'Search'}
       </a>
+      {hasTranslation && <a class="language-switch" href={route(key, ko ? 'en' : 'ko')} lang={ko ? 'en' : 'ko'}>{ko ? 'English' : '한국어'}</a>}
+      </div>
     </header>
     <main id="main-content" data-pagefind-body={!noIndex ? true : undefined}>
       <slot />
     </main>
     <footer class="site-footer" data-pagefind-ignore>
       <div>
-        <a class="brand footer-brand" href={`${base}/`}><span class="brand-mark">A:</span> API Atlas</a>
-        <p>Concise API intelligence, traced to official sources.</p>
+        <a class="brand footer-brand" href={route('', lang)}><span class="brand-mark">A:</span> API Atlas</a>
+        <p>{ko ? '공식 출처를 확인하며 API를 선택하고 연결하는 개발 가이드.' : 'Concise API intelligence, traced to official sources.'}</p>
       </div>
       <div class="footer-links">
-        <a href={`${base}/sources/`}>Source policy</a>
-        <a href={`${base}/about/`}>About</a>
-        <a href={`${base}/api/catalog.json`}>Catalog JSON</a>
+        <a href={`${base}/sources/`}>{ko ? '출처 정책 (영문)' : 'Source policy'}</a>
+        <a href={`${base}/about/`}>{ko ? '소개 (영문)' : 'About'}</a>
+        <a href={`${base}/api/catalog.json`}>{ko ? '카탈로그 JSON (영문)' : 'Catalog JSON'}</a>
         <a href={`${base}/llms.txt`}>llms.txt</a>
       </div>
-      <p class="footer-note">No crawler cloaking. No bot-driven ad impressions. Latest profile verification: {latestCatalogReview}.</p>
-      <p class="footer-powered">Powered by <a href="https://getbeta.app">GetBeta</a> — dividend portfolio intelligence.</p>
+      <p class="footer-note">{ko ? `크롤러에게도 같은 본문을 제공합니다. 봇 광고 노출을 만들지 않습니다. 원문 공급자 정보의 최근 확인일: ${latestCatalogReview}.` : `No crawler cloaking. No bot-driven ad impressions. Latest profile verification: ${latestCatalogReview}.`}</p>
+      <p class="footer-powered">{ko ? '제공: ' : 'Powered by '}<a href="https://getbeta.app">GetBeta</a>{ko ? ' · 배당 포트폴리오 서비스' : ' — dividend portfolio intelligence.'}</p>
     </footer>
   </body>
 </html>

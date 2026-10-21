@@ -1,0 +1,36 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import SourcePanel from '../../../components/SourcePanel.astro';
+import { getKoreanComparisons } from '../../../lib/translations';
+import { contentLink, route, translatedRoutes } from '../../../lib/i18n';
+import { formatDate } from '../../../lib/content';
+export async function getStaticPaths() {
+  return (await getKoreanComparisons()).map(({source,translation}) => ({params:{slug:source.id},props:{source,translation}}));
+}
+const { source, translation } = Astro.props;
+const { Content } = await render(translation);
+const published = await translatedRoutes();
+const canonical = new URL(route(`compare/${source.id}/`, 'ko'), Astro.site).href;
+const articleSchema = {
+  '@context':'https://schema.org', '@type':'TechArticle', inLanguage:'ko',
+  headline:translation.data.title, description:translation.data.description,
+  dateModified:formatDate(source.data.verifiedAt), citation:source.data.sourceUrls,
+  author:{'@type':'Organization',name:'API Atlas'}, mainEntityOfPage:canonical,
+};
+---
+<BaseLayout lang="ko" title={translation.data.title} description={translation.data.description} jsonLd={articleSchema}>
+  <header class="page-hero"><div class="shell">
+    <Breadcrumbs lang="ko" items={[{label:'홈',href:route('', 'ko')},{label:'API 비교 (영문)',href:route('compare/')},{label:translation.data.title}]} />
+    <span class="eyebrow">한국 공공 금융 API 비교</span>
+    <h1 class="page-title" data-pagefind-meta="title">{translation.data.h1}</h1><p class="lede">{translation.data.summary}</p>
+    <p>원문 확인일: <time datetime={formatDate(source.data.verifiedAt)}>{formatDate(source.data.verifiedAt)}</time> · 번역 검토일: <time datetime={translation.data.translationReviewedAt}>{translation.data.translationReviewedAt}</time></p>
+  </div></header>
+  <section class="section-tight"><article class="narrow prose">
+    <div data-translation-body><Content /></div>
+    <h2>관련 공급자와 확인 범위</h2>
+    <ul>{source.data.providers.map((id) => {const link=contentLink(`apis/${id}/`, 'ko', published); return <li><a href={link.href}>{id} 공급자 정보{link.suffix}</a></li>;})}</ul>
+    <SourcePanel lang="ko" verifiedAt={source.data.verifiedAt} sourceUrls={source.data.sourceUrls} />
+  </article></section>
+</BaseLayout>
