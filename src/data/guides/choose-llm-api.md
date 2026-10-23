@@ -32,6 +32,8 @@ Record model ID, API version, prompt version, date, input and output usage, late
 
 Test rate-limit behavior, timeouts, idempotency, streaming interruption, webhook verification, data retention controls, regional availability, audit needs, and service-account management. Confirm whether direct and cloud-hosted variants expose the same features.
 
+For mixed server/client tool workflows, include the [Anthropic Claude delayed-result and 400 continuation case](../anthropic-mixed-tools-missing-result-400/). Test result-ID correlation and unfinished-turn handling, not just final text.
+
 ## Preserve switching room
 
 Use a provider adapter for authentication, payloads, streaming events, and error translation. Keep the neutral application task separate from the provider request. Preserve raw responses for diagnosis within your retention policy.

@@ -1,0 +1,7 @@
+Source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+Checked: 2026-10-23
+
+Short verbatim field description. Client outcomes belong in tool_result; failed execution is not success.
+
+Excerpt:
+`is_error` (optional): Set to `true` if the tool execution resulted in an error.

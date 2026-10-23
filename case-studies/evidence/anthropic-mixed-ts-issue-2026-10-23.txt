@@ -1,0 +1,7 @@
+Source: https://github.com/anthropics/anthropic-sdk-typescript/issues/1090
+Checked: 2026-10-23
+
+Exact extract from the maintainer response dated 2026-06-26. The issue is closed; its original report is historical context, not current blanket failure evidence.
+
+Excerpt:
+this is long-standing, intended API behavior that the docs didn't describe, so we've fixed the docs, not the API.

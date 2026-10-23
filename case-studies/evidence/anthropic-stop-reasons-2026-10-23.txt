@@ -1,0 +1,9 @@
+Source: https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons
+Checked: 2026-10-23
+
+Short exact tokens from the stop-reason contract. Mixed tool_use continuation and pause_turn have different paths.
+
+Excerpt:
+400 `invalid_request_error`
+`pause_turn`
+`tool_use`

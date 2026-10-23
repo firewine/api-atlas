@@ -1,0 +1,9 @@
+Source: https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling
+Checked: 2026-10-23
+
+Short exact excerpts from the programmatic continuation section and caller schema. The container is required while the code awaits client results.
+
+Excerpt:
+Pass the `container` ID from the paused response.
+`caller`
+`tool_id`

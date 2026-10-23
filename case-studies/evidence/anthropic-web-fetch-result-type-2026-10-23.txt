@@ -1,0 +1,9 @@
+Source: https://github.com/anthropics/anthropic-sdk-python/blob/9313f13a5a643ceed10fafba6785eab8e04b6e6e/src/anthropic/types/web_fetch_tool_result_block.py
+Checked: 2026-10-23
+
+Exact SDK type excerpt, pinned to the commit inspected on the review date. A type definition supports field names, not runtime success.
+
+Excerpt:
+tool_use_id: str
+
+    type: Literal["web_fetch_tool_result"]

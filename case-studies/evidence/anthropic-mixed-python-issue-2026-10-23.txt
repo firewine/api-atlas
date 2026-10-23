@@ -1,0 +1,9 @@
+Source: https://github.com/anthropics/anthropic-sdk-python/issues/1325
+Checked: 2026-10-23
+
+Exact issue-specific version identifiers. These are not current compatibility recommendations or a first/fixed-version claim.
+
+Excerpt:
+anthropic Python SDK version: 0.52.0
+claude-sonnet-4-6
+code_execution_20250825

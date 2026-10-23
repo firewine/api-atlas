@@ -1,0 +1,7 @@
+Source: https://github.com/anthropics/anthropic-sdk-python/issues/1325#issuecomment-5206888743
+Checked: 2026-10-23
+
+Exact extract from the 2026-08-06 maintainer follow-up. Its reported code-execution and tool-search checks were not repeated by API Atlas.
+
+Excerpt:
+The block is only unmatched for that one turn and no synthetic results are needed.

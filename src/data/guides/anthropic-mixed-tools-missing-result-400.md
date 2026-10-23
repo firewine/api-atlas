@@ -1,0 +1,273 @@
+---
+"title": "Anthropic Claude API mixed-tool missing results and 400 errors: resume
+  the unfinished tool turn"
+"h1": "Anthropic Claude API mixed-tool missing results and 400 errors: resume
+  the unfinished tool turn"
+"description": "Handle Claude mixed server/client tools without invented
+  results: preserve IDs, return client results only, keep tools and distinguish
+  pause_turn and programmatic containers."
+"summary": "A missing server result in a mixed Claude tool response can be
+  deferred, not lost. Continue with every client result, preserve tool
+  definitions and correlate later results by ID before treating the turn as
+  complete."
+"order": 19
+"updatedAt": "2026-10-23"
+"tags":
+  - "practical-case"
+  - "llm"
+  - "anthropic"
+  - "tool-use"
+"caseStudy":
+  "slug": "anthropic-mixed-tools-missing-result-400"
+  "problemId": "anthropic-mixed-tools-premature-turn-closure"
+  "titleParts":
+    "api": "Anthropic Claude API"
+    "problem": "mixed-tool missing results and 400 errors"
+    "solution": "resume the unfinished tool turn"
+  "linkLabel": "Anthropic Claude mixed-tool results: avoid premature-turn 400 errors"
+  "providers":
+    - "anthropic"
+  "searchIntent":
+    "primary":
+      "term": "Claude mixed tools missing result 400"
+      "sourcePhrase": "server_tool_use"
+      "evidenceIds":
+        - "anthropic-mixed-contract"
+    "related":
+      - "term": "Claude tool_result only continuation"
+        "sourcePhrase": "tool_use"
+        "evidenceIds":
+          - "anthropic-stop-reasons"
+      - "term": "server tool result ID correlation"
+        "sourcePhrase": "tool_use_id"
+        "evidenceIds":
+          - "anthropic-web-fetch-result-type"
+      - "term": "pause_turn versus mixed client tools"
+        "sourcePhrase": "pause_turn"
+        "evidenceIds":
+          - "anthropic-stop-reasons"
+      - "term": "programmatic tool container continuation"
+        "sourcePhrase": "container"
+        "evidenceIds":
+          - "anthropic-programmatic"
+    "status": "keyword-candidate"
+  "evidence":
+    - "id": "anthropic-mixed-contract"
+      "kind": "documentation"
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-to\
+        ols#mixing-server-tools-and-client-tools-in-one-turn"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-mixed-contract-2026-10-23.txt"
+      "sha256": "58ee79eb68a028fb38d988617d79da7ff645cb9a50a1728001ab3a7d97584867"
+      "excerpt": "A `server_tool_use` block and its result block pair up by
+        `tool_use_id`, not by position:"
+    - "id": "anthropic-stop-reasons"
+      "kind": "documentation"
+      "url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-rea\
+        sons"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-stop-reasons-2026-10-23.txt"
+      "sha256": "38522b19deadc8eaee722d8129ca6f9e28ad35f8f8422bb472be831479fe45d5"
+      "excerpt": "400 `invalid_request_error`
+
+        `pause_turn`
+
+        `tool_use`"
+    - "id": "anthropic-client-results"
+      "kind": "documentation"
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-to\
+        ol-calls"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-client-results-2026-10-23.txt"
+      "sha256": "d7fa99ec82ccd5436d86265aae577357e3bd674c2976abf1c6cecfdd21ea1b61"
+      "excerpt": "`is_error` (optional): Set to `true` if the tool execution resulted
+        in an error."
+    - "id": "anthropic-programmatic"
+      "kind": "documentation"
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/programma\
+        tic-tool-calling"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-programmatic-2026-10-23.txt"
+      "sha256": "6e5488918bb7fa27260fc72875c53893bf394ba94900feda51ac4a6e42e2e96e"
+      "excerpt": "Pass the `container` ID from the paused response.
+
+        `caller`
+
+        `tool_id`"
+    - "id": "anthropic-web-fetch-result-type"
+      "kind": "code"
+      "url": "https://github.com/anthropics/anthropic-sdk-python/blob/9313f13a5a643ce\
+        ed10fafba6785eab8e04b6e6e/src/anthropic/types/web_fetch_tool_result_blo\
+        ck.py"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-web-fetch-result-type-2026-10-23.txt"
+      "sha256": "3b30ad112cdb654d2242036325d3dee63a78c7e491c3d98367aeb51a2de1d0dd"
+      "excerpt": "tool_use_id: str
+
+
+        \    type: Literal[\"web_fetch_tool_result\"]"
+    - "id": "anthropic-mixed-ts-issue"
+      "kind": "documentation"
+      "url": "https://github.com/anthropics/anthropic-sdk-typescript/issues/1090"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-mixed-ts-issue-2026-10-23.txt"
+      "sha256": "6777fa02e328faed7dc7b0d4deb7f56e3f1a17d31d3160f9db0a428778d6816c"
+      "excerpt": "this is long-standing, intended API behavior that the docs didn't
+        describe, so we've fixed the docs, not the API."
+    - "id": "anthropic-mixed-python-issue"
+      "kind": "documentation"
+      "url": "https://github.com/anthropics/anthropic-sdk-python/issues/1325"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-mixed-python-issue-2026-10-23.txt"
+      "sha256": "35e2923d98be847712b98ac2b3a07a871f61f16c33d1cb1cded8687931dd67d5"
+      "excerpt": "anthropic Python SDK version: 0.52.0
+
+        claude-sonnet-4-6
+
+        code_execution_20250825"
+    - "id": "anthropic-mixed-python-followup"
+      "kind": "documentation"
+      "url": "https://github.com/anthropics/anthropic-sdk-python/issues/1325#issuecom\
+        ment-5206888743"
+      "checkedAt": "2026-10-23"
+      "snapshot": "case-studies/evidence/anthropic-mixed-python-followup-2026-10-23.txt"
+      "sha256": "7223b8a8e66663ba8b20ded5b67434435370bc554b5362311bca15ca125fb74f"
+      "excerpt": "The block is only unmatched for that one turn and no synthetic
+        results are needed."
+  "technicalDetails":
+    - "kind": "field"
+      "value": "tool_use_id"
+      "evidenceId": "anthropic-web-fetch-result-type"
+    - "kind": "field"
+      "value": "web_fetch_tool_result"
+      "evidenceId": "anthropic-web-fetch-result-type"
+    - "kind": "error-code"
+      "value": "invalid_request_error"
+      "evidenceId": "anthropic-stop-reasons"
+    - "kind": "field"
+      "value": "pause_turn"
+      "evidenceId": "anthropic-stop-reasons"
+    - "kind": "sdk-version"
+      "value": "0.52.0"
+      "evidenceId": "anthropic-mixed-python-issue"
+  "verification":
+    "level": "source-review"
+    "note": "Reviewed official documentation, pinned SDK types and issue follow-ups
+      on 2026-10-23. No Anthropic API request was made; upstream observations
+      are attributed reports, not a live reproduction by API Atlas."
+    "evidenceIds":
+      - "anthropic-mixed-contract"
+      - "anthropic-web-fetch-result-type"
+      - "anthropic-mixed-ts-issue"
+      - "anthropic-mixed-python-followup"
+      - "anthropic-programmatic"
+  "review":
+    "author": "차도녀 gpt may"
+    "authorType": "Person"
+    "checkedAt": "2026-10-23"
+    "titleMatchesBody": true
+    "distinctProblem": "An unfinished mixed server/client tool turn is closed or
+      misclassified before its deferred result arrives. This differs from Gemini
+      thought signatures, OpenAI response-phase selection and generic timeout or
+      response-format forwarding."
+    "noInventedResults": true
+---
+
+## Symptoms
+
+A response ends with `stop_reason="tool_use"` and contains both a client `tool_use` and a `server_tool_use`, but the latter has no result yet. A spinner can remain open, or a continuation with extra text can fail with HTTP 400 `invalid_request_error`. This is not, by itself, proof of permanently lost output.
+
+[TypeScript issue #1090](https://github.com/anthropics/anthropic-sdk-typescript/issues/1090) reported this with web fetch. The June 26, 2026 maintainer response identifies an intended flow whose documentation was incomplete. [Python issue #1325](https://github.com/anthropics/anthropic-sdk-python/issues/1325) described code-execution/tool-search symptoms; its [August 6 follow-up](https://github.com/anthropics/anthropic-sdk-python/issues/1325#issuecomment-5206888743) reports server-side handling and says synthetic results are unnecessary. Both issues were closed when reviewed. Do not quote the original reports without their follow-ups.
+
+## Cause
+
+The [mixed-tool contract](https://platform.claude.com/docs/en/agents-and-tools/tool-use/server-tools#mixing-server-tools-and-client-tools-in-one-turn) separates two cases. For a direct parallel call, the server tool waits while the application handles client tools; its result arrives in the next response after valid client results. Correlate across responses by `tool_use_id`, not adjacency. Preserve the ordered assistant/user/assistant exchange.
+
+In [programmatic tool calling](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling), code is already running and pauses for client data. Inspect `caller` and its `tool_id`; the code's final result can require multiple exchanges. This is different from `pause_turn`, which resumes the saved assistant content without inventing a client-result message. The [stop-reason reference](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons) defines that distinction.
+
+## Safe resolution
+
+For the unfinished mixed turn, return one actual `tool_result` for every client `tool_use` in a single immediate user message. Include no extra top-level text, before or after those results. Keep the original `tools` definitions unchanged. Removing the waiting tool or prematurely ending the turn can cause 400. Add new user instructions only after the turn completes. Do not execute a server call locally or manufacture its result.
+
+The [client-result contract](https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls) allows actual failures through `is_error: true`. Text nested inside a `tool_result` is result data, not the forbidden sibling text block. Preserve all assistant blocks, including signed or non-text content, rather than flattening them.
+
+This application example operates on complete JSON-shaped response dictionaries. It builds continuation fields without calling the SDK or executing tools. Take an immutable snapshot of the original tools before the first request; supply actual client outcomes from your separately authorized dispatcher.
+
+```python
+from copy import deepcopy
+
+
+def pending_server_calls(previous, response):
+    """Track unmatched IDs across complete responses, not block positions."""
+    pending = dict(previous)
+    for block in response["content"]:
+        if block["type"] in ("server_tool_use", "mcp_tool_use"):
+            pending[block["id"]] = block["name"]
+    for block in response["content"]:
+        if block["type"].endswith("_tool_result"):
+            pending.pop(block.get("tool_use_id"), None)
+    return pending  # Result observed does NOT mean execution succeeded.
+
+
+def continuation_patch(history, response, original_tools, results=()):
+    """Build request fields offline; history excludes this response.
+
+    original_tools is the saved definition snapshot from the initial request.
+    results contains actual client outcomes, never invented server outcomes.
+    Keep model, max_tokens and other applicable request settings separately.
+    """
+    calls = [b for b in response["content"] if b["type"] == "tool_use"]
+    reason = response["stop_reason"]
+    if reason == "pause_turn":
+        if calls or results:
+            raise ValueError("pause_turn is not a client-result continuation")
+    elif reason == "tool_use":
+        if not calls or any(r.get("type") != "tool_result" for r in results):
+            raise ValueError("Return client tool_result blocks only")
+        expected = {b["id"] for b in calls}
+        actual = [r.get("tool_use_id") for r in results]
+        if len(actual) != len(expected) or set(actual) != expected:
+            raise ValueError("Return exactly one result per client tool_use")
+        by_id = {b["id"]: b for b in calls}
+        for result in results:
+            if result.get("toolset_name") != by_id[result["tool_use_id"]].get("toolset_name"):
+                raise ValueError("Preserve the client toolset_name")
+    else:
+        raise ValueError("Handle completion, refusal or truncation separately")
+
+    container_id = (response.get("container") or {}).get("id")
+    programmatic = any(
+        (b.get("caller") or {}).get("type", "direct").startswith("code_execution_")
+        for b in calls
+    )
+    if programmatic and not container_id:
+        raise ValueError("Programmatic continuation requires container.id")
+    messages = deepcopy(history)
+    messages.append({"role": "assistant", "content": deepcopy(response["content"])})
+    if reason == "tool_use":
+        messages.append({"role": "user", "content": deepcopy(list(results))})
+    patch = {"messages": messages, "tools": deepcopy(original_tools)}
+    if container_id:
+        patch["container"] = container_id
+    return patch
+```
+
+For programmatic calls, reuse the returned `container.id`; never replace it with a new container. Pass the patch with the same applicable model/request settings. Preserve the next assistant response in history before another exchange. A pending-ID map is observation state, not a success ledger: examine result content for server errors. The [pinned SDK result type](https://github.com/anthropics/anthropic-sdk-python/blob/9313f13a5a643ceed10fafba6785eab8e04b6e6e/src/anthropic/types/web_fetch_tool_result_block.py) exposes `tool_use_id` and `web_fetch_tool_result`, but types alone do not prove execution.
+
+Use a bounded continuation budget and a visible unresolved state. If a terminal response still leaves an unmatched ID, retain diagnostic evidence and investigate; do not silently mark it successful or retry a side-effecting client operation blindly.
+
+## Verification
+
+Reviewed official documentation, pinned SDK types and issue follow-ups on 2026-10-23. No Anthropic API request was made; upstream observations are attributed reports, not a live reproduction by API Atlas.
+
+The repository's offline controls execute this published example with synthetic dictionaries. Normal controls cover multiple client results, out-of-order ID correlation, a server result already present, delayed results across responses, client-error-shaped results (`is_error: true`), `pause_turn`, and multi-round programmatic continuation. Rejection controls cover extra top-level text, missing/duplicate/wrong client IDs, fabricated server results, missing programmatic containers, and attempts to resume terminal or truncated responses. Definition/history preservation is checked without a network request.
+
+In your own authorized live test, record the model, API/SDK/tool versions, stop reasons, IDs, caller and container metadata, and sanitized request/response sequence. Compare the valid result-only continuation with extra-text and removed-tool failure controls. These server-side 400 controls were not run here. Static schema, evidence hashes, translation and build checks cannot establish service availability.
+
+## Limitations
+
+The Python report's SDK `0.52.0`, `claude-sonnet-4-6` and `code_execution_20250825` identify that issue's environment, not a current recommended combination. No first-affected version, universal SDK fix version or model-wide failure rate was established. Recheck the current tool/model compatibility documentation for the endpoint you use; direct Anthropic, Vertex and Bedrock support must not be assumed identical.
+
+The example is not an SDK tool runner, streaming assembler or automatic retry system. It does not validate every payload field, enforce container expiry, authorize client actions, or establish whether a pending operation succeeded. Store diagnostics under your retention policy and redact secrets. No GetBeta production fix is claimed or implemented; a text-only adapter path does not demonstrate mixed-tool handling.
+
+Use the [Anthropic provider profile](../../apis/anthropic/) and add these cases to the [LLM API operational-fit evaluation](../choose-llm-api/#check-operational-fit). Search phrases are editorial candidates, not measured search volume, rankings or evidence of adoption.
