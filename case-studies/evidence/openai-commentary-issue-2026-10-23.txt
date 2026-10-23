@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-python/issues/3859
+Checked: 2026-10-23
+Scope: Selected public source excerpts; omitted material is not reproduced.
+
+ValidationError: json_invalid
+openai 3.14.0 and 3.8.0; Pydantic 2.13.5

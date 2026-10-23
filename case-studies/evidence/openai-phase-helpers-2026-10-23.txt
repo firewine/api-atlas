@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-python/blob/v3.14.1/helpers.md
+Checked: 2026-10-23
+Scope: Selected public source excerpts; omitted material is not reproduced.
+
+`output_parsed` returns the first parsed result, or `None` when there is none.
+`output_text` continues to concatenate all output text, including commentary.

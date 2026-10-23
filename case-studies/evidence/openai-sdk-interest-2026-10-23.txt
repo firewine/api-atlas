@@ -1,0 +1,6 @@
+Source: https://api.github.com/repos/openai/openai-python
+Checked: 2026-10-23
+Scope: Selected numeric fields from the GitHub repository metadata read on this date. Interest proxy, not API user count.
+
+"stargazers_count": 31917
+"forks_count": 8058

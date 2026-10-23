@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-python/releases/tag/v3.14.1
+Checked: 2026-10-23
+Scope: Selected public source excerpts; omitted material is not reproduced.
+
+## [3.14.1](https://github.com/openai/openai-python/compare/v3.14.0...v3.14.1) (2026-09-15)
+* **responses:** skip structured parsing for commentary

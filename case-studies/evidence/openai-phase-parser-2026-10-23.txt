@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-python/blob/6520df1220a0030c7b45b00a6fa4bf2e9c7396ac/src/openai/lib/_parsing/_responses.py
+Checked: 2026-10-23
+Scope: Selected public source excerpts; omitted material is not reproduced.
+
+if phase is not None and phase != "final_answer":
+        return None
