@@ -22,10 +22,17 @@ test('Anthropic mixed-tool guide has bilingual static content, source scope and 
   } finally {
     await context.close();
   }
-  for (const path of ['apis/anthropic/', 'guides/choose-llm-api/']) {
-    await page.goto(`http://127.0.0.1:4173${base}${path}`);
-    await expect(page.locator(`a[href="${base}guides/${slug}/"]`)).toHaveCount(1);
-  }
+  await page.goto(`http://127.0.0.1:4173${base}apis/anthropic/`);
+  await expect(page.locator(`a[href="${base}guides/${slug}/"]`)).toHaveCount(1);
+  await page.goto(`http://127.0.0.1:4173${base}guides/choose-llm-api/`);
+  const operationalLink = page.getByRole('link', {
+    name: 'Anthropic Claude delayed-result and 400 continuation case', exact: true,
+  });
+  await expect(operationalLink).toHaveCount(1);
+  await expect(operationalLink).toHaveAttribute('href', `../${slug}/`);
+  await operationalLink.click();
+  await expect(page).toHaveURL(`http://127.0.0.1:4173${base}guides/${slug}/`);
+  await expect(page.locator('h1')).toContainText('Anthropic Claude API');
   await page.goto(`http://127.0.0.1:4173${base}ko/guides/`);
   await expect(page.locator(`a[href="${base}ko/guides/${slug}/"]`)).toHaveCount(1);
 });

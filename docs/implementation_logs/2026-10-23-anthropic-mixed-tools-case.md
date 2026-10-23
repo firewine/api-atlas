@@ -24,6 +24,7 @@ Reviewed: 2026-10-23
 - Offline Python controls check normal continuation, state/definition preservation, delayed and already-present result IDs, client-error-shaped results, pause continuation and multi-round programmatic calls. Fifteen rejection controls exercise malformed or inappropriate continuations. No SDK, client tool or provider service is called by these tests.
 - Independent source/code review found no blocking issue. Synthetic-test wording was tightened before the full passing validations.
 - A browser regression test was added for both language pages, no-JavaScript readability, canonical/language links and provider/operational-fit discovery. Local browser execution remains unavailable in this sandbox and was not retried through an alternate route. Browser PASS must come from the exact pushed commit's existing CI, not from these static results.
+- The first pushed commit (`6a00ecd9dd9138a119280241d6e838fcd93e71ab`) passed both remote static suites; each browser suite passed 20 of 21 tests. The new test incorrectly required an absolute `href` for an ordinary relative Markdown link. Its scoped correction retains the link assertion, clicks it, and checks the resolved root/subpath URL and destination heading. No application link or workflow was changed; inspect the correction commit's CI separately.
 
 ## Boundaries
 
