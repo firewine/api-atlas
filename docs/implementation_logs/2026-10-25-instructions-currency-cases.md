@@ -34,6 +34,13 @@ ASTRO_TELEMETRY_DISABLED=1 XDG_CONFIG_HOME=/tmp/api-atlas-config \
 - An early validation snapshot taken while translation edits were still being finalized detected a stale Korean source revision. The revision was corrected and the full final-content validation rerun. No validator was weakened.
 - Browser assertions were not reached locally: the managed Chromium download was truncated, installed Chromium failed its socket launch, and an elevated launch failed environment setup. The two new browser tests cover no-JavaScript bilingual reading, canonical/language links, provider discovery and selection-guide navigation. The existing push-triggered CI must establish the exact commit's root/subpath browser result; local static checks are not a browser PASS.
 
+## CI regression correction
+
+- Push commit `685c1c6952b28843b8572c14aca4242af6c48978`, run `40179552707`, passed both remote static suites but each browser suite passed 22 of 23 tests. Both newly added browser cases passed.
+- The existing Korean navigation test selected every link under the yfinance Korean-cases section and expected a single link. Adding the legitimate second translated case made that locator ambiguous; this was an actual test assertion failure, not a browser installation issue or a missing guide.
+- The narrow correction identifies both expected guide hrefs separately, requires one visible link for each, follows each link, checks its Korean destination, and goes Back to the provider. No `.first()` workaround, skipped test, removed content, dependency or workflow change was introduced.
+- Root/subpath full static validation passed again for the correction: 43 tests in each mode and the same zero-error source/build/content checks above. `playwright test --list` also loaded all 23 browser tests successfully; discovery is not execution. The correction's browser result must be read from its CI separately; the failed earlier run is not relabeled as passing.
+
 ## Publication boundaries
 
 The user authorized applying these cases and committing/pushing. No paid/vendor API call, credential creation or collection, manual deployment, PR, hosting-policy change or Search Console inspection was performed. Search Console URL inspection, selected canonical, indexing and search performance remain unverified. A successful push/build does not establish production deployment or indexing.

@@ -36,7 +36,17 @@ test('Korean details are static, have reciprocal language links and preserve sou
     await expect(page.locator('#case-providers').locator('..').getByRole('link')).toContainText('영문');
     await page.goto(`http://127.0.0.1:4173${base}apis/yfinance/`);
     await expect(page.locator('link[hreflang]')).toHaveCount(0);
-    await expect(page.locator('#korean-cases').locator('..').getByRole('link')).toHaveAttribute('href', `${base}ko/guides/yfinance-adj-close-auto-adjust-multiindex/`);
+    const koreanCases = page.locator('#korean-cases').locator('..');
+    for (const slug of ['yfinance-adj-close-auto-adjust-multiindex', 'yfinance-repair-pence-pound-currency-unit-mismatch']) {
+      const caseLink = koreanCases.locator(`a[href="${base}ko/guides/${slug}/"]`);
+      await expect(caseLink).toHaveCount(1);
+      await expect(caseLink).toBeVisible();
+      await caseLink.click();
+      await expect(page).toHaveURL(`http://127.0.0.1:4173${base}ko/guides/${slug}/`);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+      await page.goBack();
+      await expect(page).toHaveURL(`http://127.0.0.1:4173${base}apis/yfinance/`);
+    }
   } finally { await context.close(); }
 });
 
