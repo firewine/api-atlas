@@ -1,0 +1,6 @@
+Source: https://github.com/ranaroussi/yfinance/pull/2907
+Checked: 2026-10-25
+Public source excerpt:
+Merged
+Jul 27, 2026
+Review: Internal unit standardization was reverted before returning prices, dividends and currency metadata.

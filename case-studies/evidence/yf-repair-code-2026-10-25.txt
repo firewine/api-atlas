@@ -1,0 +1,6 @@
+Source: https://github.com/ranaroussi/yfinance/blob/1.7.0/yfinance/scrapers/history.py
+Checked: 2026-10-25
+Public source excerpt:
+df['Dividends'] /= m
+                self._history_metadata['currency'] = original_currency
+

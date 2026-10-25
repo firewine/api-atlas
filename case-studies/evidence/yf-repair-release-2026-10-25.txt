@@ -1,0 +1,6 @@
+Source: https://github.com/ranaroussi/yfinance/blob/1.6.0/CHANGELOG.rst
+Checked: 2026-10-25
+Public source excerpt:
+1.6.0
+Fix: repair=True should not permanently convert GBp/ZAc/ILA prices to main currency #2907
+

@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-node
+Checked: 2026-10-25
+Public source excerpt; no API execution.
+
+11.2k stars
+1.6k forks

@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-node/blob/v7.43.0/docs/responses.md
+Checked: 2026-10-25
+Public source excerpt; no API execution.
+
+Previous `instructions` are not automatically carried forward when using `previous_response_id`; provide them again when
+they should apply to the next response.

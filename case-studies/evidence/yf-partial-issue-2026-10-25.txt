@@ -1,0 +1,5 @@
+Source: https://github.com/ranaroussi/yfinance/issues/2924
+Checked: 2026-10-25
+Public source excerpt:
+the reproduction is synthetic on purpose
+Review: Issue is Closed; reporter does not establish a live ticker exhibiting the combined state.

@@ -34,6 +34,8 @@ Test rate-limit behavior, timeouts, idempotency, streaming interruption, webhook
 
 For mixed server/client tool workflows, include the [Anthropic Claude delayed-result and 400 continuation case](../anthropic-mixed-tools-missing-result-400/). Test result-ID correlation and unfinished-turn handling, not just final text.
 
+For multi-turn policy checks, read the [OpenAI Responses previous_response_id instructions case](../openai-responses-previous-response-id-instructions/). Verify that stable instructions are present in each outgoing continuation, separately from response context.
+
 ## Preserve switching room
 
 Use a provider adapter for authentication, payloads, streaming events, and error translation. Keep the neutral application task separate from the provider request. Preserve raw responses for diagnosis within your retention policy.

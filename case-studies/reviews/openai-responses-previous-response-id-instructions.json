@@ -1,0 +1,139 @@
+{
+  "title": "OpenAI Responses API lost instructions: resend policy with previous_response_id",
+  "h1": "OpenAI Responses API lost instructions: resend policy with previous_response_id",
+  "description": "Keep OpenAI Responses instructions on each previous_response_id turn. Separate the documented request contract, Node SDK evidence and offline payload checks from live model behavior.",
+  "summary": "Chaining response context does not reapply the preceding top-level instructions. Put stable policy in every request and verify the actual payload before blaming the model or switching plans.",
+  "order": 21,
+  "updatedAt": "2026-10-25",
+  "tags": [
+    "practical-case",
+    "llm",
+    "openai",
+    "conversation-state"
+  ],
+  "caseStudy": {
+    "slug": "openai-responses-previous-response-id-instructions",
+    "problemId": "openai-responses-continuation-omits-top-level-instructions",
+    "titleParts": {
+      "api": "OpenAI Responses API",
+      "problem": "lost instructions",
+      "solution": "resend policy with previous_response_id"
+    },
+    "linkLabel": "OpenAI Responses lost instructions: resend policy on each turn",
+    "providers": [
+      "openai"
+    ],
+    "searchIntent": {
+      "primary": {
+        "term": "OpenAI previous_response_id instructions not retained",
+        "sourcePhrase": "previous_response_id",
+        "evidenceIds": [
+          "openai-instructions-guide"
+        ]
+      },
+      "related": [
+        {
+          "term": "Responses API stable instructions each turn",
+          "sourcePhrase": "instructions",
+          "evidenceIds": [
+            "openai-instructions-types"
+          ]
+        },
+        {
+          "term": "OpenAI Node continuation request builder",
+          "sourcePhrase": "previous_response_id",
+          "evidenceIds": [
+            "openai-instructions-types"
+          ]
+        },
+        {
+          "term": "OpenAI Node 7.43.0 Responses instructions",
+          "sourcePhrase": "7.43.0",
+          "evidenceIds": [
+            "openai-instructions-release"
+          ]
+        }
+      ],
+      "status": "keyword-candidate"
+    },
+    "evidence": [
+      {
+        "id": "openai-instructions-types",
+        "kind": "code",
+        "url": "https://github.com/openai/openai-node/blob/d02d4de77ea7a6f82325c02e6f44deb34ee3992c/src/resources/responses/responses.ts",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/openai-instructions-types-2026-10-25.txt",
+        "sha256": "c4ae66b651a845ad343e7a3591d23577b102a324f194eb30fa72279009c3c097",
+        "excerpt": "instructions?: string | null;\nprevious_response_id?: string | null;"
+      },
+      {
+        "id": "openai-instructions-guide",
+        "kind": "documentation",
+        "url": "https://github.com/openai/openai-node/blob/v7.43.0/docs/responses.md",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/openai-instructions-guide-2026-10-25.txt",
+        "sha256": "ed3693732e310c1b873f7e78180d1094d927bf32a615dd523665d0d537df7557",
+        "excerpt": "Previous `instructions` are not automatically carried forward when using `previous_response_id`; provide them again when\nthey should apply to the next response."
+      },
+      {
+        "id": "openai-instructions-release",
+        "kind": "documentation",
+        "url": "https://github.com/openai/openai-node/releases/tag/v7.43.0",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/openai-instructions-release-2026-10-25.txt",
+        "sha256": "99009ecc6915b0957b07fd7843af2f66fe1a3911621ea562ee292901e7bf1277",
+        "excerpt": "7.43.0 (2026-10-22)"
+      },
+      {
+        "id": "openai-node-interest",
+        "kind": "documentation",
+        "url": "https://github.com/openai/openai-node",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/openai-node-interest-2026-10-25.txt",
+        "sha256": "c22510a1e69ae99bd8394b73f6d4ccbaab6563ca18bc0c23b5cd061a3e56fd39",
+        "excerpt": "11.2k stars\n1.6k forks"
+      }
+    ],
+    "technicalDetails": [
+      {
+        "kind": "field",
+        "value": "previous_response_id",
+        "evidenceId": "openai-instructions-types"
+      },
+      {
+        "kind": "field",
+        "value": "instructions",
+        "evidenceId": "openai-instructions-types"
+      },
+      {
+        "kind": "sdk-version",
+        "value": "7.43.0",
+        "evidenceId": "openai-instructions-release"
+      }
+    ],
+    "verification": {
+      "level": "source-review",
+      "note": "Source review on 2026-10-25 of the official Responses guide, SDK request types and release. No OpenAI request or live model test was performed. The separate offline example test checks application payload construction only.",
+      "evidenceIds": [
+        "openai-instructions-types",
+        "openai-instructions-guide",
+        "openai-instructions-release"
+      ]
+    },
+    "review": {
+      "author": "차도녀 gpt may",
+      "authorType": "Person",
+      "checkedAt": "2026-10-25",
+      "titleMatchesBody": true,
+      "distinctProblem": "A continuation omits a per-request policy field. Unlike existing response parsing and fallback-format cases, this concerns documented context versus instruction inheritance.",
+      "noInventedResults": true
+    }
+  },
+  "sections": {
+    "symptoms": "A multi-turn assistant follows the application language or answer-style policy on the first turn, but a later request sends only new input and `previous_response_id`. The missing top-level `instructions` is a concrete payload defect to investigate; changed output alone does not prove this cause. The task is conversational continuation without silently losing the application policy.\n\nInterest and integration difficulty are separate: the [official Node SDK repository](https://github.com/openai/openai-node) displayed approximately 11.2k stars and 1.6k forks on 2026-10-25. These are repository-interest proxies, not Responses user counts or market share. Difficulty comes from the documented distinction between inherited response context and per-request instructions, not a claim that the service is broken.",
+    "cause": "The [official SDK guide](https://github.com/openai/openai-node/blob/v7.43.0/docs/responses.md) and [request types](https://github.com/openai/openai-node/blob/d02d4de77ea7a6f82325c02e6f44deb34ee3992c/src/resources/responses/responses.ts) distinguish previous response context from the next request’s top-level policy. `previous_response_id` does not automatically reapply the earlier `instructions`. This is a documented request contract, not an API bug.\n\nThe [migration guide](https://developers.openai.com/api/docs/guides/migrate-to-responses) consequently tells applications to send stable instructions again. This differs from [commentary/final-answer parsing](../openai-responses-parse-commentary-final-answer/): the boundary here is the outgoing request, not selecting a field from a successful response.",
+    "solution": "Keep stable application instructions in a shared request builder and supply them for the first request and every continuation. Inspect a redacted outgoing payload, not just the conversation UI. The following deliberately text-only JavaScript example builds a request without sending it; choose a model available to your application and pass the actual prior response ID only for continuation.\n\n```javascript\nfunction buildResponseRequest({ model, instructions, input, previousResponseId }) {\n  if (typeof model !== \"string\" || !model.trim()) {\n    throw new TypeError(\"model is required\");\n  }\n  if (typeof instructions !== \"string\" || !instructions.trim()) {\n    throw new TypeError(\"stable instructions are required on every turn\");\n  }\n  if (typeof input !== \"string\" || !input.trim()) {\n    throw new TypeError(\"this text-only example requires input\");\n  }\n  const request = { model, instructions, input };\n  if (previousResponseId !== undefined) {\n    if (typeof previousResponseId !== \"string\" || !previousResponseId.trim()) {\n      throw new TypeError(\"previousResponseId must be a nonempty response ID\");\n    }\n    request.previous_response_id = previousResponseId;\n  }\n  return request; // Build only: no SDK call, credentials, or network.\n}\n```\n\nUse the returned object with your existing SDK transport. The builder cannot validate ownership, retention or existence of a response ID. It also does not establish that a model obeyed a policy. Do not combine `previous_response_id` and `conversation`; the SDK guide describes them as mutually exclusive. If instead managing history manually, preserve required ordered output items, including reasoning/tool items rather than only assistant text.\n\nThe inspected Node SDK is v7.43.0, [released on 2026-10-22](https://github.com/openai/openai-node/releases/tag/v7.43.0). This is the reviewed documentation version, not the release that introduced instruction semantics or a claimed bug-fix version. A retry, model switch or plan upgrade does not restore an omitted field.",
+    "verification": "Source review on 2026-10-25 of the official Responses guide, SDK request types and release. No OpenAI request or live model test was performed. The separate offline example test checks application payload construction only.\n\nFor local regression controls, inspect the first-turn payload with instructions and no previous ID, the second-turn payload with the same instructions and the actual prior ID, and a deliberately changed policy that replaces the prior value. Reject missing/blank instructions, empty model/input and malformed continuation ID in this application helper. Compare against a broken manually constructed second-turn payload that lacks instructions. These are synthetic payload checks, not observations of provider responses.\n\nAn authorized live evaluation would additionally compare policy adherence across multiple turns and retain a redacted request receipt, SDK/model versions and expected output criteria. That evaluation was not run. Repository content and link validation likewise cannot prove live model behavior.",
+    "limitations": "This case is limited to `previous_response_id` with top-level `instructions`; it does not describe all state-management mechanisms or guarantee perfect instruction following. The complete affected application population, individual model access, account settings, pricing and plan requirements were not tested. There is no evidence here that upgrading a paid plan is necessary. Other causes of language or format drift require separate diagnosis.\n\nNo GetBeta production fix is claimed: related code that omits `previous_response_id` in a different request is not proof of this repair. The [OpenAI provider profile](../../apis/openai/) and [LLM selection guide](../choose-llm-api/) supply adjacent context. Search terms are intent candidates without measured search volume or ranking. Post-deploy Search Console URL inspection, indexing and performance remain unverified."
+  }
+}

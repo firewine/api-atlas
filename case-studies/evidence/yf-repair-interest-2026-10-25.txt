@@ -1,0 +1,6 @@
+Source: https://github.com/ranaroussi/yfinance
+Checked: 2026-10-25
+Public source excerpt:
+25.6k stars
+3.5k forks
+Review: Rounded public repository counters; interest proxies, not user counts or market share.

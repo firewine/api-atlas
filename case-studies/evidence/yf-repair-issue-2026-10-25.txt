@@ -1,0 +1,7 @@
+Source: https://github.com/ranaroussi/yfinance/issues/2866
+Checked: 2026-10-25
+Public source excerpt:
+repair=True
+GBp/GBX
+1.4.1
+Review: Reporter observed XDEV.L prices at different scales; not reproduced here.

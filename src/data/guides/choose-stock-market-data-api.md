@@ -57,3 +57,5 @@ Run the same acceptance test against two candidates and save the results. Re-run
 Next: compare [EODHD and Massive](../../compare/eodhd-vs-massive/) or [EODHD and Alpha Vantage](../../compare/eodhd-vs-alpha-vantage/).
 
 For minute-bar completeness checks, read the [Massive missing aggregate bars case](../massive-polygon-missing-aggregate-bars/).
+
+For quotation units before FX conversion, see [yfinance repair pence/pound mismatch](../yfinance-repair-pence-pound-currency-unit-mismatch/).

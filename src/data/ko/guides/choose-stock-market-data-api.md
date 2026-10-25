@@ -1,8 +1,8 @@
 ---
 locale: 'ko'
 sourceId: 'choose-stock-market-data-api'
-sourceRevision: '2a404316a7e3bc9fd30b4602fe0910dc60c854a29817b78fabef0d6f12bae052'
-translationReviewedAt: '2026-10-21'
+sourceRevision: '536fd39d2bca8b5b5dd58e1016864df8d69fece9c4c0dc871f66015c325d8cfe'
+translationReviewedAt: '2026-10-25'
 title: "한국·미국 주식 데이터 API 선택: 가격·배당·이용권 비교"
 h1: "한국·미국 주식 데이터 API 선택: 가격·배당·이용권 비교"
 description: "주식·배당 데이터 API를 고를 때 확인할 거래소 범위, 조정주가, 배당 날짜, 호출 비용과 상업적 이용권을 정리합니다. 작은 검증 세트와 연동 사례로 선택 기준을 점검하세요."
@@ -61,3 +61,5 @@ yfinance로 먼저 확인한다면 [yfinance Adj Close와 MultiIndex 처리 사�
 공급자별 개요와 제약은 [EODHD](../../apis/eodhd/), [SEIBRO](../../apis/seibro/), [Massive (영문)](../../../apis/massive/), [Alpha Vantage (영문)](../../../apis/alpha-vantage/), [yfinance (영문)](../../../apis/yfinance/)에서 확인할 수 있습니다.
 
 다음으로 [EODHD와 Massive 비교 (영문)](../../../compare/eodhd-vs-massive/) 또는 [EODHD와 Alpha Vantage 비교 (영문)](../../../compare/eodhd-vs-alpha-vantage/)를 읽어보세요. 분봉 데이터의 완전성을 확인하려면 [Massive 집계 봉 누락 사례 (영문)](../../../guides/massive-polygon-missing-aggregate-bars/)를 참고하세요.
+
+환율 환산 전 호가 단위는 [yfinance repair 펜스·파운드 불일치 사례](../yfinance-repair-pence-pound-currency-unit-mismatch/)를 참고하세요.

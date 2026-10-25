@@ -1,0 +1,8 @@
+Source: https://ranaroussi.github.io/yfinance/advanced/price_repair.html
+Checked: 2026-10-25
+Public source excerpt:
+Ticker.history_metadata['currency']
+Not Ticker.info
+Repaired?
+Adj Close
+Review: Currency belongs to the repaired history. Adj Close-only adjustment may not set the repair flag.

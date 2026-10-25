@@ -1,0 +1,221 @@
+---
+{
+  "title": "yfinance repair price unit mismatch: check pence, pounds and fix versions",
+  "h1": "yfinance repair price unit mismatch: check pence, pounds and fix versions",
+  "description": "Diagnose yfinance repair=True prices that change by 100x: trace GBp/GBP units, same-query currency metadata, the 1.6.0 fix and unresolved limits.",
+  "summary": "Repair can expose a quotation-unit mismatch before FX valuation. Separate the documented restoration fix from unmerged follow-up work, and normalize only with verified history currency.",
+  "order": 20,
+  "updatedAt": "2026-10-25",
+  "tags": [
+    "practical-case",
+    "yfinance",
+    "market-data",
+    "currency"
+  ],
+  "caseStudy": {
+    "slug": "yfinance-repair-pence-pound-currency-unit-mismatch",
+    "problemId": "yfinance-repair-quotation-currency-unit-restoration",
+    "titleParts": {
+      "api": "yfinance",
+      "problem": "repair price unit mismatch",
+      "solution": "check pence, pounds and fix versions"
+    },
+    "linkLabel": "yfinance repair price units: verify pence and pounds before FX",
+    "providers": [
+      "yfinance"
+    ],
+    "searchIntent": {
+      "primary": {
+        "term": "yfinance repair True wrong price",
+        "sourcePhrase": "repair=True",
+        "evidenceIds": [
+          "yf-repair-issue"
+        ]
+      },
+      "related": [
+        {
+          "term": "yfinance GBp GBP 100x",
+          "sourcePhrase": "GBp/GBX",
+          "evidenceIds": [
+            "yf-repair-issue"
+          ]
+        },
+        {
+          "term": "yfinance history currency mismatch",
+          "sourcePhrase": "Ticker.history_metadata['currency']",
+          "evidenceIds": [
+            "yf-repair-currency-doc"
+          ]
+        },
+        {
+          "term": "yfinance Repaired false changed prices",
+          "sourcePhrase": "Repaired?",
+          "evidenceIds": [
+            "yf-repair-currency-doc"
+          ]
+        }
+      ],
+      "status": "keyword-candidate"
+    },
+    "evidence": [
+      {
+        "id": "yf-repair-issue",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance/issues/2866",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-issue-2026-10-25.txt",
+        "sha256": "98bfcd6ff638f126a07b8a25e38dd7f0b40d42d382e30491c19d05b3cc616b78",
+        "excerpt": "repair=True\nGBp/GBX\n1.4.1"
+      },
+      {
+        "id": "yf-repair-release",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance/blob/1.6.0/CHANGELOG.rst",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-release-2026-10-25.txt",
+        "sha256": "771d72ba784881f81a255699689f3c72883b8fdfe5b7db5ac085eb461994e872",
+        "excerpt": "1.6.0\nFix: repair=True should not permanently convert GBp/ZAc/ILA prices to main currency #2907"
+      },
+      {
+        "id": "yf-repair-code",
+        "kind": "code",
+        "url": "https://github.com/ranaroussi/yfinance/blob/1.7.0/yfinance/scrapers/history.py",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-code-2026-10-25.txt",
+        "sha256": "8749861eeff157f648f26b3aa8a377503c85ff885c91828a2d303167d086c683",
+        "excerpt": "df['Dividends'] /= m\n                self._history_metadata['currency'] = original_currency"
+      },
+      {
+        "id": "yf-repair-currency-doc",
+        "kind": "documentation",
+        "url": "https://ranaroussi.github.io/yfinance/advanced/price_repair.html",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-currency-doc-2026-10-25.txt",
+        "sha256": "7b39f99d8e756337a73ec2cd8c1670c2f83645bf61cf59d9d5242614468f6031",
+        "excerpt": "Ticker.history_metadata['currency']\nNot Ticker.info\nRepaired?\nAdj Close"
+      },
+      {
+        "id": "yf-repair-pr",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance/pull/2907",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-pr-2026-10-25.txt",
+        "sha256": "82aa6163e139534f1eaebfb36e96090e1a73c4e610e8d6b9a3e5242f9dcff8ce",
+        "excerpt": "Merged\nJul 27, 2026"
+      },
+      {
+        "id": "yf-partial-issue",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance/issues/2924",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-partial-issue-2026-10-25.txt",
+        "sha256": "2dfe0b691cd4c584ef8893e387b774b0251d117a21f6cbfdff9b1bef3b8afdd3",
+        "excerpt": "the reproduction is synthetic on purpose"
+      },
+      {
+        "id": "yf-partial-pr",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance/pull/2927",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-partial-pr-2026-10-25.txt",
+        "sha256": "dbe4c308824573eb20c1fd88c29d7be342c3cc00243735f76be6ee77232b7990",
+        "excerpt": "Fix unit-switch revert corrupting tables with genuine partial 100x blocks\nOpen"
+      },
+      {
+        "id": "yf-repair-interest",
+        "kind": "documentation",
+        "url": "https://github.com/ranaroussi/yfinance",
+        "checkedAt": "2026-10-25",
+        "snapshot": "case-studies/evidence/yf-repair-interest-2026-10-25.txt",
+        "sha256": "e544640d7e6c5e41316377549a5a4a68328ab5a0403016636c03b1e27061a705",
+        "excerpt": "25.6k stars\n3.5k forks"
+      }
+    ],
+    "technicalDetails": [
+      {
+        "kind": "sdk-version",
+        "value": "1.6.0",
+        "evidenceId": "yf-repair-release"
+      },
+      {
+        "kind": "field",
+        "value": "Ticker.history_metadata['currency']",
+        "evidenceId": "yf-repair-currency-doc"
+      }
+    ],
+    "verification": {
+      "level": "source-review",
+      "note": "Source review on 2026-10-25 covers the yfinance issue, merged fix, 1.6.0 changelog, 1.7.0 source and repair documentation. No Yahoo request or live price comparison was performed.",
+      "evidenceIds": [
+        "yf-repair-issue",
+        "yf-repair-release",
+        "yf-repair-code",
+        "yf-repair-currency-doc",
+        "yf-repair-pr",
+        "yf-partial-issue",
+        "yf-partial-pr",
+        "yf-repair-interest"
+      ]
+    },
+    "review": {
+      "author": "차도녀 gpt may",
+      "authorType": "Person",
+      "checkedAt": "2026-10-25",
+      "titleMatchesBody": true,
+      "distinctProblem": "Quotation-unit restoration during repair and downstream FX normalization, not missing adjusted-price columns or MultiIndex selection.",
+      "noInventedResults": true
+    }
+  }
+}
+---
+
+## Symptoms
+
+A portfolio importer can receive prices on a different scale after enabling `repair=True`. [Issue #2866](https://github.com/ranaroussi/yfinance/issues/2866) reports yfinance 1.4.1 and XDEV.L: Close changed from 6201 to 62.01 while some `Repaired?` values remained false. These are the reporter's observations, not an API Atlas live test. Applying a further pence-to-pound conversion can compound the error before FX valuation.
+
+Popularity and integration difficulty have separate evidence. The [project repository](https://github.com/ranaroussi/yfinance) displayed approximately 25.6k stars and 3.5k forks on 2026-10-25: an interest proxy, not measured API adoption. The concrete difficulty is the issue's unit mismatch and the subsequent repair discussions.
+
+## Cause
+
+Internal dividend-repair standardization leaked into returned values and currency metadata. [PR #2907](https://github.com/ranaroussi/yfinance/pull/2907), merged on 2026-07-27, restores the original quotation unit. The [1.6.0 changelog](https://github.com/ranaroussi/yfinance/blob/1.6.0/CHANGELOG.rst) lists that fix; the [1.7.0 source](https://github.com/ranaroussi/yfinance/blob/1.7.0/yfinance/scrapers/history.py) restores price columns, dividends and currency metadata when internal scaling occurred.
+
+This is not a universal explanation for every 100x discrepancy. A separate [partial-block report #2924](https://github.com/ranaroussi/yfinance/issues/2924) uses a synthetic fixture, not a demonstrated live ticker with the combined state. That issue is closed, but its linked [PR #2927](https://github.com/ranaroussi/yfinance/pull/2927) remains open and unmerged at this review. A closed issue alone is not evidence of a released fix.
+
+## Safe resolution
+
+Record the installed version, ticker, dates, interval, `repair` and `auto_adjust`. Use a compatible version containing the documented fix, but retain regression checks rather than assuming all unit defects are resolved. Keep the returned prices with `Ticker.history_metadata['currency']` from the same history operation. The [repair documentation](https://ranaroussi.github.io/yfinance/advanced/price_repair.html) explicitly distinguishes that metadata from `Ticker.info`.
+
+Normalize to pounds only after verifying the quotation unit. This offline helper illustrates one explicit conversion boundary; it does not repair mixed-unit rows, validate upstream metadata or fetch data. Preserve the original value and unit alongside the normalized value. Never apply an unconditional multiplication or division by 100, and never feed its GBP result through a second pence conversion.
+
+```python
+from decimal import Decimal
+
+def quotation_to_gbp(value, history_currency):
+    """Normalize an already retrieved, unit-verified value; no network call."""
+    factors = {"GBp": Decimal("0.01"), "GBX": Decimal("0.01"),
+               "GBP": Decimal("1")}
+    if history_currency not in factors:
+        raise ValueError("Unknown quotation unit; inspect source metadata")
+    amount = Decimal(str(value))
+    if not amount.is_finite():
+        raise ValueError("Non-finite price")
+    return amount * factors[history_currency]
+```
+
+The same unit decision must be checked for dividends before FX conversion. `Repaired?=False` does not prove that every value is unchanged: the documentation notes an `Adj Close`-only adjustment may leave the flag unset. For a different problem—column selection and adjustment meaning—see [yfinance Adj Close and MultiIndex](../yfinance-adj-close-auto-adjust-multiindex/).
+
+## Verification
+
+Source review on 2026-10-25 covers the yfinance issue, merged fix, 1.6.0 changelog, 1.7.0 source and repair documentation. No Yahoo request or live price comparison was performed.
+
+For saved-data regression controls, compare a consistently pence-denominated series, an already-pound-denominated series, missing currency, and a genuine mixed-unit block. The first two must normalize exactly once; missing units must fail rather than guess. A mixed-unit block must be investigated upstream, not passed off as repaired by the scalar helper. Include dividend and FX boundaries, and retain package/options/metadata in receipts.
+
+The repository's offline example test exercises only the helper with synthetic values, including equivalent GBp/GBP amounts and unknown/non-finite inputs. It is not a yfinance runtime test, a Yahoo accuracy check or production validation.
+
+## Limitations
+
+The first affected version, all affected symbols and current live recurrence were not established. The follow-up partial-block fix is not claimed as shipped. This client defect is not evidence that upgrading a data plan repairs the issue.
+
+yfinance is an unofficial Yahoo client, not an official Yahoo SDK. The [project notice](https://ranaroussi.github.io/yfinance/) separates the library from Yahoo and directs users to applicable data terms; a free package does not establish commercial data rights. No account entitlement or commercial permission was verified.
+
+No directly corresponding GetBeta fix or production test was established. Use the [yfinance provider profile](../../apis/yfinance/) and [market-data selection guide](../choose-stock-market-data-api/) for broader context. The added value here is tracing quotation units through repair and FX, not repeating the existing adjusted-column guide. Search phrases are candidates, not verified search volume or ranking claims.

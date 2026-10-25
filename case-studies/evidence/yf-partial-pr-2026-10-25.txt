@@ -1,0 +1,6 @@
+Source: https://github.com/ranaroussi/yfinance/pull/2927
+Checked: 2026-10-25
+Public source excerpt:
+Fix unit-switch revert corrupting tables with genuine partial 100x blocks
+Open
+Review: Open and unmerged at review; not a released fix receipt.

@@ -1,0 +1,6 @@
+Source: https://github.com/openai/openai-node/blob/d02d4de77ea7a6f82325c02e6f44deb34ee3992c/src/resources/responses/responses.ts
+Checked: 2026-10-25
+Public source excerpt; no API execution.
+
+instructions?: string | null;
+previous_response_id?: string | null;
