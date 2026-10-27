@@ -2,7 +2,7 @@
 title: "How to consume an OpenAPI specification"
 summary: "Use an official API specification for discovery and validation without generating an unmaintainable wall of code or thin pages."
 order: 7
-updatedAt: "2026-09-13"
+updatedAt: "2026-10-27"
 tags: ["openapi", "tooling", "validation"]
 ---
 
@@ -45,3 +45,7 @@ Treat the diff as a review candidate. Specifications can contain mistakes, lag l
 Pin the generator and specification hash. Compile generated code, run a contract fixture, inspect authentication injection, and verify nullable or union types in the target language. Regenerate in a clean directory so removed operations do not leave stale files behind.
 
 The specification is a powerful source, but the official prose reference, changelog, and observed responses still matter when behavior is underspecified.
+
+## Observe client enum drift
+
+The [Alpaca TXSE asset-list case](../alpaca-py-txse-assetexchange-validation-error/) shows how a new server enum value can reject a whole typed response. Compare the installed client, the merged fix and the published release separately.

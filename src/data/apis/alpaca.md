@@ -79,3 +79,7 @@ This is an illustrative historical request, not a recorded live response. Keep c
 Use the [recent SIP error guide](../../guides/alpaca-api-recent-sip-data-error-iex/) to choose a delayed consolidated query or an explicitly IEX-only workflow. Preserve the feed and requested interval with cached data. Changing the feed to make an error disappear changes the dataset.
 
 The [current Python SDK](https://github.com/alpacahq/alpaca-py) is `alpaca-py`. No SDK installation, authenticated API call, order, or paid subscription was tested for this profile.
+
+## Separate asset-catalog contract
+
+The [TXSE SDK enum case](../../guides/alpaca-py-txse-assetexchange-validation-error/) concerns read-only Trading Assets metadata, not this profile's Market Data v2 host, subscription prices or limits. [Alpaca's Assets SDK reference](https://alpaca.markets/sdks/python/api_reference/trading/assets.html) defines that separate surface. The source review dated 2026-10-27 did not execute an account request or order; existing market-data fact dates above are unchanged.

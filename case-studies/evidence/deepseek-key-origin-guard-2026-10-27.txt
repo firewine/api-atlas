@@ -1,0 +1,4 @@
+Source: https://github.com/openclaw/openclaw/blob/f1036c36e4aecca8d2a392549508163b9b30bcad/extensions/deepseek/model-credential.ts
+Checked: 2026-10-27
+Public excerpt (source review only):
+return url.origin === DEEPSEEK_API_ORIGIN;

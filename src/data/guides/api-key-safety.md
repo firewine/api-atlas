@@ -2,7 +2,7 @@
 title: "How to handle API keys safely"
 summary: "Keep credentials out of source, clients, logs, and accidental blast radii with a practical key lifecycle."
 order: 3
-updatedAt: "2026-09-13"
+updatedAt: "2026-10-27"
 tags: ["security", "authentication", "operations"]
 ---
 
@@ -43,3 +43,7 @@ Document owners, creation date, intended consumers, scopes, rotation interval, a
 ## Respond to a leak
 
 Revoke or disable the credential immediately, issue a replacement, inspect provider usage and billing, search logs and repository history for exposure, and fix the leak path. Deleting the latest Git line is not enough if the secret exists in commit history or build artifacts.
+
+## Bind credentials to the intended service
+
+The [DeepSeek chat-proxy/search case](../deepseek-search-401-proxy-credential-endpoint/) separates the tool endpoint and credential issuer. A working chat request or a present key is not proof that another service will accept it.

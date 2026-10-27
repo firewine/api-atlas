@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-27",
+  "release": {
+    "source": "https://api.github.com/repos/openclaw/openclaw/releases/425325509",
+    "tag_name": "v2026.10.8",
+    "published_at": "2026-10-27T11:56:59Z"
+  },
+  "comparison": {
+    "source": "https://api.github.com/repos/openclaw/openclaw/compare/f1036c36e4aecca8d2a392549508163b9b30bcad...v2026.10.8",
+    "status": "diverged",
+    "ahead_by": 1030,
+    "behind_by": 13097,
+    "merge_base_sha": "3dac10b958665ecd0b84a6ef5dadbbda4fd5a15d"
+  },
+  "interpretation": "The reviewed commit is not an ancestor of this release. This does not exclude equivalent code under another commit or path."
+}

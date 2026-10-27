@@ -1,0 +1,148 @@
+---
+"title": "DeepSeek Search 401 with a chat proxy: separate tool credentials and
+  endpoints"
+"h1": "DeepSeek Search 401 with a chat proxy: separate tool credentials and
+  endpoints"
+"description": "Diagnose DeepSeek search authentication failures when chat
+  through a gateway works. Separate tool origins, key issuers, partial upstream
+  fixes and Search/Fetch billing."
+"summary": "A working chat route does not validate the credential for a separate
+  search service. Bind each tool to its intended origin and credential issuer
+  before retrying or enabling automatic search."
+"order": 23
+"updatedAt": "2026-10-27"
+"tags":
+  - "practical-case"
+  - "deepseek"
+  - "integration"
+"caseStudy":
+  "slug": "deepseek-search-401-proxy-credential-endpoint"
+  "problemId": "deepseek-chat-proxy-key-search-origin-mismatch"
+  "titleParts":
+    "api": "DeepSeek Search"
+    "problem": "401 with a chat proxy"
+    "solution": "separate tool credentials and endpoints"
+  "linkLabel": "DeepSeek Search 401 with a chat proxy: separate tool credentials
+    and endpoints"
+  "providers":
+    - "deepseek"
+  "searchIntent":
+    "primary":
+      "term": "DeepSeek search 401 chat proxy"
+      "sourcePhrase": "401"
+      "evidenceIds":
+        - "deepseek-tools-auth"
+    "related":
+      - "term": "DeepSeek separate search base URL"
+        "sourcePhrase": "DEEPSEEK_SEARCH_BASE_URL"
+        "evidenceIds":
+          - "deepseek-search-endpoint-separation"
+      - "term": "OpenClaw DeepSeek model key fallback"
+        "sourcePhrase": "model key"
+        "evidenceIds":
+          - "deepseek-search-fallback-pr"
+      - "term": "DeepSeek official origin credential guard"
+        "sourcePhrase": "DEEPSEEK_API_ORIGIN"
+        "evidenceIds":
+          - "deepseek-key-origin-guard"
+    "status": "keyword-candidate"
+  "evidence":
+    - "id": "deepseek-key-origin-guard"
+      "kind": "code"
+      "url": "https://github.com/openclaw/openclaw/blob/f1036c36e4aecca8d2a3925495081\
+        63b9b30bcad/extensions/deepseek/model-credential.ts"
+      "checkedAt": "2026-10-27"
+      "snapshot": "case-studies/evidence/deepseek-key-origin-guard-2026-10-27.txt"
+      "sha256": "8c6a0ccea783a9767b7adea5a478aa13c0462c657db97fb1ab92667ffe08bdce"
+      "excerpt": "return url.origin === DEEPSEEK_API_ORIGIN;"
+    - "id": "deepseek-search-endpoint-separation"
+      "kind": "documentation"
+      "url": "https://github.com/deepseek-ai/deepseek-harness/blob/22ddee3792402c3e70\
+        ec5f86a63c3e3e895a2f60/packages/web/web-search-deepseek/README.md"
+      "checkedAt": "2026-10-27"
+      "snapshot": "case-studies/evidence/deepseek-search-endpoint-separation-2026-10-\
+        27.txt"
+      "sha256": "58ac7ee43f043626eced3c877dca907f9940bc6bbfc5530dae0379cc4cdf70bc"
+      "excerpt": "It reads `$DEEPSEEK_SEARCH_BASE_URL`, independently of the
+        conversation adapter’s `$DEEPSEEK_BASE_URL`."
+    - "id": "deepseek-tools-auth"
+      "kind": "documentation"
+      "url": "https://api-docs.deepseek.com/guides/search/"
+      "checkedAt": "2026-10-27"
+      "snapshot": "case-studies/evidence/deepseek-tools-auth-2026-10-27.txt"
+      "sha256": "d222d3ebbcf70cef0601a54deacd8d21f738d20e9995787bcabc5ac90cce1930"
+      "excerpt": "401 | The API key is missing or invalid.
+
+        Search | Per 1,000 successful requests | $0.75"
+    - "id": "deepseek-search-fallback-pr"
+      "kind": "documentation"
+      "url": "https://github.com/openclaw/openclaw/pull/183831"
+      "checkedAt": "2026-10-27"
+      "snapshot": "case-studies/evidence/deepseek-search-fallback-pr-2026-10-27.txt"
+      "sha256": "d1ace56e1d71750061f316886fd38d4d54ef0b7800d787b74b3ddcd4ab7f68c3"
+      "excerpt": "fix(deepseek): keep a chat proxy's model key away from DeepSeek
+        search and balance"
+  "technicalDetails":
+    - "kind": "error-code"
+      "value": "401"
+      "evidenceId": "deepseek-tools-auth"
+  "verification":
+    "level": "source-review"
+    "note": "Reviewed official DeepSeek documentation and Harness source, plus
+      OpenClaw issue, patch and release metadata on 2026-10-27. No model, Search
+      or Fetch request, credential creation or paid call was executed."
+    "evidenceIds":
+      - "deepseek-key-origin-guard"
+      - "deepseek-search-endpoint-separation"
+      - "deepseek-tools-auth"
+      - "deepseek-search-fallback-pr"
+  "review":
+    "author": "차도녀 gpt may"
+    "authorType": "Person"
+    "checkedAt": "2026-10-27"
+    "titleMatchesBody": true
+    "distinctProblem": "deepseek-chat-proxy-key-search-origin-mismatch; independent
+      of existing pagination, feed entitlement and model-output cases."
+    "noInventedResults": true
+---
+
+## Symptoms
+
+[Harness discussion #408](https://github.com/deepseek-ai/deepseek-harness/discussions/408) and [OpenClaw issue #183830](https://github.com/openclaw/openclaw/issues/183830) describe a gateway-backed chat route working while search authentication fails. These separate reports support an integration failure pattern, not a measured failure rate or proof that every gateway is affected.
+
+## Cause
+
+The [pinned Harness module](https://github.com/deepseek-ai/deepseek-harness/blob/22ddee3792402c3e70ec5f86a63c3e3e895a2f60/packages/web/web-search-deepseek/README.md) configures its auxiliary Messages-based search endpoint separately from chat. Its readiness check cannot prove a key is valid or the endpoint supports the required search tool. Do not confuse this model-turn search backend with the [dedicated Search/Fetch module](https://github.com/deepseek-ai/deepseek-harness/blob/22ddee3792402c3e70ec5f86a63c3e3e895a2f60/packages/web/web-deepseek-api/README.md): the latter uses retrieval endpoints. A proxy-issued chat key sent to the official search service can produce 401.
+
+## Safe resolution
+
+Configure chat and retrieval independently, and verify the intended HTTPS origin before attaching a credential. Never probe a credential against arbitrary endpoints to discover where it works. A local preflight can fail closed without sending a request:
+
+```javascript
+function checkToolRoute(endpoint, credentialIssuerOrigin) {
+  const route = new URL(endpoint);
+  if (route.protocol !== "https:" || route.username || route.password) {
+    throw new Error("Invalid tool route");
+  }
+  if (route.origin !== credentialIssuerOrigin) {
+    throw new Error("Tool origin does not match credential issuer");
+  }
+  return route.href;
+}
+```
+
+The issuer origin must come from trusted deployment configuration, not model output. This illustrative check is not a drop-in Harness/OpenClaw patch; it intentionally rejects aliases unless separately reviewed. Do not log keys. Treat authentication 401, balance 402 and throttling 429 as separate states rather than retrying all errors identically. See [API key safety](../api-key-safety/) and [LLM API selection](../choose-llm-api/).
+
+[OpenClaw PR #183831](https://github.com/openclaw/openclaw/pull/183831) merged an official-origin guard for model-key fallback on October 26. That narrow change does not validate explicit search keys or settle account-balance checks. Release status was rechecked during publication: v2026.10.8 was published at 11:56 UTC on October 27, after the earlier research report. Its tag did not contain the reviewed model-credential.ts path, and the fix commit was not an ancestor of that release in the [comparison](https://github.com/openclaw/openclaw/compare/f1036c36e4aecca8d2a392549508163b9b30bcad...v2026.10.8). Do not present the merged patch as a verified shipped remedy.
+
+## Verification
+
+Reviewed official DeepSeek documentation and Harness source, plus OpenClaw issue, patch and release metadata on 2026-10-27. No model, Search or Fetch request, credential creation or paid call was executed.
+
+Proposed controls: an official-origin route with the appropriate key, a proxy route that must not inherit an official tool credential, a missing key, and a deliberately mismatched issuer/origin. Inspect the resolved host and error classification without exposing headers. None of these network controls was executed here. Upstream tests and repository build checks do not establish live authentication success.
+
+## Limitations
+
+The [official tool guide](https://api-docs.deepseek.com/guides/search/#billing) prices Search and Fetch separately at US$0.75 per 1,000 successful requests. Charging requires HTTP 200 plus nonempty results/content; unsuccessful or empty retrievals are not billed. The described DeepSeek-backed server tools used through Harness, Claude Code or Codex begin per-request billing on November 1, 2026 at 00:00 Beijing time (01:00 KST). This is not a price change for every call made by those products. Track tool requests separately from model tokens, especially for the Messages-based search backend.
+
+No actual Search API usage volume, all-proxy compatibility or fixed-release runtime was established. The new [DeepSeek profile](../../apis/deepseek/) deliberately covers Search/Fetch rather than an unverified full model catalog. Search terms are candidates, not measured demand; no GetBeta resolution of this exact problem was verified.

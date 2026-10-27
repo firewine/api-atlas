@@ -2,7 +2,7 @@
 title: "How to choose an LLM API"
 summary: "Select a model platform with a reproducible evaluation instead of chasing a leaderboard or a single token price."
 order: 2
-updatedAt: "2026-09-13"
+updatedAt: "2026-10-27"
 tags: ["ai", "evaluation", "selection"]
 ---
 
@@ -49,3 +49,7 @@ Repeat the evaluation after a model deprecation, major price or quota change, su
 Next: compare [OpenAI and Anthropic](../../compare/openai-vs-anthropic/) or [OpenAI and Gemini](../../compare/openai-vs-gemini/).
 
 For a concrete function-calling failure, read the [Gemini thought_signature 400 case](../gemini-thought-signature-parallel-tool-calls/).
+
+## Test tool compatibility separately
+
+The [DeepSeek Search 401 case](../deepseek-search-401-proxy-credential-endpoint/) covers a chat-compatible gateway with a distinct search authentication boundary. Compare model costs and tool charges separately; a merged client fix is not itself release evidence.
