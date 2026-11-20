@@ -1,0 +1,126 @@
+{
+  "title": "EODHD bulk close session date mismatch: verify the returned trading date before writing",
+  "h1": "EODHD bulk close session date mismatch: verify the returned trading date before writing",
+  "description": "Check EODHD bulk row dates against the completed exchange session before storing an unadjusted close. See a documented GetBeta KRX recheck and why it made no writes.",
+  "summary": "A bulk response can contain an older close than the requested session. Pin the completed exchange session, validate each returned date, and leave stale or missing prices unwritten.",
+  "order": 33,
+  "updatedAt": "2026-11-20",
+  "tags": [
+    "eodhd",
+    "krx",
+    "market-data",
+    "bulk-prices",
+    "freshness"
+  ],
+  "caseStudy": {
+    "slug": "eodhd-bulk-close-session-date-mismatch",
+    "problemId": "eodhd-bulk-close-session-date-mismatch",
+    "titleParts": {
+      "api": "EODHD",
+      "problem": "bulk close session date mismatch",
+      "solution": "verify the returned trading date before writing"
+    },
+    "linkLabel": "EODHD bulk closes: verify the returned session date",
+    "providers": [
+      "eodhd"
+    ],
+    "searchIntent": {
+      "primary": {
+        "term": "EODHD bulk close date mismatch",
+        "sourcePhrase": "Read the date field",
+        "evidenceIds": [
+          "vendor-date"
+        ]
+      },
+      "related": [
+        {
+          "term": "EODHD bulk previous trading day fallback",
+          "sourcePhrase": "past non-trading day returns the previous trading day",
+          "evidenceIds": [
+            "vendor-date"
+          ]
+        },
+        {
+          "term": "EODHD bulk future date latest available close",
+          "sourcePhrase": "future date returns the latest available day",
+          "evidenceIds": [
+            "vendor-date"
+          ]
+        },
+        {
+          "term": "KRX bulk price stale quote rejection",
+          "sourcePhrase": "price_quote_stale",
+          "evidenceIds": [
+            "getbeta-code"
+          ]
+        }
+      ],
+      "status": "keyword-candidate"
+    },
+    "evidence": [
+      {
+        "id": "vendor-date",
+        "kind": "documentation",
+        "url": "https://eodhd.com/financial-apis/bulk-api-eod-splits-dividends",
+        "checkedAt": "2026-11-20",
+        "snapshot": "case-studies/evidence/eodhd-bulk-close-session-date-mismatch-vendor-date-2026-11-20.txt",
+        "sha256": "0995d668389e469a73fd006c228922ad08f7a82b315d1f5e30771de47a55af05",
+        "excerpt": "past non-trading day returns the previous trading day\nfuture date returns the latest available day\nRead the date field"
+      },
+      {
+        "id": "getbeta-code",
+        "kind": "code",
+        "url": "https://github.com/firewine/getbeta/blob/85fb65013df819462126fe3f85d96b1a0fc5876e/scripts/bulk_price_ingestion.py#L159-L183",
+        "checkedAt": "2026-11-20",
+        "snapshot": "case-studies/evidence/eodhd-bulk-close-session-date-mismatch-getbeta-code-2026-11-20.txt",
+        "sha256": "54c8a2333579696019361235dafaa4018eaa2fe764e5679d856889bb8a6f4f82",
+        "excerpt": "close = item.get(\"close\")\nraise _RejectedQuote(\"price_quote_missing\")\nraise _RejectedQuote(\"price_session_unavailable\")\nraise _RejectedQuote(\"price_quote_stale\")"
+      },
+      {
+        "id": "getbeta-recheck",
+        "kind": "documentation",
+        "url": "https://github.com/firewine/getbeta/blob/11719738cd0a18b64d7d804997b0c4fc134b5ab8/docs/plans/2026-11-06_COLLECTION_RELIABILITY_PHASES.md#L1589-L1601",
+        "checkedAt": "2026-11-20",
+        "snapshot": "case-studies/evidence/eodhd-bulk-close-session-date-mismatch-getbeta-recheck-2026-11-20.txt",
+        "sha256": "3c5a50417d918577f461eb437fc61c9b829129a2e4ceef0b8534638aa92585c8",
+        "excerpt": "11월 19일 미확보 172종목\n운영에서 날짜 지정 일괄 0건, 개별 0건, 기존 일별 가격 이력 0건\n이전 거래일 127종목, 응답 없음 14종목, 공급처 종목 목록에 없음 31종목이다."
+      }
+    ],
+    "technicalDetails": [
+      {
+        "kind": "field",
+        "value": "date",
+        "evidenceId": "vendor-date"
+      },
+      {
+        "kind": "field",
+        "value": "close",
+        "evidenceId": "getbeta-code"
+      }
+    ],
+    "verification": {
+      "level": "source-review",
+      "note": "Source review only, checked 2026-11-20. We read the vendor documentation and pinned GetBeta code and recheck notes; we did not run provider requests, execute the example or fixtures, write prices, or verify deployment.",
+      "evidenceIds": [
+        "vendor-date",
+        "getbeta-code",
+        "getbeta-recheck"
+      ]
+    },
+    "review": {
+      "author": "차도녀 gpt may",
+      "authorType": "Person",
+      "checkedAt": "2026-11-20",
+      "titleMatchesBody": true,
+      "distinctProblem": "Existing EODHD cases cover delayed dividend refresh and missing Korean dividend dates. Here a bulk closing-price row may carry a different trading date, so admission is gated on an exact completed session and safe writes.",
+      "noInventedResults": true
+    }
+  },
+  "sections": {
+    "symptoms": "An EODHD exchange bulk query can return a nonempty price response without the regular-session close you asked for. If a collector uses the requested date or download time as the observation date, an older close can be recorded as today's price.\n\nFor the completed KRX session of 2026-11-19, a [GetBeta recheck note](https://github.com/firewine/getbeta/blob/11719738cd0a18b64d7d804997b0c4fc134b5ab8/docs/plans/2026-11-06_COLLECTION_RELIABILITY_PHASES.md#L1589-L1601) records 172 unresolved securities. The recheck found zero matching rows in the date-pinned bulk response, individual lookup and existing daily history. The individual lookup classifications were 127 prior-session rows, 14 with no response, and 31 absent from the vendor symbol list. Zero financial-data writes were recorded for this recheck.",
+    "cause": "EODHD's [Bulk API reference](https://eodhd.com/financial-apis/bulk-api-eod-splits-dividends) describes two cases where the request parameter and the returned `date` differ: a historical non-trading day can return the preceding session, and a future date can return the latest available session. A successful response and a date parameter therefore do not establish exact session coverage. These documented fallbacks are not a finding about why the November 19 KRX rows were missing: the public source review does not establish the supplier-side cause.\n\nThe [GetBeta change](https://github.com/firewine/getbeta/blob/85fb65013df819462126fe3f85d96b1a0fc5876e/scripts/bulk_price_ingestion.py#L563-L600) pins the completed KRX trading date and its close time, sends the date to the bulk route, and retains the row's own date for admission. Its [date and close checks](https://github.com/firewine/getbeta/blob/85fb65013df819462126fe3f85d96b1a0fc5876e/scripts/bulk_price_ingestion.py#L159-L183) reject a missing date, reject malformed or later dates, reject earlier dates as stale, and use the unadjusted `close` rather than `adjusted_close`.",
+    "solution": "1. Resolve the last **completed regular session** from the exchange calendar, including non-trading days and close-time exceptions. Hold its session date and close timestamp fixed for the job.\n2. Send that date to the bulk endpoint. Treat each returned `date` as independent evidence. Require a matching listing identity and exact canonical date before using the positive finite unadjusted `close`. Keep missing, stale and invalid observations separate; do not stamp an older price with the target session or silently fall back to a different series.\n3. Preserve a newer stored observation; do not overwrite conflicting same-session values silently. [Before the GetBeta transaction commits](https://github.com/firewine/getbeta/blob/85fb65013df819462126fe3f85d96b1a0fc5876e/scripts/bulk_price_ingestion.py#L278-L303), the reviewed implementation checks again that the pinned session is still eligible. On rollover it rejects the pending old-session write instead of marrying the old price to the new session. Apply the same eligibility checks to individual recovery.\n\nThis read-only admission example assumes symbol identity has already been validated. It neither fetches nor writes prices:\n\n```python\nfrom decimal import Decimal, InvalidOperation\n\n\ndef exact_close(row, expected_session):\n    # expected_session is a date from the exchange's completed-session calendar.\n    if row.get(\"date\") != expected_session.isoformat():\n        return None\n    raw_close = row.get(\"close\")\n    if isinstance(raw_close, bool):\n        return None\n    try:\n        close = Decimal(str(raw_close))\n    except (InvalidOperation, ValueError):\n        return None\n    return close if close.is_finite() and close > 0 else None\n```\n\nSee the [EODHD provider profile](../../apis/eodhd/) and [market-data selection guide](../choose-stock-market-data-api/) for the broader coverage checks.",
+    "verification": "Source review only, checked 2026-11-20. We read the vendor documentation and pinned GetBeta code and recheck notes; we did not run provider requests, execute the example or fixtures, write prices, or verify deployment.\n\nThe [dated GetBeta change](https://github.com/firewine/getbeta/blob/85fb65013df819462126fe3f85d96b1a0fc5876e/scripts/bulk_price_ingestion.py#L305-L322) shows the requested date being sent, and the [pinned recheck note](https://github.com/firewine/getbeta/blob/11719738cd0a18b64d7d804997b0c4fc134b5ab8/docs/plans/2026-11-06_COLLECTION_RELIABILITY_PHASES.md#L1589-L1601) documents the zero-write outcome. The note records a prior operator observation; it is not an execution receipt for this guide.\n\nFor offline controls, supply an exact-session row with a valid `close` and confirm admission. Supply an earlier, later, missing or malformed row date, or an invalid price, and confirm rejection. Add a boundary test that changes the latest completed session between selection and commit and verifies rollback. Check that a newer stored observation remains unchanged.",
+    "limitations": "This is a source review of one Korean equity close-ingestion path. The 172-symbol recheck is not evidence that every KRX symbol lacked data, that EODHD never supplies Korean closes, or that the documented date fallback caused the incident. It does not establish upstream recovery, a live end-to-end result, or the deployment of any alternative provider. This price-date check is separate from dividend date coverage and dividend cache freshness."
+  }
+}

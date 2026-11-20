@@ -1,0 +1,3 @@
+past non-trading day returns the previous trading day
+future date returns the latest available day
+Read the date field

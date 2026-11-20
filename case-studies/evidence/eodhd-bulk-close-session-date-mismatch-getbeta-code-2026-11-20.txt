@@ -1,0 +1,4 @@
+close = item.get("close")
+raise _RejectedQuote("price_quote_missing")
+raise _RejectedQuote("price_session_unavailable")
+raise _RejectedQuote("price_quote_stale")
