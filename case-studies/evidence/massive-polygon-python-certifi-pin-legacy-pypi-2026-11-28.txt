@@ -1,0 +1,8 @@
+Source: https://pypi.org/pypi/polygon-api-client/1.16.3/json
+Checked: 2026-11-28
+Short source excerpt (selected exact JSON fields, one per line):
+
+"name":"polygon-api-client"
+"version":"1.16.3"
+"requires_python":"<4.0,>=3.9"
+"requires_dist":["urllib3>=1.26.9","websockets>=14.0","certifi<2026.0.0,>=2022.5.18"]

@@ -1,0 +1,126 @@
+{
+  "title": "Massive Python Polygon SDK certifi conflict: migrate and verify the dependency lock",
+  "h1": "Massive Python Polygon SDK certifi conflict: migrate and verify the dependency lock",
+  "description": "Diagnose the certifi collision in polygon-api-client 1.16.3, move to Massive 2.9.0 on supported Python, and validate the full lock without disabling TLS checks.",
+  "summary": "A certifi pin from 2026 cannot satisfy the older Polygon Python SDK's upper bound. The checked Massive SDK release admits that pin, but migration still requires a compatible Python version and an independent project-wide resolver and import check.",
+  "order": 34,
+  "updatedAt": "2026-11-28",
+  "tags": [
+    "massive",
+    "polygon",
+    "market-data",
+    "python",
+    "certifi"
+  ],
+  "caseStudy": {
+    "slug": "massive-polygon-python-certifi-pin",
+    "problemId": "massive-polygon-python-certifi-pin",
+    "titleParts": {
+      "api": "Massive Python",
+      "problem": "Polygon SDK certifi conflict",
+      "solution": "migrate and verify the dependency lock"
+    },
+    "linkLabel": "Massive Python: resolve the legacy Polygon certifi pin",
+    "providers": [
+      "massive"
+    ],
+    "searchIntent": {
+      "primary": {
+        "term": "polygon-api-client certifi conflict",
+        "sourcePhrase": "certifi<2026.0.0",
+        "evidenceIds": [
+          "legacy-pypi"
+        ]
+      },
+      "related": [
+        {
+          "term": "Massive Python SDK certifi dependency",
+          "sourcePhrase": "certifi<2027.0.0",
+          "evidenceIds": [
+            "massive-pypi"
+          ]
+        },
+        {
+          "term": "Massive 2.9.0 Python minimum version",
+          "sourcePhrase": ">=3.10",
+          "evidenceIds": [
+            "massive-pypi"
+          ]
+        },
+        {
+          "term": "replace polygon-api-client 1.16.3",
+          "sourcePhrase": "1.16.3",
+          "evidenceIds": [
+            "legacy-pypi"
+          ]
+        }
+      ],
+      "status": "keyword-candidate"
+    },
+    "evidence": [
+      {
+        "id": "legacy-pypi",
+        "kind": "documentation",
+        "url": "https://pypi.org/pypi/polygon-api-client/1.16.3/json",
+        "checkedAt": "2026-11-28",
+        "snapshot": "case-studies/evidence/massive-polygon-python-certifi-pin-legacy-pypi-2026-11-28.txt",
+        "sha256": "87860a9a917aaa498aafbdeae14889f28474ea8ab4c6a2ed50b6bce720475eff",
+        "excerpt": "\"name\":\"polygon-api-client\"\n\"version\":\"1.16.3\"\n\"requires_python\":\"<4.0,>=3.9\"\n\"requires_dist\":[\"urllib3>=1.26.9\",\"websockets>=14.0\",\"certifi<2026.0.0,>=2022.5.18\"]"
+      },
+      {
+        "id": "massive-pypi",
+        "kind": "documentation",
+        "url": "https://pypi.org/pypi/massive/2.9.0/json",
+        "checkedAt": "2026-11-28",
+        "snapshot": "case-studies/evidence/massive-polygon-python-certifi-pin-massive-pypi-2026-11-28.txt",
+        "sha256": "4b493cb7b7d3ba874a5c26ba476d98f24e1ec17606452647263cef4828387faa",
+        "excerpt": "\"name\":\"massive\"\n\"version\":\"2.9.0\"\n\"requires_python\":\"<4.0,>=3.10\"\n\"requires_dist\":[\"certifi<2027.0.0,>=2022.5.18\",\"urllib3>=1.26.9\",\"websockets>=14.0\"]"
+      },
+      {
+        "id": "massive-source",
+        "kind": "code",
+        "url": "https://github.com/massive-com/client-python/blob/v2.9.0/pyproject.toml",
+        "checkedAt": "2026-11-28",
+        "snapshot": "case-studies/evidence/massive-polygon-python-certifi-pin-massive-source-2026-11-28.txt",
+        "sha256": "a8f03f8f214d7158d6ce727d5777b6c4f8e478cb7e9fea498adc6a672be9e55a",
+        "excerpt": "[tool.poetry.dependencies]\npython = \"^3.10\"\nurllib3 = \">=1.26.9\"\nwebsockets = \">=14.0\"\ncertifi = \">=2022.5.18,<2027.0.0\""
+      }
+    ],
+    "technicalDetails": [
+      {
+        "kind": "sdk-version",
+        "value": "1.16.3",
+        "evidenceId": "legacy-pypi"
+      },
+      {
+        "kind": "sdk-version",
+        "value": "2.9.0",
+        "evidenceId": "massive-pypi"
+      }
+    ],
+    "verification": {
+      "level": "source-review",
+      "note": "Source review only, checked 2026-11-28. We compared exact PyPI releases with the tagged SDK source; we did not run the resolver, install the packages, call the API, or verify a deployment.",
+      "evidenceIds": [
+        "legacy-pypi",
+        "massive-pypi",
+        "massive-source"
+      ]
+    },
+    "review": {
+      "author": "차도녀 gpt may",
+      "authorType": "Person",
+      "checkedAt": "2026-11-28",
+      "titleMatchesBody": true,
+      "distinctProblem": "The existing aggregate-bars guide diagnoses unexpected result coverage after an API call. This case diagnoses incompatible package requirements before a request can be made.",
+      "noInventedResults": true
+    }
+  },
+  "sections": {
+    "symptoms": "If a project requests `polygon-api-client==1.16.3` and `certifi==2026.7.22` together, there is no compatible certifi version. The resolver conflict happens before an API request; it is not an authentication, plan, or TLS handshake error.",
+    "cause": "The [legacy release on PyPI](https://pypi.org/pypi/polygon-api-client/1.16.3/json) requires `certifi>=2022.5.18,<2026.0.0` and Python 3.9 or newer within Python 3. The [Massive 2.9.0 release](https://pypi.org/pypi/massive/2.9.0/json) and its [tagged SDK source](https://github.com/massive-com/client-python/blob/v2.9.0/pyproject.toml) allow `certifi>=2022.5.18,<2027.0.0` and require Python 3.10 or newer within Python 3. The requested certifi release fits the latter interval, not the former.",
+    "solution": "On a supported interpreter, replace the old direct dependency with `massive` and update client imports to `from massive import RESTClient`. Check for transitive requirements that still pull the old package. Rebuild the project's full lock for each supported Python version and platform using its normal tooling. Do not lower certifi across a shared environment to force installation or disable certificate verification.\n\nThese commands are a two-package sanity check for a disposable POSIX environment, not a project lock verification. Use a fresh environment path if the example directory already exists. The import does not require a key or call the service.\n\n```bash\npython3.10 -m venv /tmp/massive-sdk-check\n/tmp/massive-sdk-check/bin/python -m pip install --dry-run \"massive==2.9.0\" \"certifi==2026.7.22\"\n/tmp/massive-sdk-check/bin/python -m pip install \"massive==2.9.0\" \"certifi==2026.7.22\"\n/tmp/massive-sdk-check/bin/python -m pip check\n/tmp/massive-sdk-check/bin/python -c 'from massive import RESTClient; from importlib.metadata import version; assert version(\"massive\") == \"2.9.0\"; assert version(\"certifi\") == \"2026.7.22\"'\n```",
+    "verification": "Source review only, checked 2026-11-28. We compared exact PyPI releases with the tagged SDK source; we did not run the resolver, install the packages, call the API, or verify a deployment.\n\nAs a negative control, use a separate clean Python 3.10 environment and dry-run the legacy 1.16.3 package with the same certifi pin; expect a resolver rejection, not a transport error. Then run the new-package control above. Next install the regenerated full lock in a fresh project environment, run `pip check`, smoke-test the actual application imports and run its tests. If deployment still runs Python 3.9, upgrade that deployment interpreter or keep the legacy workload isolated pending a supported migration; the new package does not make Python 3.9 compatible.",
+    "limitations": "Only the listed releases and constraints were compared. Allowing one direct certifi pin does not establish that the entire application dependency graph resolves, that the service works in production, or that older Polygon hostnames are unavailable. No API key, provider response, or deployment is implied."
+  }
+}

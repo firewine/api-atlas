@@ -1,0 +1,9 @@
+Source: https://github.com/massive-com/client-python/blob/v2.9.0/pyproject.toml
+Checked: 2026-11-28
+Short source excerpt (contiguous tagged SDK source):
+
+[tool.poetry.dependencies]
+python = "^3.10"
+urllib3 = ">=1.26.9"
+websockets = ">=14.0"
+certifi = ">=2022.5.18,<2027.0.0"

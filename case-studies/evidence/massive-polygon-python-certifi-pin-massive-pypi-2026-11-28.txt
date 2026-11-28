@@ -1,0 +1,8 @@
+Source: https://pypi.org/pypi/massive/2.9.0/json
+Checked: 2026-11-28
+Short source excerpt (selected exact JSON fields, one per line):
+
+"name":"massive"
+"version":"2.9.0"
+"requires_python":"<4.0,>=3.10"
+"requires_dist":["certifi<2027.0.0,>=2022.5.18","urllib3>=1.26.9","websockets>=14.0"]
